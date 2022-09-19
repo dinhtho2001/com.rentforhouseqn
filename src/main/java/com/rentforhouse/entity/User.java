@@ -14,40 +14,36 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "user")
-public class User extends BaseEntity{
+public class User extends BaseEntity {
 
 	@Column(name = "first_name")
-    private String firstName;
-	
-	@Column(name = "last_name")
-    private String lastName;
-	
-	@Column(name = "username", nullable = false)
-    private String userName;
-	
-	@Column(name = "password", nullable = false)
-    private String password;
-	
-	@Column(name = "phone")
-    private String phone;
-	
-	@Column(name = "email")
-    private String email;
-	
-	@Column(name = "status")
-    private Integer status;
-	
-	@OneToMany(mappedBy ="user" ,fetch = FetchType.LAZY) 
-	private List<House> houses = new ArrayList<>();
-	
-	 @ManyToMany(fetch = FetchType.LAZY)
-	    @JoinTable(name = "user_roles",
-	            joinColumns = @JoinColumn(name = "user_id", nullable = false),
-	            inverseJoinColumns = @JoinColumn(name = "role_id", nullable = false))
-	    private List<Role> roles = new ArrayList<>();
+	private String firstName;
 
-	
-	 
+	@Column(name = "last_name")
+	private String lastName;
+
+	@Column(name = "username", nullable = false)
+	private String userName;
+
+	@Column(name = "password", nullable = false)
+	private String password;
+
+	@Column(name = "phone")
+	private String phone;
+
+	@Column(name = "email")
+	private String email;
+
+	@Column(name = "status")
+	private Integer status;
+
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	private List<House> houses = new ArrayList<>();
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "role_id", nullable = false))
+	private List<Role> roles = new ArrayList<>();
+
 	public Integer getStatus() {
 		return status;
 	}
@@ -119,6 +115,5 @@ public class User extends BaseEntity{
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
-	
-	
+
 }

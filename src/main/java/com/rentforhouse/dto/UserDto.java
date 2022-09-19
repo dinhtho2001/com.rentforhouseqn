@@ -1,20 +1,18 @@
 package com.rentforhouse.dto;
 
-import javax.persistence.Column;
-
 public class UserDto {
 
-    private String fistName;
-	
-    private String lastName;
-	
-    private String userName;
-	
-    private String password;
-	
-    private String phone;
-	
-    private String email;
+	private String fistName;
+
+	private String lastName;
+
+	private String userName;
+
+	private String password;
+
+	private String phone;
+
+	private String email;
 
 	public String getFistName() {
 		return fistName;
@@ -63,7 +61,5 @@ public class UserDto {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-    
-    
-	
+
 }

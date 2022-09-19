@@ -12,10 +12,10 @@ public class HouseConverter {
 
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	public HouseDto convertToDto(House houseEntity) {
 		HouseDto houseDto = modelMapper.map(houseEntity, HouseDto.class);
 		return houseDto;
-		
+
 	}
 }

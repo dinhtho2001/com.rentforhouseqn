@@ -11,13 +11,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "type")
-public class HouseType extends BaseEntity{
+public class HouseType extends BaseEntity {
 
 	@Column(name = "name", nullable = false)
-    private String name;
-	
-	 @ManyToMany(mappedBy = "houseTypes", fetch = FetchType.LAZY)
-	 private List<House> houses = new ArrayList<>();
+	private String name;
+
+	@ManyToMany(mappedBy = "houseTypes", fetch = FetchType.LAZY)
+	private List<House> houses = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -34,7 +34,5 @@ public class HouseType extends BaseEntity{
 	public void setHouses(List<House> houses) {
 		this.houses = houses;
 	}
-	 
-	 
-	
+
 }

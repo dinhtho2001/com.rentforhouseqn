@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rentforhouse.dto.HouseDto;
-import com.rentforhouse.dto.request.HouseRequest;
+import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.service.IHouseService;
 
 @RestController(value="houseAPIOfWeb")

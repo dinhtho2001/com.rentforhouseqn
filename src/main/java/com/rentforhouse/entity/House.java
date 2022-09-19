@@ -15,40 +15,38 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "house")
-public class House extends BaseEntity{
+public class House extends BaseEntity {
 
 	@Column(name = "name", nullable = false)
-    private String name;
-	
+	private String name;
+
 	@Column(name = "address", nullable = false)
-    private String address;
-	
+	private String address;
+
 	@Column(name = "area")
-    private String area;
-	
-	@Column(name = "description",columnDefinition = "TEXT")
-    private String description;
-	
-	@Column(name = "detailsumary" ,columnDefinition = "TEXT")
-    private String detailSumary;
-	
+	private String area;
+
+	@Column(name = "description", columnDefinition = "TEXT")
+	private String description;
+
+	@Column(name = "detailsumary", columnDefinition = "TEXT")
+	private String detailSumary;
+
 	@Column(name = "price")
-    private Float price;
-	
+	private Float price;
+
 	@Column(name = "image")
-    private String image;
-	
+	private String image;
+
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	
+
 	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "house_type",
-            joinColumns = @JoinColumn(name = "house_id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "type_id", nullable = false))
-    private List<HouseType> houseTypes = new ArrayList<>();
-	
-	@OneToMany(mappedBy ="house" ,fetch = FetchType.LAZY) 
+	@JoinTable(name = "house_type", joinColumns = @JoinColumn(name = "house_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "type_id", nullable = false))
+	private List<HouseType> houseTypes = new ArrayList<>();
+
+	@OneToMany(mappedBy = "house", fetch = FetchType.LAZY)
 	private List<Comment> comments = new ArrayList<>();
 
 	public String getName() {
@@ -130,8 +128,5 @@ public class House extends BaseEntity{
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
-	
-	
-	
-	
+
 }

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.dto.HouseDto;
-import com.rentforhouse.dto.request.HouseRequest;
 import com.rentforhouse.entity.House;
+import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.service.IHouseService;
 

@@ -11,17 +11,16 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "role")
-public class Role extends BaseEntity{
+public class Role extends BaseEntity {
 
-	 @Column(name = "name",nullable = false)
-	 private String name;
-	 
-	 @Column(name = "code",nullable = false)
-	 private String code;
-	
-	 @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-	 private List<User> users = new ArrayList<>();
-	
+	@Column(name = "name", nullable = false)
+	private String name;
+
+	@Column(name = "code", nullable = false)
+	private String code;
+
+	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+	private List<User> users = new ArrayList<>();
 
 	public String getCode() {
 		return code;
@@ -46,6 +45,5 @@ public class Role extends BaseEntity{
 	public void setUsers(List<User> users) {
 		this.users = users;
 	}
-	 
-	 
+
 }
