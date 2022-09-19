@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class AbstractDto <T> implements Serializable  {
 	
 	private Long id;
@@ -12,7 +15,7 @@ public class AbstractDto <T> implements Serializable  {
 	private String createdBy;
 	private Date modifiedDate;
 	private String modifiedBy;
-	private List<T> listResult = new ArrayList<>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -43,13 +46,7 @@ public class AbstractDto <T> implements Serializable  {
 	public void setModifiedBy(String modifiedBy) {
 		this.modifiedBy = modifiedBy;
 	}
-	public List<T> getListResult() {
-		return listResult;
-	}
-	public void setListResult(List<T> listResult) {
-		this.listResult = listResult;
-	}
-	
+
 	
 
 }

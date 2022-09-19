@@ -1,5 +1,9 @@
 package com.rentforhouse.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+
 public class HouseDto extends AbstractDto<HouseDto>{
 
     private String name;
@@ -91,6 +95,8 @@ public class HouseDto extends AbstractDto<HouseDto>{
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
+
     
+
     
 }

@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "house")
-public class HouseEntity extends BaseEntity{
+public class House extends BaseEntity{
 
 	@Column(name = "name", nullable = false)
     private String name;
@@ -40,16 +40,16 @@ public class HouseEntity extends BaseEntity{
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private UserEntity user;
+	private User user;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "house_type",
             joinColumns = @JoinColumn(name = "house_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "type_id", nullable = false))
-    private List<HouseTypeEntity> houseTypes = new ArrayList<>();
+    private List<HouseType> houseTypes = new ArrayList<>();
 	
 	@OneToMany(mappedBy ="house" ,fetch = FetchType.LAZY) 
-	private List<CommentEntity> comments = new ArrayList<>();
+	private List<Comment> comments = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -107,27 +107,27 @@ public class HouseEntity extends BaseEntity{
 		this.image = image;
 	}
 
-	public UserEntity getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(UserEntity user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 
-	public List<HouseTypeEntity> getHouseTypes() {
+	public List<HouseType> getHouseTypes() {
 		return houseTypes;
 	}
 
-	public void setHouseTypes(List<HouseTypeEntity> houseTypes) {
+	public void setHouseTypes(List<HouseType> houseTypes) {
 		this.houseTypes = houseTypes;
 	}
 
-	public List<CommentEntity> getComments() {
+	public List<Comment> getComments() {
 		return comments;
 	}
 
-	public void setComments(List<CommentEntity> comments) {
+	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
 	

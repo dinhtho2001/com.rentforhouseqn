@@ -14,10 +14,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "user")
-public class UserEntity extends BaseEntity{
+public class User extends BaseEntity{
 
-	@Column(name = "fist_name")
-    private String fistName;
+	@Column(name = "first_name")
+    private String firstName;
 	
 	@Column(name = "last_name")
     private String lastName;
@@ -34,21 +34,34 @@ public class UserEntity extends BaseEntity{
 	@Column(name = "email")
     private String email;
 	
+	@Column(name = "status")
+    private Integer status;
+	
 	@OneToMany(mappedBy ="user" ,fetch = FetchType.LAZY) 
-	private List<HouseEntity> houses = new ArrayList<>();
+	private List<House> houses = new ArrayList<>();
 	
 	 @ManyToMany(fetch = FetchType.LAZY)
 	    @JoinTable(name = "user_roles",
 	            joinColumns = @JoinColumn(name = "user_id", nullable = false),
 	            inverseJoinColumns = @JoinColumn(name = "role_id", nullable = false))
-	    private List<RoleEntity> roles = new ArrayList<>();
+	    private List<Role> roles = new ArrayList<>();
 
-	public String getFistName() {
-		return fistName;
+	
+	 
+	public Integer getStatus() {
+		return status;
 	}
 
-	public void setFistName(String fistName) {
-		this.fistName = fistName;
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
 	public String getLastName() {
@@ -91,19 +104,19 @@ public class UserEntity extends BaseEntity{
 		this.email = email;
 	}
 
-	public List<HouseEntity> getHouses() {
+	public List<House> getHouses() {
 		return houses;
 	}
 
-	public void setHouses(List<HouseEntity> houses) {
+	public void setHouses(List<House> houses) {
 		this.houses = houses;
 	}
 
-	public List<RoleEntity> getRoles() {
+	public List<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<RoleEntity> roles) {
+	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
 	

@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "comment")
-public class CommentEntity extends BaseEntity{
+public class Comment extends BaseEntity{
 
 	@Column(name = "content",columnDefinition = "TEXT")
     private String content;
@@ -18,7 +18,7 @@ public class CommentEntity extends BaseEntity{
 	
 	@ManyToOne
 	@JoinColumn(name = "house_id")
-	private HouseEntity house;
+	private House house;
 
 	public String getContent() {
 		return content;
@@ -36,11 +36,11 @@ public class CommentEntity extends BaseEntity{
 		this.userId = userId;
 	}
 
-	public HouseEntity getHouse() {
+	public House getHouse() {
 		return house;
 	}
 
-	public void setHouse(HouseEntity house) {
+	public void setHouse(House house) {
 		this.house = house;
 	}
 
