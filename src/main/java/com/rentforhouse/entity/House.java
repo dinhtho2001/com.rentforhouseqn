@@ -17,10 +17,10 @@ import javax.persistence.Table;
 @Table(name = "house")
 public class House extends BaseEntity {
 
-	@Column(name = "name", nullable = false)
+	@Column(name = "name")
 	private String name;
 
-	@Column(name = "address", nullable = false)
+	@Column(name = "address")
 	private String address;
 
 	@Column(name = "area")

@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Table(name = "comment")
 public class Comment extends BaseEntity {
 
-	@Column(name = "content", columnDefinition = "TEXT")
+	@Column(name = "content"/* , columnDefinition = "TEXT" */)
 	private String content;
 
 	@Column(name = "user_id")

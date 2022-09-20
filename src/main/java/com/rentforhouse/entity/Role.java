@@ -13,10 +13,10 @@ import javax.persistence.Table;
 @Table(name = "role")
 public class Role extends BaseEntity {
 
-	@Column(name = "name", nullable = false)
+	@Column(name = "name")
 	private String name;
 
-	@Column(name = "code", nullable = false)
+	@Column(name = "code")
 	private String code;
 
 	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)

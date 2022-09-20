@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table(name = "type")
 public class HouseType extends BaseEntity {
 
-	@Column(name = "name", nullable = false)
+	@Column(name = "name")
 	private String name;
 
 	@ManyToMany(mappedBy = "houseTypes", fetch = FetchType.LAZY)
