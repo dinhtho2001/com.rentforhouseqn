@@ -35,7 +35,7 @@ public class User extends BaseEntity {
 	private String email;
 
 	@Column(name = "status")
-	private Integer status;
+	private Boolean status;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<House> houses = new ArrayList<>();
@@ -44,11 +44,11 @@ public class User extends BaseEntity {
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "role_id", nullable = false))
 	private List<Role> roles = new ArrayList<>();
 
-	public Integer getStatus() {
+	public Boolean getStatus() {
 		return status;
 	}
 
-	public void setStatus(Integer status) {
+	public void setStatus(Boolean status) {
 		this.status = status;
 	}
 
