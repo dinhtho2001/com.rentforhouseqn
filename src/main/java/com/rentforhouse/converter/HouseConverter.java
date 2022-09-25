@@ -16,6 +16,12 @@ public class HouseConverter {
 	public HouseDto convertToDto(House houseEntity) {
 		HouseDto houseDto = modelMapper.map(houseEntity, HouseDto.class);
 		return houseDto;
-
 	}
+	
+	public House convertToEntity(HouseDto houseDto) {
+		House house = modelMapper.map(houseDto, House.class);
+		house.setImage(houseDto.getFile().getOriginalFilename());
+		return house;
+	}
+	
 }

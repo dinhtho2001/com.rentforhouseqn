@@ -43,7 +43,8 @@ public class House extends BaseEntity {
 	private User user;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "house_type", joinColumns = @JoinColumn(name = "house_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "type_id", nullable = false))
+	@JoinTable(name = "house_type", joinColumns = @JoinColumn(name = "house_id", nullable = false),
+				inverseJoinColumns = @JoinColumn(name = "type_id", nullable = false))
 	private List<HouseType> houseTypes = new ArrayList<>();
 
 	@OneToMany(mappedBy = "house", fetch = FetchType.LAZY)
