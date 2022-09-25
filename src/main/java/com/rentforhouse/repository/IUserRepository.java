@@ -8,8 +8,8 @@ import com.rentforhouse.entity.User;
 
 public interface IUserRepository extends JpaRepository<User, Long>{
 
-	User findOneByEmpId(Long id);
-	User findOneByEmpId(User id);
+	User findOneById(Long id);
+	User findOneById(User id);
 	Optional<User> findByUserName(String username);
 	Boolean existsByEmail(String email);
 }
