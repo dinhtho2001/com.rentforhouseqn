@@ -2,12 +2,19 @@ package com.rentforhouse.payload.request;
 
 public class HouseRequest {
 
+	private Long id;
 	private String name ;
 	private Long typeId;
 	private Integer page;
 	private Integer limit;
 	
 	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public Integer getPage() {
 		return page;
 	}

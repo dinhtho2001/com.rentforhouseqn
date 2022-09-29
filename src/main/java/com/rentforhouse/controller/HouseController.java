@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
@@ -41,12 +42,17 @@ public class HouseController {
 		return houseService.findHouse(houseRequest,pageable);
 	}
 	
+	@GetMapping("/{id}")
+	public HouseDto findById(@PathVariable(value="id") Long id ) {
+		return houseService.findById(id);
+	}
+	
 	@PostMapping
 	public ResponseEntity<ResponseMessage>  saveHouse(@ModelAttribute HouseDto houseDto){
 		String message = "";
 		try {
-			storageService.save(houseDto.getFile());
 			houseService.saveHouse(houseDto);
+			storageService.save(houseDto.getFile());
 			message = "Add house success!";
 		    return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
 		} catch (Exception e) {

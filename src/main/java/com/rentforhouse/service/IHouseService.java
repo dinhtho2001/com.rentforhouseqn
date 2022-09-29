@@ -11,4 +11,5 @@ public interface IHouseService {
 
 	List<HouseDto> findHouse(HouseRequest houseRequest ,Pageable pageable);
 	HouseDto saveHouse(HouseDto houseDto);
+	HouseDto findById(Long id);
 }

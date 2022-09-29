@@ -28,7 +28,7 @@ public class AuthController {
 		JwtResponse jwtResponse = authService.signin(loginRequest);
 		if (jwtResponse.getUserName() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("email-not-found", new ErrorParam()))
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError())
 					);
 		} else {
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success", jwtResponse, HttpStatus.OK.name()));

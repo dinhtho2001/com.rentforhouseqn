@@ -63,4 +63,12 @@ public class HouseServiceImpl implements IHouseService{
 		return houseConverter.convertToDto(houseRepository.save(house));
 	}
 
+
+	@Override
+	public HouseDto findById(Long id) {
+		House house = houseRepository.findById(id).get();
+		HouseDto houseDto = houseConverter.convertToDto(house);
+		return houseDto;
+	}
+
 }
