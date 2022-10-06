@@ -20,7 +20,7 @@ import com.rentforhouse.service.FilesStorageService;
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService{
 
-	private final Path root = Paths.get("uploads");
+	private final Path root = Paths.get("src/main/resources/uploads");
 
 	  @Override
 	  public void init() {
