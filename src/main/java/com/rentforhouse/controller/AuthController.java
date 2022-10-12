@@ -19,7 +19,7 @@ import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IAuthService;
 import com.rentforhouse.service.IUserService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000/")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
