@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
@@ -61,21 +60,6 @@ public class HouseController {
 		}
 
 	}
-	
-	/*@PostMapping("/upload")
-	  public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file ,
-			  											@RequestParam("name") String name) {
-	    String message = "";
-	    try {
-	      storageService.save(file); //service
-
-	      message = "Uploaded the file successfully: " + file.getOriginalFilename();
-	      return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
-	    } catch (Exception e) {
-	      message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
-	    }
-	  }*/
 
 	  @GetMapping("/files")
 	  public ResponseEntity<List<FileInfo>> getListFiles() {
@@ -86,7 +70,7 @@ public class HouseController {
 
 	      return new FileInfo(filename,url);
 	    }).collect(Collectors.toList());
-
+	    
 	    return ResponseEntity.status(HttpStatus.OK).body(fileInfos);
 	  }
 

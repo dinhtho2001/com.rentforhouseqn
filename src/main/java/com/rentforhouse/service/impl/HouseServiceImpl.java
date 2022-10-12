@@ -2,6 +2,7 @@ package com.rentforhouse.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -9,12 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import com.rentforhouse.controller.HouseController;
 import com.rentforhouse.converter.HouseConverter;
+import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.repository.IHouseRepository;
+import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
 import com.rentforhouse.utils.ValidateUtils;
 
@@ -27,6 +32,8 @@ public class HouseServiceImpl implements IHouseService{
 	@Autowired
 	private HouseConverter houseConverter;
 	
+	@Autowired
+	 FilesStorageService storageService;
 
 	@Override
 	public List<HouseDto> findHouse(HouseRequest houseRequest, Pageable pageable) {
@@ -45,9 +52,23 @@ public class HouseServiceImpl implements IHouseService{
 		else {
 			houseEntities = houseRepository.findAll(pageable);
 		}
+		List<FileInfo> fileInfos = storageService.loadAll().map(path -> {
+		      String filename = path.getFileName().toString();
+		      String url = MvcUriComponentsBuilder
+		          .fromMethodName(HouseController.class, "getFile", path.getFileName().toString()).build().toString();
+
+		      return new FileInfo(filename,url);
+		    }).collect(Collectors.toList());
 		
 		for(House houseEntity : houseEntities) {		
 			HouseDto houseDto = houseConverter.convertToDto(houseEntity);
+
+			for(FileInfo fileInfo : fileInfos) {
+				if(houseDto.getImage().equals(fileInfo.getName()) ) {
+					houseDto.setImage(fileInfo.getUrl());
+				}
+			}
+			
 			houseDtos.add(houseDto);
 		}
 		
