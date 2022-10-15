@@ -22,16 +22,16 @@ public class User extends BaseEntity {
 	@Column(name = "last_name")
 	private String lastName;
 
-	@Column(name = "username")
+	@Column(name = "username", nullable = false, unique = true)
 	private String userName;
 
 	@Column(name = "password")
 	private String password;
 
-	@Column(name = "phone")
+	@Column(name = "phone", unique = true)
 	private String phone;
 
-	@Column(name = "email")
+	@Column(name = "email", unique = true)
 	private String email;
 
 	@Column(name = "status")
