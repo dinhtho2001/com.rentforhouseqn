@@ -18,8 +18,9 @@ public class UserConverter {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	@Autowired
-    private PasswordEncoder passwordEncoder;
+	/*
+	 * @Autowired private PasswordEncoder passwordEncoder;
+	 */
 	
 	@Autowired
 	private IRoleRepository roleRepository;
@@ -29,7 +30,7 @@ public class UserConverter {
 		List<Role> roles = roleRepository.findByCode("ROLE_STAFF");
 		user.setRoles(roles);
 		user.setStatus(true);
-		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+		/* user.setPassword(passwordEncoder.encode(userDto.getPassword())); */
 		return user;
 	}
 	
