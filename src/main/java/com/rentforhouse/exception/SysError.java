@@ -11,5 +11,6 @@ public class SysError {
 
 	private String code;
 	private ErrorParam errorParams;
+	
 
 }

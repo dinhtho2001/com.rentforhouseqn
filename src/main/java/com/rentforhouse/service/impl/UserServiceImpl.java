@@ -19,6 +19,16 @@ public class UserServiceImpl implements IUserService{
 
 	@Override
 	public UserDto saveUser(UserDto userDto) {
+		if(userRepository.existsByUserName(userDto.getUserName())) {
+			
+		}
+		if(userRepository.existsByEmail(userDto.getEmail())){
+			
+		}
+		if(userRepository.existsByPhone(userDto.getPhone())) {
+			
+		}
+		
 		User user = new User();
 		user = userConverter.convertToEntity(userDto);
 		return userConverter.convertToDto(userRepository.save(user));

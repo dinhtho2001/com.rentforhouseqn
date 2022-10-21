@@ -15,14 +15,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.payload.request.HouseRequest;
+import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.payload.response.ResponseMessage;
+import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
 
@@ -39,7 +44,7 @@ public class HouseController {
 
 	@GetMapping
 	public List<HouseDto> findHouse(@ModelAttribute HouseRequest houseRequest ){	
-		Pageable pageable = PageRequest.of(houseRequest.getPage(), houseRequest.getLimit());
+		Pageable pageable = PageRequest.of(houseRequest.getPage() -1, houseRequest.getLimit());
 		return houseService.findHouse(houseRequest,pageable);
 	}
 	
@@ -49,12 +54,26 @@ public class HouseController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<ResponseMessage>  saveHouse(@ModelAttribute HouseDto houseDto){
+	public ResponseEntity<?>  saveHouse(@ModelAttribute HouseSaveRequest houseSaveRequest, @RequestParam MultipartFile file){
 		String message = "";
 		try {
-			houseService.saveHouse(houseDto);
-			storageService.save(houseDto.getFile());
-			message = "Add house success!";
+			houseSaveRequest.setFile(file);
+			HouseDto houseDto = houseService.saveHouse(houseSaveRequest);
+			storageService.save(file);
+		    return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("Add house success!", houseDto, HttpStatus.OK.name()));
+		} catch (Exception e) {
+			message = "Failed!";
+		    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+		}
+	}
+	
+	
+	@PostMapping("/upload")
+	public ResponseEntity<ResponseMessage>  upload(@RequestParam MultipartFile file){
+		String message = "";
+		try {
+			storageService.save(file);
+			message = "Add file success!";
 		    return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
 		} catch (Exception e) {
 			message = "Failed!";

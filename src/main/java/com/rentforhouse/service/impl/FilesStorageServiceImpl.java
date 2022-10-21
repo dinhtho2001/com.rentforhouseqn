@@ -5,23 +5,32 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import com.rentforhouse.controller.HouseController;
+import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.service.FilesStorageService;
 
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService{
 
-	private final Path root = Paths.get("src/main/resources/uploads");
-
+	@Value("classpath:uploads")
+	private  Path root ;
+	
+	
 	  @Override
 	  public void init() {
 	    try {
@@ -69,6 +78,17 @@ public class FilesStorageServiceImpl implements FilesStorageService{
 	    } catch (IOException e) {
 	      throw new RuntimeException("Could not load the files!");
 	    }
+	  }
+	  
+	  public List<FileInfo> getListFile(){
+		  List<FileInfo> fileInfos = loadAll().map(path -> {
+		      String filename = path.getFileName().toString();
+		      String url = MvcUriComponentsBuilder
+		          .fromMethodName(HouseController.class, "getFile", path.getFileName().toString()).build().toString();
+
+		      return new FileInfo(filename,url);
+		    }).collect(Collectors.toList());
+		  return fileInfos;
 	  }
 
 }
