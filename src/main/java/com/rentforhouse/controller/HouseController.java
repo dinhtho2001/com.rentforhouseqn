@@ -57,7 +57,7 @@ public class HouseController {
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
 	
-	@GetMapping
+	@GetMapping("/list/{id}")
 	public ResponseEntity<?> findAllHouseById(@PathVariable(value = "id") Long id) {
 		if (true) {
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
