@@ -19,6 +19,9 @@ import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.response.HouseResponse;
+
+import com.rentforhouse.payload.request.HouseSaveRequest;
+
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
@@ -83,9 +86,9 @@ public class HouseServiceImpl implements IHouseService{
 
 	@Override
 	@Transactional
-	public HouseDto saveHouse(HouseDto houseDto) {
+	public HouseDto saveHouse(HouseSaveRequest houseSaveRequest) {
 		House house = new House();
-		house = houseConverter.convertToEntity(houseDto);
+		house = houseConverter.convertToEntity(houseSaveRequest);
 		return houseConverter.convertToDto(houseRepository.save(house));
 	}
 

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.payload.request.HouseRequest;
+
 import com.rentforhouse.payload.response.HouseResponse;
 
 public interface IHouseService {
