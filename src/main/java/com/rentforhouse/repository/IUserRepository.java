@@ -8,7 +8,7 @@ import com.rentforhouse.entity.User;
 
 public interface IUserRepository extends JpaRepository<User, Long>{
 
-	User findOneById(Long id);
+	Optional<User> findById(Long id);
 	User findOneById(User id);
 	Optional<User> findByUserName(String username);
 	Boolean existsByEmail(String email);

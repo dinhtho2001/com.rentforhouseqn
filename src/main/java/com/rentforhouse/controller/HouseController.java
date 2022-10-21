@@ -21,66 +21,87 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
+import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseRequest;
+import com.rentforhouse.payload.response.ErrorResponse;
+import com.rentforhouse.payload.response.HouseResponse;
 import com.rentforhouse.payload.response.ResponseMessage;
+import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
 
-@CrossOrigin(origins = "http://localhost:3000")
-@RestController(value="houseAPIOfWeb")
-@RequestMapping("/api/house")
+@CrossOrigin(origins = "http://localhost:3000/")
+@RestController(value = "houseAPIOfWeb")
+@RequestMapping("/api/houses")
 public class HouseController {
-	
+
 	@Autowired
 	private IHouseService houseService;
-	
-	 @Autowired
-	 FilesStorageService storageService;
+
+	@Autowired
+	FilesStorageService storageService;
 
 	@GetMapping
-	public List<HouseDto> findHouse(@ModelAttribute HouseRequest houseRequest ){	
+	public ResponseEntity<?> findHouse(@ModelAttribute HouseRequest houseRequest) {
 		Pageable pageable = PageRequest.of(houseRequest.getPage(), houseRequest.getLimit());
-		return houseService.findHouse(houseRequest,pageable);
+		HouseResponse houseResponse = houseService.findHouse(houseRequest, pageable);
+		if (houseResponse.getHouses() != null) {
+			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
+					houseResponse, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
 	
+	@GetMapping
+	public ResponseEntity<?> findAllHouseById(@PathVariable(value = "id") Long id) {
+		if (true) {
+			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
+					null, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	}
+
 	@GetMapping("/{id}")
-	public HouseDto findById(@PathVariable(value="id") Long id ) {
+	public HouseDto findById(@PathVariable(value = "id") Long id) {
 		return houseService.findById(id);
 	}
-	
+
 	@PostMapping
-	public ResponseEntity<ResponseMessage>  saveHouse(@ModelAttribute HouseDto houseDto){
+	public ResponseEntity<ResponseMessage> saveHouse(@ModelAttribute HouseDto houseDto) {
 		String message = "";
 		try {
 			houseService.saveHouse(houseDto);
 			storageService.save(houseDto.getFile());
 			message = "Add house success!";
-		    return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
 		} catch (Exception e) {
 			message = "Failed!";
-		    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
 		}
 
 	}
 
-	  @GetMapping("/files")
-	  public ResponseEntity<List<FileInfo>> getListFiles() {
-	    List<FileInfo> fileInfos = storageService.loadAll().map(path -> {
-	      String filename = path.getFileName().toString();
-	      String url = MvcUriComponentsBuilder
-	          .fromMethodName(HouseController.class, "getFile", path.getFileName().toString()).build().toString();
+	@GetMapping("/files")
+	public ResponseEntity<List<FileInfo>> getListFiles() {
+		List<FileInfo> fileInfos = storageService.loadAll().map(path -> {
+			String filename = path.getFileName().toString();
+			String url = MvcUriComponentsBuilder
+					.fromMethodName(HouseController.class, "getFile", path.getFileName().toString()).build().toString();
 
-	      return new FileInfo(filename,url);
-	    }).collect(Collectors.toList());
-	    
-	    return ResponseEntity.status(HttpStatus.OK).body(fileInfos);
-	  }
+			return new FileInfo(filename, url);
+		}).collect(Collectors.toList());
 
-	  @GetMapping("/files/{filename:.+}")
-	  public ResponseEntity<Resource> getFile(@PathVariable String filename) {
-	    Resource file = storageService.load(filename);
-	    return ResponseEntity.ok()
-	        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
-	  }
-	
+		return ResponseEntity.status(HttpStatus.OK).body(fileInfos);
+	}
+
+	@GetMapping("/files/{filename:.+}")
+	public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+		Resource file = storageService.load(filename);
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+				.body(file);
+	}
+
 }

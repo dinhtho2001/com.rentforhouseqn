@@ -18,6 +18,7 @@ import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.payload.request.HouseRequest;
+import com.rentforhouse.payload.response.HouseResponse;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
@@ -36,9 +37,10 @@ public class HouseServiceImpl implements IHouseService{
 	 FilesStorageService storageService;
 
 	@Override
-	public List<HouseDto> findHouse(HouseRequest houseRequest, Pageable pageable) {
+	public HouseResponse findHouse(HouseRequest houseRequest, Pageable pageable) {
 		List<HouseDto> houseDtos = new ArrayList<>();
-		Page<House> houseEntities = null ;	
+		Page<House> houseEntities = null ;
+		HouseResponse houseResponse;
 		
 		if(houseRequest.getTypeId() != null && ValidateUtils.checkNullAndEmpty(houseRequest.getName())) {
 			houseEntities = houseRepository.findByHouseTypes_Id(houseRequest.getTypeId(), pageable);
@@ -71,8 +73,11 @@ public class HouseServiceImpl implements IHouseService{
 			
 			houseDtos.add(houseDto);
 		}
-		
-		return houseDtos;
+		houseResponse = new HouseResponse();
+		houseResponse.setPage(houseRequest.getPage());
+		houseResponse.setTotal_page((int) Math.ceil((double) (totalTtem()) / houseRequest.getLimit()));
+		houseResponse.setHouses(houseDtos);
+		return houseResponse;
 	}
 
 
@@ -89,7 +94,16 @@ public class HouseServiceImpl implements IHouseService{
 	public HouseDto findById(Long id) {
 		House house = houseRepository.findById(id).get();
 		HouseDto houseDto = houseConverter.convertToDto(house);
+		
 		return houseDto;
+	}
+	
+	public int totalTtem() {
+		try {
+			return (int) houseRepository.count();
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 
 }

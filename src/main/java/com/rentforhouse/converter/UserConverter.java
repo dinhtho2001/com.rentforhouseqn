@@ -14,13 +14,14 @@ public class UserConverter {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	@Autowired
-    private PasswordEncoder passwordEncoder;
+	/*
+	 * @Autowired private PasswordEncoder passwordEncoder;
+	 */
 	
 	public User convertToEntity(UserDto userDto) {
 		User user = modelMapper.map(userDto, User.class);
 		user.setStatus(true);
-		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+		/* user.setPassword(passwordEncoder.encode(userDto.getPassword())); */
 		return user;
 	}
 	
