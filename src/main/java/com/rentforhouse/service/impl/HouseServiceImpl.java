@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
@@ -17,14 +18,12 @@ import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.entity.House;
-import com.rentforhouse.entity.HouseType;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.response.HouseResponse;
 
 import com.rentforhouse.payload.request.HouseSaveRequest;
 
 import com.rentforhouse.repository.IHouseRepository;
-import com.rentforhouse.repository.IHouseTypeRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
 import com.rentforhouse.utils.ValidateUtils;
@@ -40,8 +39,6 @@ public class HouseServiceImpl implements IHouseService{
 	
 	@Autowired
 	 FilesStorageService storageService;
-	
-	
 
 	@Override
 	public HouseResponse findHouse(HouseRequest houseRequest, Pageable pageable) {
@@ -101,6 +98,7 @@ public class HouseServiceImpl implements IHouseService{
 	public HouseDto findById(Long id) {
 		House house = houseRepository.findById(id).get();
 		HouseDto houseDto = houseConverter.convertToDto(house);
+		
 		return houseDto;
 	}
 	
@@ -121,6 +119,28 @@ public class HouseServiceImpl implements IHouseService{
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+
+	@Override
+	public HouseResponse findAllByUserId(Long id, int page, int limit) {
+		HouseResponse houseResponse = new HouseResponse();
+		List<HouseDto> houseDtos = new ArrayList<>();
+		Page<House> houseEntities = null ;
+		try {
+			Pageable pageable = PageRequest.of(page - 1, limit);
+			houseEntities = houseRepository.findByUser_Id(id, pageable);
+			for(House item : houseEntities) {		
+				HouseDto houseDto = houseConverter.convertToDto(item);
+				houseDtos.add(houseDto);
+			}
+			houseResponse.setHouses(houseDtos);
+			houseResponse.setPage(page);
+			houseResponse.setTotal_page((int) Math.ceil((double) (totalTtem()) / limit));
+		} catch (Exception e) {
+			return new HouseResponse();
+		}
+		return houseResponse;
 	}
 
 }
