@@ -10,5 +10,5 @@ public interface IHouseRepository extends JpaRepository<House, Long>{
 	Page<House> findByNameLike(String name, Pageable pageable);
 	Page<House> findByHouseTypes_Id(Long typeId, Pageable pageable);
 	Page<House> findByNameLikeAndHouseTypes_Id(String name, Long typeId,Pageable pageable);
-	
+	Page<House> findByUser_Id(Long id, Pageable pageable);
 }
