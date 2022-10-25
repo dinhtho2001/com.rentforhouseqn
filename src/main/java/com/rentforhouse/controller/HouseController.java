@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,9 +26,9 @@ import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseRequest;
+import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.HouseResponse;
-import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.payload.response.ResponseMessage;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.FilesStorageService;
@@ -73,16 +73,25 @@ public class HouseController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?>  saveHouse(@ModelAttribute HouseSaveRequest houseSaveRequest, @RequestParam MultipartFile file){
-		String message = "";
+	public ResponseEntity<?>  saveHouse(@ModelAttribute HouseSaveRequest houseSaveRequest
+										,@RequestParam MultipartFile file){
 		try {
-			houseSaveRequest.setFile(file);
 			HouseDto houseDto = houseService.saveHouse(houseSaveRequest);
-			storageService.save(file);
+			storageService.save(houseSaveRequest.getFiles());
 		    return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("Add house success!", houseDto, HttpStatus.OK.name()));
 		} catch (Exception e) {
-			message = "Failed!";
-		    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+		    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Failed!"));
+		}
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<?>  editHouse(@ModelAttribute HouseSaveRequest houseSaveRequest,@PathVariable("id") Long id){
+		try {
+			houseSaveRequest.setId(id);
+			HouseDto houseDto = houseService.saveHouse(houseSaveRequest);
+		    return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("Add house success!", houseDto, HttpStatus.OK.name()));
+		} catch (Exception e) {
+		    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Failed!"));
 		}
 	}
 	

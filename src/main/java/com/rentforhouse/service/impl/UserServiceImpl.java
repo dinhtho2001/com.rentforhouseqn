@@ -8,6 +8,7 @@ import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.User;
+import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.IUserService;
 
@@ -21,15 +22,15 @@ public class UserServiceImpl implements IUserService{
 	private UserConverter userConverter;
 
 	@Override
-	public UserDto saveUser(UserDto userDto) {
+	public UserDto saveUser(UserDto userDto) throws MyFileNotFoundException{
 		if(userRepository.existsByUserName(userDto.getUserName())) {
-			
+			throw new MyFileNotFoundException("Tên đăng nhập đã tồn tại!");
 		}
 		if(userRepository.existsByEmail(userDto.getEmail())){
-			
+			throw new MyFileNotFoundException("Email đã tồn tại!");
 		}
 		if(userRepository.existsByPhone(userDto.getPhone())) {
-			
+			throw new MyFileNotFoundException("Số điện thoại đã tồn tại!");
 		}
 		
 		User user = new User();

@@ -18,6 +18,7 @@ import com.rentforhouse.payload.response.JwtResponse;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IAuthService;
 import com.rentforhouse.service.IUserService;
+import com.rentforhouse.utils.ValidateUtils;
 
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController
@@ -43,6 +44,7 @@ public class AuthController {
 	
 	@PostMapping("/signup")
 	public ResponseEntity<UserDto> signUp(@RequestBody UserDto userDto){
+		ValidateUtils.validateUser(userDto);
 		return ResponseEntity.ok(userService.saveUser(userDto));
 	}
 }
