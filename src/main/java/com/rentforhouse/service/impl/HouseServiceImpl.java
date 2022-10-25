@@ -17,12 +17,14 @@ import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.entity.House;
+import com.rentforhouse.entity.HouseType;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.response.HouseResponse;
 
 import com.rentforhouse.payload.request.HouseSaveRequest;
 
 import com.rentforhouse.repository.IHouseRepository;
+import com.rentforhouse.repository.IHouseTypeRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
 import com.rentforhouse.utils.ValidateUtils;
@@ -38,6 +40,8 @@ public class HouseServiceImpl implements IHouseService{
 	
 	@Autowired
 	 FilesStorageService storageService;
+	
+	
 
 	@Override
 	public HouseResponse findHouse(HouseRequest houseRequest, Pageable pageable) {
@@ -97,7 +101,6 @@ public class HouseServiceImpl implements IHouseService{
 	public HouseDto findById(Long id) {
 		House house = houseRepository.findById(id).get();
 		HouseDto houseDto = houseConverter.convertToDto(house);
-		
 		return houseDto;
 	}
 	

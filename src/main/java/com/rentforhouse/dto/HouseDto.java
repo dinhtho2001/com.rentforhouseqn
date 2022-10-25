@@ -1,6 +1,6 @@
 package com.rentforhouse.dto;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.util.Map;
 
 public class HouseDto extends AbstractDto<HouseDto>{
 
@@ -18,21 +18,10 @@ public class HouseDto extends AbstractDto<HouseDto>{
 
     private String image;
     
-    private MultipartFile file;
     
-    private Long typeId;
+    private Map<Long,String> types;
     
     private Long userId;
-
-    
-    
-	public MultipartFile getFile() {
-		return file;
-	}
-
-	public void setFile(MultipartFile file) {
-		this.file = file;
-	}
 
 	public String getName() {
 		return name;
@@ -90,12 +79,13 @@ public class HouseDto extends AbstractDto<HouseDto>{
 		this.image = image;
 	}
 
-	public Long getTypeId() {
-		return typeId;
+	
+	public Map<Long, String> getTypes() {
+		return types;
 	}
 
-	public void setTypeId(Long typeId) {
-		this.typeId = typeId;
+	public void setTypes(Map<Long, String> types) {
+		this.types = types;
 	}
 
 	public Long getUserId() {
