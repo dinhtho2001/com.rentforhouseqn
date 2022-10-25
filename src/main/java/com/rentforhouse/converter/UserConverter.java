@@ -26,7 +26,7 @@ public class UserConverter {
 	public User convertToEntity(UserDto userDto) {
 		
 		User user = modelMapper.map(userDto, User.class);
-		List<Role> roles = roleRepository.findByCode("ROLE_STAFF");
+		List<Role> roles = roleRepository.findByName("ROLE_STAFF");
 		user.setRoles(roles);
 		user.setStatus(true);
 		 user.setPassword(passwordEncoder.encode(userDto.getPassword()));
