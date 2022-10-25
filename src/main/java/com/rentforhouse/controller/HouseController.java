@@ -61,13 +61,24 @@ public class HouseController {
 	}
 	
 	@GetMapping("/list/{id}")
-	public ResponseEntity<?> findAllHouseById(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<?> findAllHouseById(@RequestParam("id") Long id, @RequestParam("page") int page, @RequestParam("limit") int limit) {
 		if (true) {
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
 					null, HttpStatus.OK.name()));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	}
+	
+	@GetMapping("/user")
+	public ResponseEntity<?> findAllHouseByUserId(@RequestParam("id") Long id, @RequestParam("page") int page, @RequestParam("limit") int limit) {
+		HouseResponse houseResponse = houseService.findAllByUserId(id, page, limit);
+		if (houseResponse.getTotal_page() != 0) {
+			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
+					houseResponse, HttpStatus.OK.name()));
+		}	
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
 	}
 
 	@GetMapping("/{id}")
