@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class HouseSaveRequest {
+	@ApiModelProperty(hidden = true)
 	private Long id;
 	
 	private String name;
