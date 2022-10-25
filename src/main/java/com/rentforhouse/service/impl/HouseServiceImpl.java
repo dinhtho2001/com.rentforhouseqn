@@ -113,7 +113,14 @@ public class HouseServiceImpl implements IHouseService{
 		}
 	}
 
-
-	
+	@Override
+	public Boolean delete(Long id) {
+		try {
+			houseRepository.deleteById(id);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 
 }
