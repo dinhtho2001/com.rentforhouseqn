@@ -1,8 +1,12 @@
 package com.rentforhouse.payload.request;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 public class HouseSaveRequest {
+	private Long id;
+	
 	private String name;
 	
     private String address;
@@ -14,9 +18,37 @@ public class HouseSaveRequest {
     private String detailSumary;
 
     private Float price;
-
     
-    private MultipartFile file;
+    private List<Long> typeIds;
+    
+    private MultipartFile files;
+    
+    
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public MultipartFile getFiles() {
+		return files;
+	}
+
+	public void setFiles(MultipartFile files) {
+		this.files = files;
+	}
+
+	public List<Long> getTypeIds() {
+		return typeIds;
+	}
+
+	public void setTypeIds(List<Long> typeIds) {
+		this.typeIds = typeIds;
+	}
+
+	
 
 	public String getName() {
 		return name;
@@ -66,13 +98,5 @@ public class HouseSaveRequest {
 		this.price = price;
 	}
 
-	public MultipartFile getFile() {
-		return file;
-	}
-
-	public void setFile(MultipartFile file) {
-		this.file = file;
-	}
-    
     
 }
