@@ -10,7 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +26,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
+import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
@@ -130,6 +133,19 @@ public class HouseController {
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
 				.body(file);
+	}
+	
+	@DeleteMapping("/{id}")
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+	public ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
+		if(houseService.delete(id)) {
+			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
+					null, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+				new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("id-not-found", new ErrorParam("id")))
+				);
+		
 	}
 
 }
