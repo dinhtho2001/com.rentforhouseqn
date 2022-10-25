@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -25,8 +25,8 @@ import com.rentforhouse.service.FilesStorageService;
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService{
 
-	@Value("classpath:uploads")
-	private  Path root ;
+
+	private static final Path root = Paths.get("src/main/resources/uploads") ;
 	
 	
 	  @Override

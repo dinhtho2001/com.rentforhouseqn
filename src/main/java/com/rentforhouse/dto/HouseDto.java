@@ -1,5 +1,6 @@
 package com.rentforhouse.dto;
 
+import java.util.List;
 import java.util.Map;
 
 public class HouseDto extends AbstractDto<HouseDto>{
@@ -19,7 +20,7 @@ public class HouseDto extends AbstractDto<HouseDto>{
     private String image;
     
     
-    private Map<Long,String> types;
+    private List<Long> typeIds;
     
     private Long userId;
 
@@ -80,12 +81,13 @@ public class HouseDto extends AbstractDto<HouseDto>{
 	}
 
 	
-	public Map<Long, String> getTypes() {
-		return types;
+
+	public List<Long> getTypeIds() {
+		return typeIds;
 	}
 
-	public void setTypes(Map<Long, String> types) {
-		this.types = types;
+	public void setTypeIds(List<Long> typeIds) {
+		this.typeIds = typeIds;
 	}
 
 	public Long getUserId() {

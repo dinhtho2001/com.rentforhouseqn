@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
@@ -18,11 +19,11 @@ import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.entity.House;
+import com.rentforhouse.entity.HouseType;
+import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.response.HouseResponse;
-
 import com.rentforhouse.payload.request.HouseSaveRequest;
-
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
@@ -93,10 +94,9 @@ public class HouseServiceImpl implements IHouseService{
 		return houseConverter.convertToDto(houseRepository.save(house));
 	}
 
-
 	@Override
 	public HouseDto findById(Long id) {
-		House house = houseRepository.findById(id).get();
+		House house = houseRepository.findById(id).orElseThrow(() -> new MyFileNotFoundException("Id : "+id+" không tồn tại"));
 		HouseDto houseDto = houseConverter.convertToDto(house);
 		
 		return houseDto;
@@ -109,7 +109,6 @@ public class HouseServiceImpl implements IHouseService{
 			return 0;
 		}
 	}
-
 
 	@Override
 	public Boolean delete(Long id) {
