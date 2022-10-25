@@ -76,8 +76,9 @@ public class HouseController {
 	public ResponseEntity<?>  saveHouse(@ModelAttribute HouseSaveRequest houseSaveRequest
 										,@RequestParam MultipartFile file){
 		try {
+			houseSaveRequest.setFiles(file);
 			HouseDto houseDto = houseService.saveHouse(houseSaveRequest);
-			storageService.save(houseSaveRequest.getFiles());
+			storageService.save(file);
 		    return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("Add house success!", houseDto, HttpStatus.OK.name()));
 		} catch (Exception e) {
 		    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Failed!"));
