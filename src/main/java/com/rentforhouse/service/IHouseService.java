@@ -12,4 +12,6 @@ public interface IHouseService {
 	HouseResponse findHouse(HouseRequest houseRequest ,Pageable pageable);
 	HouseDto saveHouse(HouseSaveRequest houseSaveRequest);
 	HouseDto findById(Long id);
+	Boolean delete(Long id);
+	HouseResponse findAllByUserId(Long id, int page, int limit);
 }
