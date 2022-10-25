@@ -4,10 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import io.swagger.annotations.ApiModelProperty;
-
 public class HouseSaveRequest {
-	@ApiModelProperty(hidden = true)
 	private Long id;
 	
 	private String name;
@@ -24,8 +21,7 @@ public class HouseSaveRequest {
     
     private List<Long> typeIds;
     
-    @ApiModelProperty(hidden = true)
-    private MultipartFile file;
+    private MultipartFile files;
     
     
 	public Long getId() {
@@ -37,11 +33,11 @@ public class HouseSaveRequest {
 	}
 
 	public MultipartFile getFiles() {
-		return file;
+		return files;
 	}
 
-	public void setFiles(MultipartFile file) {
-		this.file = file;
+	public void setFiles(MultipartFile files) {
+		this.files = files;
 	}
 
 	public List<Long> getTypeIds() {
