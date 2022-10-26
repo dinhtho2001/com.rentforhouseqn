@@ -42,6 +42,7 @@ public class UserServiceImpl implements IUserService{
 	public UserDto findbyId(Long id) {
 		User user = userRepository.findById(id).get();
 		UserDto userDto = userConverter.convertToDto(user);
+		userDto.setPassword(null);
 		return userDto;
 	}
 	

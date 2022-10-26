@@ -60,17 +60,8 @@ public class HouseController {
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
 	
-	@GetMapping("/list/{id}")
-	public ResponseEntity<?> findAllHouseById(@RequestParam("id") Long id, @RequestParam("page") int page, @RequestParam("limit") int limit) {
-		if (true) {
-			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
-					null, HttpStatus.OK.name()));
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
-	}
-	
 	@GetMapping("/user")
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
 	public ResponseEntity<?> findAllHouseByUserId(@RequestParam("id") Long id, @RequestParam("page") int page, @RequestParam("limit") int limit) {
 		HouseResponse houseResponse = houseService.findAllByUserId(id, page, limit);
 		if (houseResponse.getTotal_page() != 0) {
@@ -87,6 +78,7 @@ public class HouseController {
 	}
 
 	@PostMapping
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
 	public ResponseEntity<?>  saveHouse(@ModelAttribute HouseSaveRequest houseSaveRequest
 										,@RequestParam MultipartFile file){
 		try {
@@ -100,6 +92,7 @@ public class HouseController {
 	}
 	
 	@PutMapping("/{id}")
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
 	public ResponseEntity<?>  editHouse(@ModelAttribute HouseSaveRequest houseSaveRequest,@PathVariable("id") Long id){
 		try {
 			houseSaveRequest.setId(id);

@@ -16,7 +16,7 @@ import com.rentforhouse.service.IHouseTypeService;
 
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController(value = "houseTypeAPI")
-@RequestMapping("/api/housetype")
+@RequestMapping("/api/houseTypes")
 public class HouseTypeController {
 	@Autowired
 	private IHouseTypeService houseTypeService;
@@ -30,10 +30,6 @@ public class HouseTypeController {
 
 	}
 
-	
-	
-	
-	
 }
 
 

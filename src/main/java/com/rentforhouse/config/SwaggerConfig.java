@@ -39,7 +39,7 @@ public class SwaggerConfig {
 	
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
-	            .title("API Ren For House")
+	            .title("Rent For House API")
 	            .build();
 	}
 
