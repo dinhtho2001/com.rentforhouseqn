@@ -27,7 +27,6 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.exception.ErrorParam;
-import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
@@ -54,7 +53,7 @@ public class HouseController {
 	public ResponseEntity<?> findHouse(@ModelAttribute HouseRequest houseRequest) {
 		Pageable pageable = PageRequest.of(houseRequest.getPage(), houseRequest.getLimit());
 		HouseResponse houseResponse = houseService.findHouse(houseRequest, pageable);
-		if (houseResponse.getHouses() != null) {
+		if (houseResponse.getTotal_page()>0) {
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
 					houseResponse, HttpStatus.OK.name()));
 		}
