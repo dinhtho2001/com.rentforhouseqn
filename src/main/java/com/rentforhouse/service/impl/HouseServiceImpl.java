@@ -89,7 +89,7 @@ public class HouseServiceImpl implements IHouseService{
 	@Override
 	@Transactional
 	public HouseDto saveHouse(HouseSaveRequest houseSaveRequest) {
-		House house = new House();
+		House house = new House();	
 		house = houseConverter.convertToEntity(houseSaveRequest);
 		return houseConverter.convertToDto(houseRepository.save(house));
 	}

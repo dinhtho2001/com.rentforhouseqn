@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.exception.MyFileNotFoundException;
+import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.repository.IUserRepository;
 
 public class ValidateUtils {
@@ -28,6 +29,19 @@ public class ValidateUtils {
 		}
 		if(checkNullAndEmpty(userDto.getPhone())) {
 			throw new MyFileNotFoundException("Phone is require!");
+		}
+	}
+	
+	
+	public static void validateHouse(HouseSaveRequest houseSaveRequest) throws MyFileNotFoundException{
+		if(checkNullAndEmpty(houseSaveRequest.getName())) {
+			throw new MyFileNotFoundException("Name is require!");
+		}
+		if(houseSaveRequest.getTypeIds() == null){
+			throw new MyFileNotFoundException("Type is require!");
+		}
+		if(checkNullAndEmpty(houseSaveRequest.getAddress())) {
+			throw new MyFileNotFoundException("Address is require!");
 		}
 	}
 }

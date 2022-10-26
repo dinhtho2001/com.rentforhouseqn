@@ -1,5 +1,7 @@
 package com.rentforhouse.service.impl;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ public class UserServiceImpl implements IUserService{
 	private UserConverter userConverter;
 
 	@Override
+	@Transactional
 	public UserDto saveUser(UserDto userDto) throws MyFileNotFoundException{
 		if(userRepository.existsByUserName(userDto.getUserName())) {
 			throw new MyFileNotFoundException("Tên đăng nhập đã tồn tại!");

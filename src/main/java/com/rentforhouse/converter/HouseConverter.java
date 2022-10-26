@@ -42,13 +42,13 @@ public class HouseConverter {
 		return houseDto;
 	}
 	
-	public House convertToEntity(HouseSaveRequest houseSaveRequest) {
+	public House convertToEntity(HouseSaveRequest houseSaveRequest){
 		House house = modelMapper.map(houseSaveRequest, House.class);
 		List<HouseType> houseTypes = new ArrayList<>();
 		if(houseSaveRequest.getId() == null) {
 			house.setImage(houseSaveRequest.getFiles().getOriginalFilename());
 		}		
-		
+
 		for(Long item : houseSaveRequest.getTypeIds()) {
 			HouseType houseType = new HouseType();
 			houseType = houseTypeRepository.findById(item).orElseThrow((() -> new MyFileNotFoundException("Type Id : "+item+" không tồn tại")));

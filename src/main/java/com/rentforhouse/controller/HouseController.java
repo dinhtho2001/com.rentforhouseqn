@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.exception.ErrorParam;
+import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
@@ -36,6 +37,7 @@ import com.rentforhouse.payload.response.ResponseMessage;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
+import com.rentforhouse.utils.ValidateUtils;
 
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController(value = "houseAPIOfWeb")
@@ -81,26 +83,27 @@ public class HouseController {
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
 	public ResponseEntity<?>  saveHouse(@ModelAttribute HouseSaveRequest houseSaveRequest
 										,@RequestParam MultipartFile file){
-		try {
+		
 			houseSaveRequest.setFiles(file);
+			ValidateUtils.validateHouse(houseSaveRequest);
 			HouseDto houseDto = houseService.saveHouse(houseSaveRequest);
-			storageService.save(file);
-		    return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("Add house success!", houseDto, HttpStatus.OK.name()));
-		} catch (Exception e) {
-		    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Failed!"));
-		}
+			try {
+				storageService.save(file);
+			} catch (Exception e) {
+			    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Add Image Failed!"));
+			}
+		    return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success!", houseDto, HttpStatus.OK.name()));
+		
 	}
 	
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
 	public ResponseEntity<?>  editHouse(@ModelAttribute HouseSaveRequest houseSaveRequest,@PathVariable("id") Long id){
-		try {
 			houseSaveRequest.setId(id);
+			ValidateUtils.validateHouse(houseSaveRequest);
 			HouseDto houseDto = houseService.saveHouse(houseSaveRequest);
-		    return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("Add house success!", houseDto, HttpStatus.OK.name()));
-		} catch (Exception e) {
-		    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Failed!"));
-		}
+		    return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success!", houseDto, HttpStatus.OK.name()));
+		
 	}
 	
 	
