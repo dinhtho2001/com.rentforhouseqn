@@ -55,7 +55,7 @@ public class AuthService implements IAuthService {
 				.collect(Collectors.toList());
 		JwtResponse response = new JwtResponse();;
 		response.setId(Integer.parseInt(userDetails.getId().toString()));
-		response.setUserName(userDetails.getUsername());
+		response.setUsername(userDetails.getUsername());
 		response.setRoles(roles);
 		response.setAccess_token(token);
 		response.setToken_type("Bearer");

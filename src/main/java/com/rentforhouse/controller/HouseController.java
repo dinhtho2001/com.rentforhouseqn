@@ -51,8 +51,7 @@ public class HouseController {
 
 	@GetMapping
 	public ResponseEntity<?> findHouse(@ModelAttribute HouseRequest houseRequest) {
-		Pageable pageable = PageRequest.of(houseRequest.getPage(), houseRequest.getLimit());
-		HouseResponse houseResponse = houseService.findHouse(houseRequest, pageable);
+		HouseResponse houseResponse = houseService.findHouse(houseRequest);
 		if (houseResponse.getTotal_page() > 0) {
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
 					houseResponse, HttpStatus.OK.name()));

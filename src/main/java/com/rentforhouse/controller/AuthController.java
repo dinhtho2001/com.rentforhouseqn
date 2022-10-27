@@ -33,7 +33,7 @@ public class AuthController {
 	@PostMapping("/signin")
 	public ResponseEntity<?> signin(@RequestBody LoginRequest loginRequest) {
 		JwtResponse jwtResponse = authService.signin(loginRequest);
-		if (jwtResponse.getUserName() == null) {
+		if (jwtResponse.getUsername() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
 					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError())
 					);
