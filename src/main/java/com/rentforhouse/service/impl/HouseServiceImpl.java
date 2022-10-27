@@ -80,7 +80,7 @@ public class HouseServiceImpl implements IHouseService{
 		}
 		houseResponse = new HouseResponse();
 		houseResponse.setPage(houseRequest.getPage());
-		houseResponse.setTotal_page((int) Math.ceil((double) (totalTtem()) / houseRequest.getLimit()));
+		houseResponse.setTotal_page(houseEntities.getTotalPages());
 		houseResponse.setHouses(houseDtos);
 		return houseResponse;
 	}
@@ -134,8 +134,8 @@ public class HouseServiceImpl implements IHouseService{
 				houseDtos.add(houseDto);
 			}
 			houseResponse.setHouses(houseDtos);
-			houseResponse.setPage(page);
-			houseResponse.setTotal_page((int) Math.ceil((double) (totalTtem()) / limit));
+			houseResponse.setPage(houseEntities.getSize());
+			houseResponse.setTotal_page(houseEntities.getTotalPages());
 		} catch (Exception e) {
 			return new HouseResponse();
 		}
