@@ -35,7 +35,7 @@ public class UserConverter {
 	
 	public UserDto convertToDto(User user) {
 		UserDto userDto = modelMapper.map(user, UserDto.class);
-		user.setPassword(null);
+		userDto.setPassword(null);
 		return userDto;
 	}
 }

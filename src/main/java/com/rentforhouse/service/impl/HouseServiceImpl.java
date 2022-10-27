@@ -46,8 +46,8 @@ public class HouseServiceImpl implements IHouseService {
 	private HouseConverter houseConverter;
 
 	@Autowired
-	private UserConverter userConverter ;
-	
+	private UserConverter userConverter;
+
 	@Autowired
 	FilesStorageService storageService;
 
@@ -88,24 +88,10 @@ public class HouseServiceImpl implements IHouseService {
 
 	@Override
 	public HouseResponse findAllByUserId(Long id, int page, int limit) {
-		/*
-		 * HouseResponse houseResponse = new HouseResponse(); List<HouseDto> houseDtos =
-		 * new ArrayList<>(); HouseDto houseDto; User user; Page<House> houseEntities =
-		 * null; try { Pageable pageable = PageRequest.of(page - 1, limit);
-		 * houseEntities = houseRepository.findByUser_Id(id, pageable); user =
-		 * userRepository.findById(id).orElse(new User()); UserDto userDto =
-		 * userConverter.convertToDto(user); for (House item : houseEntities) { houseDto
-		 * = houseConverter.convertToDto(item); houseDto.setUser(userDto);
-		 * houseDtos.add(houseDto); } houseResponse.setHouses(houseDtos);
-		 * houseResponse.setPage(page);
-		 * houseResponse.setTotal_page(houseEntities.getTotalPages()); } catch
-		 * (Exception e) { return new HouseResponse(); } return houseResponse;
-		 */
-
 		HouseResponse houseResponse = new HouseResponse();
 		List<HouseDto> houseDtos = new ArrayList<>();
 		HouseDto houseDto;
-		Page<House> houseEntities = null;		
+		Page<House> houseEntities = null;
 		try {
 			Pageable pageable = PageRequest.of(page - 1, limit);
 			houseEntities = houseRepository.findByUser_Id(id, pageable);
@@ -129,7 +115,9 @@ public class HouseServiceImpl implements IHouseService {
 		List<HouseDto> houseDtos = new ArrayList<>();
 		Page<House> houseEntities = null;
 		User user;
+		UserDto userDto;
 		HouseResponse houseResponse;
+		HouseDto houseDto;
 
 		if (houseRequest.getTypeId() != null && ValidateUtils.checkNullAndEmpty(houseRequest.getName())) {
 			houseEntities = houseRepository.findByHouseTypes_Id(houseRequest.getTypeId(), pageable);
@@ -149,10 +137,11 @@ public class HouseServiceImpl implements IHouseService {
 			return new FileInfo(filename, url);
 		}).collect(Collectors.toList());
 
-		for (House houseEntity : houseEntities) {
-			HouseDto houseDto = houseConverter.convertToDto(houseEntity);
-			// user = userService.findbyId(houseEntity.getUser())
-
+		for (House item : houseEntities) {
+			houseDto = houseConverter.convertToDto(item);
+			user = item.getUser();
+			userDto = userConverter.convertToDto(user);
+			houseDto.setUser(userDto);
 			for (FileInfo fileInfo : fileInfos) {
 				if (houseDto.getImage().equals(fileInfo.getName())) {
 					houseDto.setImage(fileInfo.getUrl());
@@ -166,6 +155,7 @@ public class HouseServiceImpl implements IHouseService {
 		houseResponse.setTotal_page(houseEntities.getTotalPages());
 		houseResponse.setHouses(houseDtos);
 		return houseResponse;
+
 	}
 
 }
