@@ -35,10 +35,13 @@ public class HouseConverter {
 		HouseDto houseDto = modelMapper.map(houseEntity, HouseDto.class);
 		List<HouseType> houseTypes = houseTypeRepository.findByHouses_Id(houseEntity.getId());
 		List<Long> typeIds = new ArrayList<>();
+		List<String> typeNames = new ArrayList<>();
 		for(HouseType houseType :houseTypes) {
 			typeIds.add(houseType.getId());
+			typeNames.add(houseType.getName());
 		}
 		houseDto.setTypeIds(typeIds);
+		houseDto.setTypeNames(typeNames);
 		return houseDto;
 	}
 	

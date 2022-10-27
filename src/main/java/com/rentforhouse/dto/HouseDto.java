@@ -33,7 +33,7 @@ public class HouseDto extends AbstractDto<HouseDto>{
     
     
     private List<Long> typeIds;
-    
+    private List<String> typeNames;
 	/* private Long userIds; */
 
     private UserDto user;
