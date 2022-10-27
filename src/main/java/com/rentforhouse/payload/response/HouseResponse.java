@@ -16,7 +16,7 @@ import lombok.Setter;
 public class HouseResponse {
 	private int page;
 	private int total_page;
-	private List<HouseDto> houses;
+	private Object houses;
 
 	
 }

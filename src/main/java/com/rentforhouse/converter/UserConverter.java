@@ -29,12 +29,13 @@ public class UserConverter {
 		List<Role> roles = roleRepository.findByName("ROLE_STAFF");
 		user.setRoles(roles);
 		user.setStatus(true);
-		 user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+		user.setPassword(/* passwordEncoder.encode(userDto.getPassword()) */ null);
 		return user;
 	}
 	
 	public UserDto convertToDto(User user) {
 		UserDto userDto = modelMapper.map(user, UserDto.class);
+		user.setPassword(null);
 		return userDto;
 	}
 }

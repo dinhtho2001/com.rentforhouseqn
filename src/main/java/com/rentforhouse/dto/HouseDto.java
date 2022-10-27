@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.rentforhouse.entity.House;
+import com.rentforhouse.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +34,7 @@ public class HouseDto extends AbstractDto<HouseDto>{
     
     private List<Long> typeIds;
     
-    private Long userId;
+	/* private Long userIds; */
 
-	
+    private UserDto user;
 }
