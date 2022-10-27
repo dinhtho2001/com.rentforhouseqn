@@ -27,7 +27,6 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.exception.ErrorParam;
-import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
