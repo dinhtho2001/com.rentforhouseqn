@@ -64,7 +64,7 @@ public class HouseServiceImpl implements IHouseService {
 		House house = houseRepository.findById(id)
 				.orElseThrow(() -> new MyFileNotFoundException("Id : " + id + " không tồn tại"));
 		HouseDto houseDto = houseConverter.convertToDto(house);
-
+		houseDto.setUser(houseDto.setPassword(houseDto.getUser()));
 		return houseDto;
 	}
 

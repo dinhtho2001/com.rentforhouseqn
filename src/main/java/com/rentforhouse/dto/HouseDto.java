@@ -37,4 +37,10 @@ public class HouseDto extends AbstractDto<HouseDto>{
 	/* private Long userIds; */
 
     private UserDto user;
+    
+    public UserDto setPassword(UserDto user) {
+    	user.setPassword("");
+    	return user;
+    }
+    
 }
