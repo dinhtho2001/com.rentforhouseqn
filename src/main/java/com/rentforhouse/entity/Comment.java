@@ -22,6 +22,9 @@ public class Comment extends BaseEntity {
 	@Column(name = "content" , columnDefinition = "TEXT")
 	private String content;
 
+	@Column(name = "user_id")
+	private Long userId;
+	
 	@ManyToOne
 	@JoinColumn(name = "house_id")
 	private House house;
