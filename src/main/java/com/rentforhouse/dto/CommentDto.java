@@ -1,7 +1,5 @@
 package com.rentforhouse.dto;
 
-import com.rentforhouse.entity.House;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
