@@ -30,11 +30,10 @@ public class HouseDto extends AbstractDto<HouseDto>{
     private Float price;
 
     private String image;
-    
-    
+     
     private List<Long> typeIds;
+    
     private List<String> typeNames;
-	/* private Long userIds; */
 
     private UserDto user;
     
