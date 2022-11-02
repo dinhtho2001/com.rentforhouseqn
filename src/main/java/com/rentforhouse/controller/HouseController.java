@@ -31,6 +31,7 @@ import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
+import com.rentforhouse.payload.response.HouseGetResponse;
 import com.rentforhouse.payload.response.HouseResponse;
 import com.rentforhouse.payload.response.ResponseMessage;
 import com.rentforhouse.payload.response.SuccessReponse;
@@ -51,7 +52,7 @@ public class HouseController {
 
 	@GetMapping
 	public ResponseEntity<?> findHouse(@ModelAttribute HouseRequest houseRequest) {
-		HouseResponse houseResponse = houseService.findHouse(houseRequest);
+		HouseGetResponse houseResponse = houseService.findHouse(houseRequest);
 		if (houseResponse.getTotal_page() > 0) {
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
 					houseResponse, HttpStatus.OK.name()));

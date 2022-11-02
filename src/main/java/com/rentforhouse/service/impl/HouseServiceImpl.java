@@ -25,6 +25,7 @@ import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
+import com.rentforhouse.payload.response.HouseGetResponse;
 import com.rentforhouse.payload.response.HouseResponse;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.repository.IUserRepository;
@@ -87,8 +88,8 @@ public class HouseServiceImpl implements IHouseService {
 	}
 
 	@Override
-	public HouseResponse findAllByUserId(Long id, int page, int limit) {
-		HouseResponse houseResponse = new HouseResponse();
+	public HouseGetResponse findAllByUserId(Long id, int page, int limit) {
+		HouseGetResponse response = new HouseGetResponse();
 		List<HouseDto> houseDtos = new ArrayList<>();
 		HouseDto houseDto;
 		Page<House> houseEntities = null;
@@ -100,23 +101,23 @@ public class HouseServiceImpl implements IHouseService {
 				houseDto.setUser(null);
 				houseDtos.add(houseDto);
 			}
-			houseResponse.setHouses(houseDtos);
-			houseResponse.setPage(page);
-			houseResponse.setTotal_page(houseEntities.getTotalPages());
+			response.setHouses(houseDtos);
+			response.setPage(page);
+			response.setTotal_page(houseEntities.getTotalPages());
 		} catch (Exception e) {
-			return new HouseResponse();
+			return new HouseGetResponse();
 		}
-		return houseResponse;
+		return response;
 	}
 
 	@Override
-	public HouseResponse findHouse(HouseRequest houseRequest) {
+	public HouseGetResponse findHouse(HouseRequest houseRequest) {
 		Pageable pageable = PageRequest.of(houseRequest.getPage() - 1, houseRequest.getLimit());
 		List<HouseDto> houseDtos = new ArrayList<>();
 		Page<House> houseEntities = null;
 		User user;
 		UserDto userDto;
-		HouseResponse houseResponse;
+		HouseGetResponse houseResponse;
 		HouseDto houseDto;
 
 		if (houseRequest.getTypeId() != null && ValidateUtils.checkNullAndEmpty(houseRequest.getName())) {
@@ -150,7 +151,7 @@ public class HouseServiceImpl implements IHouseService {
 
 			houseDtos.add(houseDto);
 		}
-		houseResponse = new HouseResponse();
+		houseResponse = new HouseGetResponse();
 		houseResponse.setPage(houseRequest.getPage());
 		houseResponse.setTotal_page(houseEntities.getTotalPages());
 		houseResponse.setHouses(houseDtos);
