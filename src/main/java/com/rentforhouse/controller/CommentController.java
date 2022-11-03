@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rentforhouse.exception.SysError;
@@ -34,4 +36,17 @@ public class CommentController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
-}
+	
+	@PutMapping
+	public ResponseEntity<?> edit(@ModelAttribute CommentRequest request, @RequestParam(value = "id") Long id){
+		request.setId(id);
+		CommentResponse response = commentService.save(request);
+		if (response.getComment() != null) {
+			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
+					response, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	}
+	
+}	

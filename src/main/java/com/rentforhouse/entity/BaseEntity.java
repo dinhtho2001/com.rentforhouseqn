@@ -42,7 +42,7 @@ public class BaseEntity implements Serializable{
 	@CreatedDate
 	private Date createdDate;
 
-	@Column(name = "modifieddate", updatable = false)
+	@Column(name = "modifieddate")
 	@LastModifiedDate
 	private Date modifiedDate;
 
@@ -50,7 +50,7 @@ public class BaseEntity implements Serializable{
 	@CreatedBy
 	private String createdBy;
 
-	@Column(name = "modifiedby", updatable = false)
+	@Column(name = "modifiedby")
 	@LastModifiedBy
 	private String modifiedBy;
 

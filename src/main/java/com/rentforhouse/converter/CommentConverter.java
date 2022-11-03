@@ -20,6 +20,11 @@ public class CommentConverter {
 	
 	public CommentDto convertToDto(Comment comment) {
 		CommentDto commentDto = modelMapper.map(comment, CommentDto.class);
+		/*
+		 * commentDto.setCreatedBy(comment.getCreatedBy());
+		 * commentDto.setCreatedDate(comment.getCreatedDate());
+		 */
+		
 		return commentDto;
 	}
 }
