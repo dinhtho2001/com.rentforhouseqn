@@ -1,5 +1,6 @@
 package com.rentforhouse.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
+import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.HouseGetResponse;
 import com.rentforhouse.payload.response.HouseResponse;
@@ -51,11 +53,12 @@ public class HouseController {
 	FilesStorageService storageService;
 
 	@GetMapping
-	public ResponseEntity<?> findHouse(@ModelAttribute HouseRequest houseRequest) {
-		HouseGetResponse houseResponse = houseService.findHouse(houseRequest);
-		if (houseResponse.getTotal_page() > 0) {
+	public ResponseEntity<?> findHouse(@ModelAttribute SearchHouseRequest request) {
+		List<HouseDto> houses = new ArrayList<>();
+		houses = houseService.findHouse(request);
+		if (houses != null) {
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
-					houseResponse, HttpStatus.OK.name()));
+					houses, HttpStatus.OK.name()));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));

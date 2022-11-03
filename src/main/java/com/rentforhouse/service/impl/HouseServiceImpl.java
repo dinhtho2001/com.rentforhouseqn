@@ -25,7 +25,7 @@ import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
-import com.rentforhouse.payload.response.HouseGetResponse;
+import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.payload.response.HouseResponse;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.repository.IUserRepository;
@@ -111,52 +111,41 @@ public class HouseServiceImpl implements IHouseService {
 	}
 
 	@Override
-	public HouseGetResponse findHouse(HouseRequest houseRequest) {
-		Pageable pageable = PageRequest.of(houseRequest.getPage() - 1, houseRequest.getLimit());
+	public List<HouseDto> findHouse(SearchHouseRequest request) {
 		List<HouseDto> houseDtos = new ArrayList<>();
-		Page<House> houseEntities = null;
+		List<House> houses = new ArrayList<>();
 		User user;
 		UserDto userDto;
-		HouseGetResponse houseResponse;
 		HouseDto houseDto;
 
-		if (houseRequest.getTypeId() != null && ValidateUtils.checkNullAndEmpty(houseRequest.getName())) {
-			houseEntities = houseRepository.findByHouseTypes_Id(houseRequest.getTypeId(), pageable);
-		} else if (houseRequest.getTypeId() == null && !ValidateUtils.checkNullAndEmpty(houseRequest.getName())) {
-			houseEntities = houseRepository.findByNameLike("%" + houseRequest.getName() + "%", pageable);
-		} else if (houseRequest.getTypeId() != null && !ValidateUtils.checkNullAndEmpty(houseRequest.getName())) {
-			houseEntities = houseRepository.findByNameLikeAndHouseTypes_Id("%" + houseRequest.getName() + "%",
-					houseRequest.getTypeId(), pageable);
-		} else {
-			houseEntities = houseRepository.findAll(pageable);
+		if (request.getName() != "") {
+			houses = houseRepository.findByNameContaining(request.getName());
+		}else {
+			houses = null;
 		}
-		List<FileInfo> fileInfos = storageService.loadAll().map(path -> {
-			String filename = path.getFileName().toString();
-			String url = MvcUriComponentsBuilder
-					.fromMethodName(HouseController.class, "getFile", path.getFileName().toString()).build().toString();
+		/*
+		 * List<FileInfo> fileInfos = storageService.loadAll().map(path -> { String
+		 * filename = path.getFileName().toString(); String url =
+		 * MvcUriComponentsBuilder .fromMethodName(HouseController.class, "getFile",
+		 * path.getFileName().toString()).build().toString();
+		 * 
+		 * return new FileInfo(filename, url); }).collect(Collectors.toList());
+		 */
 
-			return new FileInfo(filename, url);
-		}).collect(Collectors.toList());
-
-		for (House item : houseEntities) {
+		for (House item : houses) {
 			houseDto = houseConverter.convertToDto(item);
 			user = item.getUser();
 			userDto = userConverter.convertToDto(user);
 			houseDto.setUser(userDto);
-			for (FileInfo fileInfo : fileInfos) {
-				if (houseDto.getImage().equals(fileInfo.getName())) {
-					houseDto.setImage(fileInfo.getUrl());
-				}
-			}
+			/*
+			 * for (FileInfo fileInfo : fileInfos) { if
+			 * (houseDto.getImage().equals(fileInfo.getName())) {
+			 * houseDto.setImage(fileInfo.getUrl()); } }
+			 */
 
 			houseDtos.add(houseDto);
 		}
-		houseResponse = new HouseGetResponse();
-		houseResponse.setPage(houseRequest.getPage());
-		houseResponse.setTotal_page(houseEntities.getTotalPages());
-		houseResponse.setHouses(houseDtos);
-		return houseResponse;
-
+		return houseDtos;
 	}
 
 }
