@@ -84,16 +84,15 @@ public class HouseController {
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
 	public ResponseEntity<?>  saveHouse(@ModelAttribute HouseSaveRequest houseSaveRequest
-										,@RequestParam MultipartFile file){
-		
-			houseSaveRequest.setFiles(file);
+	/* ,@RequestParam MultipartFile file */){
+			/* houseSaveRequest.setFiles(file); */
 			ValidateUtils.validateHouse(houseSaveRequest);
 			HouseDto houseDto = houseService.saveHouse(houseSaveRequest);
-			try {
-				storageService.save(file);
-			} catch (Exception e) {
-			    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("Add Image Failed!"));
-			}
+			/*
+			 * try { storageService.save(file); } catch (Exception e) { return
+			 * ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new
+			 * ResponseMessage("Add Image Failed!")); }
+			 */
 		    return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success!", houseDto, HttpStatus.OK.name()));
 		
 	}
