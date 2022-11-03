@@ -33,6 +33,7 @@ import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
+import com.rentforhouse.payload.response.HouseGetResponse;
 import com.rentforhouse.payload.response.HouseResponse;
 import com.rentforhouse.payload.response.ResponseMessage;
 import com.rentforhouse.payload.response.SuccessReponse;

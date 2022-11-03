@@ -88,8 +88,8 @@ public class HouseServiceImpl implements IHouseService {
 	}
 
 	@Override
-	public HouseResponse findAllByUserId(Long id, int page, int limit) {
-		HouseResponse houseResponse = new HouseResponse();
+	public HouseGetResponse findAllByUserId(Long id, int page, int limit) {
+		HouseGetResponse response = new HouseGetResponse();
 		List<HouseDto> houseDtos = new ArrayList<>();
 		HouseDto houseDto;
 		Page<House> houseEntities = null;
@@ -101,13 +101,13 @@ public class HouseServiceImpl implements IHouseService {
 				houseDto.setUser(null);
 				houseDtos.add(houseDto);
 			}
-			houseResponse.setHouses(houseDtos);
-			houseResponse.setPage(page);
-			houseResponse.setTotal_page(houseEntities.getTotalPages());
+			response.setHouses(houseDtos);
+			response.setPage(page);
+			response.setTotal_page(houseEntities.getTotalPages());
 		} catch (Exception e) {
-			return new HouseResponse();
+			return new HouseGetResponse();
 		}
-		return houseResponse;
+		return response;
 	}
 
 	@Override
@@ -146,7 +146,6 @@ public class HouseServiceImpl implements IHouseService {
 			houseDtos.add(houseDto);
 		}
 		return houseDtos;
-
 	}
 
 }
