@@ -26,6 +26,7 @@ import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
+import com.rentforhouse.payload.response.HouseGetResponse;
 import com.rentforhouse.payload.response.HouseResponse;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.repository.IUserRepository;

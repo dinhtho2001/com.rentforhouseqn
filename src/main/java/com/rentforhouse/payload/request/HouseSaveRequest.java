@@ -32,9 +32,10 @@ public class HouseSaveRequest {
 
     private Float price;
     
+    private String image;
+    
     private List<Long> typeIds;
     
-    private MultipartFile files;
-    
+	/* private MultipartFile files; */ 
     
 }
