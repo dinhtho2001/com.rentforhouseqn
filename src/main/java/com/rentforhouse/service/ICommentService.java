@@ -8,4 +8,5 @@ import com.rentforhouse.payload.response.CommentResponse;
 @Service
 public interface ICommentService {
 	CommentResponse save(CommentRequest request);
+	Boolean delete(Long id);
 }

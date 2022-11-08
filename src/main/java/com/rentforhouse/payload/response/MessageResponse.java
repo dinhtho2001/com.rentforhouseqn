@@ -9,9 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseMessage {
-	
-	  private String message;
+public class MessageResponse {
 
-	 
+	private String message;
 }

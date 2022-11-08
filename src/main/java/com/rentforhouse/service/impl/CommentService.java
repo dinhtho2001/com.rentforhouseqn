@@ -1,10 +1,6 @@
 package com.rentforhouse.service.impl;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -17,10 +13,8 @@ import com.rentforhouse.entity.Comment;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.MyFileNotFoundException;
-import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.CommentRequest;
 import com.rentforhouse.payload.response.CommentResponse;
-import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.repository.ICommentRepository;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.repository.IUserRepository;
@@ -88,6 +82,12 @@ public class CommentService implements ICommentService {
 			}
 		}
 		return new CommentResponse();
+	}
+
+	@Override
+	public Boolean delete(Long id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

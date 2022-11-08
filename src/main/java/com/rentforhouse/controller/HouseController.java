@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +27,11 @@ import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
-import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
-import com.rentforhouse.payload.response.HouseGetResponse;
 import com.rentforhouse.payload.response.HouseResponse;
-import com.rentforhouse.payload.response.ResponseMessage;
+import com.rentforhouse.payload.response.MessageResponse;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
@@ -115,15 +111,15 @@ public class HouseController {
 	
 	
 	@PostMapping("/upload")
-	public ResponseEntity<ResponseMessage>  upload(@RequestParam MultipartFile file){
+	public ResponseEntity<?>  upload(@RequestParam MultipartFile file){
 		String message = "";
 		try {
 			storageService.save(file);
 			message = "Add file success!";
-		    return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+		    return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse(message));
 		} catch (Exception e) {
 			message = "Failed!";
-			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new MessageResponse(message));
 		}
 
 	}
@@ -154,7 +150,7 @@ public class HouseController {
 	public ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
 		if(houseService.delete(id)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
-					null, HttpStatus.OK.name()));
+					new MessageResponse("successful delete"), HttpStatus.OK.name()));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
 				new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("id-not-found", new ErrorParam("id")))
