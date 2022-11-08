@@ -77,8 +77,14 @@ public class HouseController {
 	}
 
 	@GetMapping("/{id}")
-	public HouseDto findById(@PathVariable(value = "id") Long id) {
-		return houseService.findById(id);
+	public ResponseEntity<?> findById(@PathVariable(value = "id") Long id) {
+		HouseDto houseDto = houseService.findById(id);
+		if (houseDto.getId() != null) {
+			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
+					houseDto, HttpStatus.OK.name()));
+		}	
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
 	}
 
 	@PostMapping
