@@ -2,8 +2,6 @@ package com.rentforhouse.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -12,28 +10,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
-import com.rentforhouse.controller.HouseController;
 import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.converter.UserConverter;
-import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.MyFileNotFoundException;
-import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.payload.response.HouseGetResponse;
-import com.rentforhouse.payload.response.HouseResponse;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
-import com.rentforhouse.service.IUserService;
-import com.rentforhouse.utils.ValidateUtils;
 
 @Service
 public class HouseServiceImpl implements IHouseService {
