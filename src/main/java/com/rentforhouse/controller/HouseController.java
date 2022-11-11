@@ -42,6 +42,17 @@ public class HouseController {
 	@Autowired
 	FilesStorageService storageService;
 
+	@GetMapping("/all")
+	public ResponseEntity<?> findAll(@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit) {
+		HouseGetResponse response = houseService.findAll(page, limit);
+		if (response.getTotal_page() != 0) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse("success", response, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	}
+	
 	@GetMapping
 	public ResponseEntity<?> findHouse(@ModelAttribute SearchHouseRequest request) {
 		List<HouseDto> houses = new ArrayList<>();

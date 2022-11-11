@@ -80,6 +80,30 @@ public class HouseServiceImpl implements IHouseService {
 	}
 
 	@Override
+	public HouseGetResponse findAll(int page, int limit) {
+		HouseGetResponse response = new HouseGetResponse();
+		List<HouseDto> houseDtos = new ArrayList<>();
+		HouseDto houseDto;
+		Page<House> houseEntities = null;
+		try {
+			Pageable pageable = PageRequest.of(page - 1, limit);
+			houseEntities = houseRepository.findAll(pageable);
+			for (House item : houseEntities) {
+				houseDto = houseConverter.convertToDto(item);
+				houseDto.getUser().setPassword(null);
+				//houseDto.setUser(null);
+				houseDtos.add(houseDto);
+			}
+			response.setHouses(houseDtos);
+			response.setPage(page);
+			response.setTotal_page(houseEntities.getTotalPages());
+		} catch (Exception e) {
+			return new HouseGetResponse();
+		}
+		return response;
+	}
+
+	@Override
 	public HouseGetResponse findAllByUserId(Long id, int page, int limit) {
 		HouseGetResponse response = new HouseGetResponse();
 		List<HouseDto> houseDtos = new ArrayList<>();
@@ -112,7 +136,7 @@ public class HouseServiceImpl implements IHouseService {
 
 		if (request.getName() != "") {
 			houses = houseRepository.findByNameContaining(request.getName());
-		}else {
+		} else {
 			houses = null;
 		}
 		/*

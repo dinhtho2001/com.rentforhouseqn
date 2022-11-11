@@ -11,6 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CommentDto  extends AbstractDto<CommentDto>{
 
+	private Long id;
+	
     private String content;
 
 	private Long userId;
