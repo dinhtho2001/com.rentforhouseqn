@@ -1,22 +1,20 @@
 package com.rentforhouse.payload.response;
 
+import java.util.List;
+
 import com.rentforhouse.dto.CommentDto;
-import com.rentforhouse.dto.HouseDto;
-import com.rentforhouse.dto.UserDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/*@Getter
+@Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor*/
+@NoArgsConstructor
 public class CommentResponse {
 
-	/*
-	 * private Long houseId; private CommentDto comment; private UserDto user;
-	 */
-	
+	private Long houseId;
+	private List<CommentDto> comment;
 }

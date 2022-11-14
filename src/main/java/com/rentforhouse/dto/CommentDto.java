@@ -16,8 +16,7 @@ public class CommentDto  extends AbstractDto<CommentDto>{
     private String content;
 
 	private Long userId;
-	
-	private Long houseId;
 
+	private UserDto user;
 	
 }

@@ -1,5 +1,8 @@
 package com.rentforhouse.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,29 +53,38 @@ public class CommentService implements ICommentService {
 		House house = houseRepository.findById(request.getHouseId()).orElse(new House());
 		User user = userRepository.findById(request.getUserId()).orElse(new User());
 		if (request.getId() != null) {
-			Comment editComment = commentRepository.findById(request.getId()).orElse(new Comment());
+			Comment comment = commentRepository.findById(request.getId()).orElse(new Comment());
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
 			Long userId = userRepository.findById(userDetailsImpl.getId()).map(User::getId).get();
-			if (editComment.getUserId() != userId) {
+			if (comment.getUserId() != userId) {
 				throw new MyFileNotFoundException("Bạn không có quyền chỉnh sửa comment!");
+			} else {
+				Comment commentNew = new Comment();
+				commentNew.setContent(request.getContent());
+				commentNew.setId(request.getId());
+				commentNew.setUserId(userId);
+				commentNew.setHouse(house);
+				Comment result = commentRepository.save(commentNew);
+				if (result.getId() != null) {
+					CommentDto commentDto = commentConverter.convertToDto(result);
+					return commentDto;
+				}
 			}
-		}
-		if (house.getId() != null && user.getId() != null) {
-			
+		} else if (house.getId() != null && user.getId() != null) {
 			Comment comment = new Comment();
 			CommentDto commentDto = new CommentDto();
-			commentDto.setHouseId(house.getId());
-			commentDto.setUserId(request.getUserId());
+			commentDto.setUserId(user.getId());
 			commentDto.setContent(request.getContent());
-			commentDto.setCreatedBy(user.getUserName());
-			commentDto.setCreatedDate(date.getDate());
-			commentDto.setModifiedBy(user.getUserName());
-			commentDto.setModifiedDate(date.getDate());
 			comment = commentConverter.convertToEntity(commentDto);
 			comment.setHouse(house);
 			Comment result = commentRepository.save(comment);
-			if (result.getId() != null) {				
+			if (result.getId() != null) {
+				commentDto.setId(result.getId());
+				commentDto.setCreatedBy(result.getCreatedBy());
+				commentDto.setCreatedDate(result.getCreatedDate());
+				commentDto.setModifiedBy(result.getModifiedBy());
+				commentDto.setModifiedDate(result.getModifiedDate());
 				return commentDto;
 			}
 		}
@@ -80,9 +92,36 @@ public class CommentService implements ICommentService {
 	}
 
 	@Override
+	@Transactional
 	public Boolean delete(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			commentRepository.deleteById(id);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Override
+	public CommentResponse findAllByHouse(Long id) {		
+		try {
+			CommentResponse response = new CommentResponse();
+			CommentDto commentDto;
+			List<Comment> comments = commentRepository.findAllByHouse_id(id);
+			List<CommentDto> commentDtos = new ArrayList<>();
+			for (Comment item : comments) {
+				commentDto = commentConverter.convertToDto(item);
+				User user = userRepository.findById(item.getUserId()).orElse(new User());
+				commentDto.setUser(userConverter.convertToDto(user));
+				commentDtos.add(commentDto);
+			}
+			response.setComment(commentDtos);
+			response.setHouseId(id);
+			return response;
+		} catch (Exception e) {
+			System.out.println(e);
+			return new CommentResponse();
+		}
 	}
 
 }

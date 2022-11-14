@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rentforhouse.dto.CommentDto;
+import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.CommentRequest;
 import com.rentforhouse.payload.response.CommentResponse;
@@ -47,7 +48,6 @@ public class CommentController {
 			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(new SuccessReponse("success", response, HttpStatus.CREATED.name()));
 		}
-
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
@@ -81,13 +81,14 @@ public class CommentController {
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
 
-	@GetMapping("/house/{id}")
-	public ResponseEntity<?> findCommentsByHouse(@PathVariable("id") Long id) {
+	@GetMapping("/house/{houseId}")
+	public ResponseEntity<?> findCommentsByHouse(@PathVariable("houseId") Long id) {
 
-		if (true) {
-			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success", null, HttpStatus.OK.name()));
+		CommentResponse response = commentService.findAllByHouse(id);
+		if (response.getHouseId() != null) {
+			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success", response, HttpStatus.OK.name()));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("houseId", new ErrorParam("houseId-notfound"))));
 	}
 }
