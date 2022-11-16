@@ -68,6 +68,7 @@ public class CommentService implements ICommentService {
 				Comment result = commentRepository.save(commentNew);
 				if (result.getId() != null) {
 					CommentDto commentDto = commentConverter.convertToDto(result);
+					commentDto.setUser(userConverter.convertToDto(user));
 					return commentDto;
 				}
 			}
@@ -85,6 +86,7 @@ public class CommentService implements ICommentService {
 				commentDto.setCreatedDate(result.getCreatedDate());
 				commentDto.setModifiedBy(result.getModifiedBy());
 				commentDto.setModifiedDate(result.getModifiedDate());
+				commentDto.setUser(userConverter.convertToDto(user));
 				return commentDto;
 			}
 		}
