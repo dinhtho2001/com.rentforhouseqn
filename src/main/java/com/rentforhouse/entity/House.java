@@ -38,8 +38,8 @@ public class House extends BaseEntity {
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description;
 
-	@Column(name = "detailsumary", columnDefinition = "TEXT")
-	private String detailSumary;
+	@Column(name = "status")
+	private Boolean status;
 
 	@Column(name = "price")
 	private Float price;

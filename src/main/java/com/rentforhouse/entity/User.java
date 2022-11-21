@@ -45,6 +45,9 @@ public class User extends BaseEntity {
 
 	@Column(name = "status")
 	private Boolean status;
+	
+	@Column(name = "image")
+	private String image;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private List<House> houses = new ArrayList<>();

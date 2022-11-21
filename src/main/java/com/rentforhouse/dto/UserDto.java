@@ -33,6 +33,7 @@ public class UserDto {
 
 	private Boolean status;
 	
+	private String image;
 	//private List<House> houses = new ArrayList<>();
 
 	

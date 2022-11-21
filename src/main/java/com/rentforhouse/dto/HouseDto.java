@@ -1,10 +1,6 @@
 package com.rentforhouse.dto;
 
 import java.util.List;
-import java.util.Map;
-
-import com.rentforhouse.entity.House;
-import com.rentforhouse.entity.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +21,7 @@ public class HouseDto extends AbstractDto<HouseDto>{
 	
     private String description;
 	
-    private String detailSumary;
+	private Boolean status;
 
     private Float price;
 
