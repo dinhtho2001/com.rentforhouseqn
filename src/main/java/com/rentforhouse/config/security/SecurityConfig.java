@@ -51,8 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-				.authorizeRequests().anyRequest().authenticated().and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+				.authorizeRequests().anyRequest().authenticated().and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -61,9 +61,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/swagger-ui.html").antMatchers("/webjars/springfox-swagger-ui/**")
-				.antMatchers("/swagger-resources/**").antMatchers("/v2/api-docs")
-				.antMatchers("/api/auth/**")
-				.antMatchers(HttpMethod.GET, "/api/houses", "/api/houses/all", "/api/houses/{id}", "/api/houseTypes", "/api/comments/**")
+				.antMatchers("/swagger-resources/**").antMatchers("/v2/api-docs").antMatchers("/api/auth/**")
+				.antMatchers(HttpMethod.GET, "/api/houses", "/api/houses/all", "/api/houses/{id}",
+						"/api/houses/typeId/{typeId}", "/api/houseTypes", "/api/comments/**")
 				.antMatchers(HttpMethod.PUT, "/api/houses/{id}/viewPlus");
 	}
 

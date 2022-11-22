@@ -41,17 +41,6 @@ public class HouseController {
 
 	@Autowired
 	FilesStorageService storageService;
-
-	@GetMapping("/all")
-	public ResponseEntity<?> listHouses(@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit) {
-		HouseGetResponse response = houseService.findAll(page, limit);
-		if (response.getTotal_page() != 0) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new SuccessReponse("success", response, HttpStatus.OK.name()));
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
-	}
 	
 	@GetMapping
 	public ResponseEntity<?> searchHousesByName(@ModelAttribute SearchHouseRequest request) {
@@ -64,22 +53,7 @@ public class HouseController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
-
-	@PostMapping("/user/{id}")
-	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-	public ResponseEntity<?> findHousesByUserId(@PathVariable(value = "id") Long id,
-			@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit) {
-
-		HouseGetResponse houseResponse = (HouseGetResponse) houseService.findAllByUserId(id, page, limit);
-		if (houseResponse.getTotal_page() != 0) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new SuccessReponse("success", houseResponse, HttpStatus.OK.name()));
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-				new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
-
-	}
-
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<?> findHouseById(@PathVariable(value = "id") Long id) {
 		HouseDto houseDto = houseService.findById(id);
@@ -90,10 +64,21 @@ public class HouseController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
 				new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
 	}
-
+	
+	@GetMapping("/all")
+	public ResponseEntity<?> listHouses(@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit) {
+		HouseGetResponse response = houseService.findAll(page, limit);
+		if (response.getTotal_page() != 0) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse("success", response, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	}
+	
 	@GetMapping("/status/{trueOrfalse}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<?> findHousesStatusFalse(@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit, @PathVariable Boolean trueOrfalse) {
+	public ResponseEntity<?> findHousesByStatus(@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit, @PathVariable Boolean trueOrfalse) {
 		HouseGetResponse response = houseService.findHousesByStatus(trueOrfalse, page, limit);
 		if (response.getTotal_page() != 0 && response.getHouses() != null) {
 			return ResponseEntity.status(HttpStatus.OK)
@@ -101,6 +86,17 @@ public class HouseController {
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	}
+	
+	@GetMapping("/typeId/{typeId}")
+	public ResponseEntity<?> findHousesByTypeId(@PathVariable Long typeId, @RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit) {
+		HouseGetResponse response = houseService.findByTypeId(typeId, page, limit);
+		if (response.getTotal_page() != 0 && response.getHouses() != null) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse("success", response, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam())));
 	}
 	
 	@PostMapping
@@ -122,7 +118,7 @@ public class HouseController {
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-	public ResponseEntity<?> editHouse(@ModelAttribute HouseSaveRequest request, @PathVariable("id") Long id) {
+	public ResponseEntity<?> updateHouse(@ModelAttribute HouseSaveRequest request, @PathVariable("id") Long id) {
 		request.setId(id);
 		ValidateUtils.validateHouse(request);
 		HouseDto houseDto = houseService.save(request);
@@ -178,7 +174,6 @@ public class HouseController {
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
 				new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("id-not-found", new ErrorParam("id"))));
-
 	}
 
 	

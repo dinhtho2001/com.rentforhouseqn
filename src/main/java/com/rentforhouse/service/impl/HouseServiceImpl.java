@@ -33,9 +33,6 @@ public class HouseServiceImpl implements IHouseService {
 	private IHouseRepository houseRepository;
 
 	@Autowired
-	private IUserRepository userRepository;
-
-	@Autowired
 	private HouseConverter houseConverter;
 
 	@Autowired
@@ -235,5 +232,33 @@ public class HouseServiceImpl implements IHouseService {
 		} catch (Exception e) {
 			return new HouseGetResponse();
 		}	
+	}
+
+	@Override
+	public HouseGetResponse findByTypeId(Long id, int page, int limit) {
+		HouseGetResponse response = new HouseGetResponse();
+		Page<House> houses = null;
+		List<HouseDto> houseDtos = new ArrayList<>();
+		HouseDto houseDto;
+		try {
+			Pageable pageable = PageRequest.of(page - 1, limit);
+			houses = houseRepository.findByHouseTypes_Id(id, pageable);
+			for (House item : houses) {
+				houseDto = houseConverter.convertToDto(item);
+				houseDto.getUser().setPassword(null);
+				houseDtos.add(houseDto);
+			}			
+			if (houseDtos.get(0).getId() != null) {
+				response.setHouses(houseDtos);
+				response.setPage(page);
+				response.setTotal_page(houses.getTotalPages());
+				return response;
+			}
+			else {
+				return new HouseGetResponse();
+			}
+		} catch (Exception e) {
+			return new HouseGetResponse();
+		}
 	}
 }

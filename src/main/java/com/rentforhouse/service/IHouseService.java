@@ -16,5 +16,6 @@ public interface IHouseService {
 	HouseGetResponse findHousesByStatus(Boolean status, int page, int limit);
 	Boolean viewPlus(Long id);
 	HouseDto save(HouseSaveRequest request);
+	HouseGetResponse findByTypeId(Long id, int page, int limit);
 	
 }
