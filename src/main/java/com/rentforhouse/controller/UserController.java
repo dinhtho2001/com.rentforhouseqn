@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.exception.SysError;
+import com.rentforhouse.payload.response.DataGetResponse;
 import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IUserService;
@@ -36,6 +38,19 @@ public class UserController {
 			}
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	}
+	
+	@GetMapping
+	public ResponseEntity<?> findAll(@RequestParam(name = "page") int page, 
+									 @RequestParam(name = "limit") int limit){
+		DataGetResponse dataGetResponse = new DataGetResponse();
+		dataGetResponse = userService.findAll(page, limit);
+		if (dataGetResponse.getTotal_page() != 0) {
+			return ResponseEntity.status(HttpStatus.OK)
+								.body(new SuccessReponse("success", dataGetResponse, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
 	
 }
