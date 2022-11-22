@@ -37,6 +37,10 @@ public class House extends BaseEntity {
 
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description;
+	
+	@Column(name = "view")
+	private Integer view;
+	
 
 	@Column(name = "status")
 	private Boolean status;
@@ -45,7 +49,7 @@ public class House extends BaseEntity {
 	private Float price;
 
 	@Column(name = "image")
-	private String image;
+	private String image;	
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")

@@ -20,6 +20,8 @@ public class HouseDto extends AbstractDto<HouseDto>{
     private String area;
 	
     private String description;
+    
+    private Integer view;
 	
 	private Boolean status;
 
