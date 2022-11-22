@@ -104,7 +104,7 @@ public class HouseController {
 		 * ResponseMessage("Add Image Failed!")); }
 		 */
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(new SuccessReponse("success!", houseDto, HttpStatus.OK.name()));
+				.body(new SuccessReponse("success", houseDto, HttpStatus.OK.name()));
 
 	}
 
@@ -115,7 +115,18 @@ public class HouseController {
 		ValidateUtils.validateHouse(houseSaveRequest);
 		HouseDto houseDto = houseService.saveHouse(houseSaveRequest);
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(new SuccessReponse("success!", houseDto, HttpStatus.OK.name()));
+				.body(new SuccessReponse("success", houseDto, HttpStatus.OK.name()));
+
+	}
+	
+	@PutMapping("/{id}/viewPlus")
+	public ResponseEntity<?> updateView(@PathVariable("id") Long id) {
+		if (houseService.viewPlus(id)) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse("success", null, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+				new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("house-not-found", new ErrorParam("id"))));
 
 	}
 

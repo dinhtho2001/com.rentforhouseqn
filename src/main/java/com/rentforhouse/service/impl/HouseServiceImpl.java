@@ -164,4 +164,19 @@ public class HouseServiceImpl implements IHouseService {
 		return houseDtos;
 	}
 
+	@Override
+	public Boolean viewPlus(Long id) {
+		try {
+			House house = new House();
+			house = houseRepository.findById(id).orElse(new House());
+			if(house.getId() != null) {
+				house.setView(house.getView()+1);
+				houseRepository.save(house);
+				return true;
+			}
+		} catch (Exception e) {
+			System.out.println(e);			
+		}
+		return false;				
+	}
 }

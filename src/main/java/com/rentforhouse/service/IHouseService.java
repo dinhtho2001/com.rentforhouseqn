@@ -14,4 +14,5 @@ public interface IHouseService {
 	Boolean delete(Long id);
 	Object findAllByUserId(Long id, int page, int limit);
 	HouseGetResponse findAll(int page, int limit);
+	Boolean viewPlus(Long id);
 }
