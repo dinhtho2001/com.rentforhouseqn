@@ -1,16 +1,21 @@
 package com.rentforhouse.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.rentforhouse.converter.UserConverter;
-import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.dto.UserDto;
-import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.MyFileNotFoundException;
+import com.rentforhouse.payload.response.DataGetResponse;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.IUserService;
 
@@ -47,6 +52,23 @@ public class UserServiceImpl implements IUserService{
 		UserDto userDto = userConverter.convertToDto(user);
 		userDto.setPassword(null);
 		return userDto;
+	}
+
+	@Override
+	public DataGetResponse findAll(int page, int limit) {
+		DataGetResponse dataGetResponse = new DataGetResponse();
+		Pageable pageable = PageRequest.of(page - 1, limit);
+		Page<User> users = userRepository.findAll(pageable);
+		List<UserDto> userDtos= new ArrayList<>();
+		for(User user : users) {
+			UserDto userDto = new UserDto();
+			userDto = userConverter.convertToDto(user);
+			userDtos.add(userDto);
+		}
+		dataGetResponse.setTotal_page(users.getTotalPages());
+		dataGetResponse.setPage(page);
+		dataGetResponse.setData(userDtos);
+		return dataGetResponse;
 	}
 	
 }
