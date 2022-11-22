@@ -18,6 +18,8 @@ public class HouseDto extends AbstractDto<HouseDto>{
     private String address;
 	
     private String area;
+    
+    private Integer roomNumber;
 	
     private String description;
     

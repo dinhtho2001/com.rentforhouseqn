@@ -34,6 +34,9 @@ public class House extends BaseEntity {
 
 	@Column(name = "area")
 	private String area;
+	
+	@Column(name = "room_number")
+	private Integer roomNumber;
 
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description;
