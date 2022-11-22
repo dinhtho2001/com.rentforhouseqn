@@ -63,7 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		web.ignoring().antMatchers("/swagger-ui.html").antMatchers("/webjars/springfox-swagger-ui/**")
 				.antMatchers("/swagger-resources/**").antMatchers("/v2/api-docs")
 				.antMatchers("/api/auth/**")
-				.antMatchers(HttpMethod.GET, "/api/houses/**", "/api/houseTypes", "/api/comments/**");
+				.antMatchers(HttpMethod.GET, "/api/houses/**", "/api/houseTypes", "/api/comments/**")
+				.antMatchers(HttpMethod.PUT, "/api/houses/{id}/viewPlus");
 	}
 
 	@Bean
