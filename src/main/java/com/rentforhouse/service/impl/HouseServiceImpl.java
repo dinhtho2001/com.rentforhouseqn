@@ -46,10 +46,19 @@ public class HouseServiceImpl implements IHouseService {
 
 	@Override
 	@Transactional
-	public HouseDto saveHouse(HouseSaveRequest houseSaveRequest) {
-		House house = new House();
-		house = houseConverter.convertToEntity(houseSaveRequest);
-		return houseConverter.convertToDto(houseRepository.save(house));
+	public HouseDto save(HouseSaveRequest request) {
+		if (request.getId() != null) {
+			House house = new House();
+			house = houseConverter.convertToEntity(request);
+			return houseConverter.convertToDto(houseRepository.save(house));
+		}
+		else {
+			House house = new House();
+			house = houseConverter.convertToEntity(request);
+			house.setView(0);
+			house.setStatus(false);
+			return houseConverter.convertToDto(houseRepository.save(house));
+		}
 	}
 
 	@Override
@@ -93,14 +102,20 @@ public class HouseServiceImpl implements IHouseService {
 				houseDto.getUser().setPassword(null);
 				//houseDto.setUser(null);
 				houseDtos.add(houseDto);
+			}			
+			if (houseDtos.get(0).getId() != null) {
+				response.setHouses(houseDtos);
+				response.setPage(page);
+				response.setTotal_page(houseEntities.getTotalPages());
+				return response;
 			}
-			response.setHouses(houseDtos);
-			response.setPage(page);
-			response.setTotal_page(houseEntities.getTotalPages());
+			else {
+				return new HouseGetResponse();
+			}
+			
 		} catch (Exception e) {
 			return new HouseGetResponse();
 		}
-		return response;
 	}
 
 	@Override
@@ -117,13 +132,18 @@ public class HouseServiceImpl implements IHouseService {
 				houseDto.setUser(null);
 				houseDtos.add(houseDto);
 			}
-			response.setHouses(houseDtos);
-			response.setPage(page);
-			response.setTotal_page(houseEntities.getTotalPages());
+			if (houseDtos.get(0).getId() != null) {
+				response.setHouses(houseDtos);
+				response.setPage(page);
+				response.setTotal_page(houseEntities.getTotalPages());
+				return response;
+			}
+			else {
+				return new HouseGetResponse();
+			}
 		} catch (Exception e) {
 			return new HouseGetResponse();
 		}
-		return response;
 	}
 
 	@Override
@@ -165,6 +185,7 @@ public class HouseServiceImpl implements IHouseService {
 	}
 
 	@Override
+	@Transactional
 	public Boolean viewPlus(Long id) {
 		try {
 			House house = new House();
@@ -178,5 +199,33 @@ public class HouseServiceImpl implements IHouseService {
 			System.out.println(e);			
 		}
 		return false;				
+	}
+
+	@Override
+	public HouseGetResponse findHousesByStatus(Boolean status, int page, int limit) {
+		HouseGetResponse response = new HouseGetResponse();
+		List<HouseDto> houseDtos = new ArrayList<>();
+		Page<House> houses = null;
+		HouseDto houseDto = new HouseDto();
+		try {
+			Pageable pageable = PageRequest.of(page - 1, limit);
+			houses = houseRepository.findByStatus(status, pageable);
+			for (House item : houses) {
+				houseDto = houseConverter.convertToDto(item);
+				houseDto.getUser().setPassword(null);			
+				houseDtos.add(houseDto);
+			}			
+			if (houseDtos.get(0).getId() != null) {
+				response.setHouses(houseDtos);
+				response.setPage(page);
+				response.setTotal_page( houses.getTotalPages());
+				return response;
+			}
+			else {
+				return new HouseGetResponse();
+			}
+		} catch (Exception e) {
+			return new HouseGetResponse();
+		}	
 	}
 }

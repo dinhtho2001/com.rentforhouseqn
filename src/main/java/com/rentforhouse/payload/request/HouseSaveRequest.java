@@ -34,6 +34,10 @@ public class HouseSaveRequest {
     
     private String image;
     
+    private Integer roomNumber;
+    
+    private Boolean status;
+    
     private List<Long> typeIds;
     
 	/* private MultipartFile files; */ 

@@ -9,10 +9,12 @@ import com.rentforhouse.payload.response.HouseGetResponse;
 
 public interface IHouseService {
 	List<HouseDto> findHouse(SearchHouseRequest request);
-	HouseDto saveHouse(HouseSaveRequest houseSaveRequest);
 	HouseDto findById(Long id);
 	Boolean delete(Long id);
 	Object findAllByUserId(Long id, int page, int limit);
 	HouseGetResponse findAll(int page, int limit);
+	HouseGetResponse findHousesByStatus(Boolean status, int page, int limit);
 	Boolean viewPlus(Long id);
+	HouseDto save(HouseSaveRequest request);
+	
 }

@@ -91,13 +91,25 @@ public class HouseController {
 				new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
 	}
 
+	@GetMapping("/status/{trueOrfalse}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	public ResponseEntity<?> findAllHouseStatusFalse(@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit, @PathVariable Boolean trueOrfalse) {
+		HouseGetResponse response = houseService.findHousesByStatus(trueOrfalse, page, limit);
+		if (response.getTotal_page() != 0 && response.getHouses() != null) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse("success", response, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	}
+	
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-	public ResponseEntity<?> saveHouse(@ModelAttribute HouseSaveRequest houseSaveRequest
+	public ResponseEntity<?> saveHouse(@ModelAttribute HouseSaveRequest request
 	/* ,@RequestParam MultipartFile file */) {
 		/* houseSaveRequest.setFiles(file); */
-		ValidateUtils.validateHouse(houseSaveRequest);
-		HouseDto houseDto = houseService.saveHouse(houseSaveRequest);
+		ValidateUtils.validateHouse(request);
+		HouseDto houseDto = houseService.save(request);
 		/*
 		 * try { storageService.save(file); } catch (Exception e) { return
 		 * ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new
@@ -110,13 +122,12 @@ public class HouseController {
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-	public ResponseEntity<?> editHouse(@ModelAttribute HouseSaveRequest houseSaveRequest, @PathVariable("id") Long id) {
-		houseSaveRequest.setId(id);
-		ValidateUtils.validateHouse(houseSaveRequest);
-		HouseDto houseDto = houseService.saveHouse(houseSaveRequest);
+	public ResponseEntity<?> editHouse(@ModelAttribute HouseSaveRequest request, @PathVariable("id") Long id) {
+		request.setId(id);
+		ValidateUtils.validateHouse(request);
+		HouseDto houseDto = houseService.save(request);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new SuccessReponse("success", houseDto, HttpStatus.OK.name()));
-
 	}
 	
 	@PutMapping("/{id}/viewPlus")
@@ -170,4 +181,5 @@ public class HouseController {
 
 	}
 
+	
 }
