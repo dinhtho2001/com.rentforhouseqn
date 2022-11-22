@@ -63,11 +63,19 @@ public class HouseServiceImpl implements IHouseService {
 
 	@Override
 	public HouseDto findById(Long id) {
-		House house = houseRepository.findById(id)
-				.orElseThrow(() -> new MyFileNotFoundException("Id : " + id + " không tồn tại"));
-		HouseDto houseDto = houseConverter.convertToDto(house);
-		houseDto.setUser(houseDto.setPassword(houseDto.getUser()));
-		return houseDto;
+		/*
+		 * House house = houseRepository.findById(id) .orElseThrow(() -> new
+		 * MyFileNotFoundException("Id : " + id + " không tồn tại"));
+		 */
+		House house = houseRepository.findById(id).orElse(new House());
+		if (house.getId() != null) {
+			HouseDto houseDto = houseConverter.convertToDto(house);
+			houseDto.setUser(houseDto.setPassword(houseDto.getUser()));
+			return houseDto;
+		}
+		else {
+			return new HouseDto();
+		}
 	}
 
 	public int totalTtem() {

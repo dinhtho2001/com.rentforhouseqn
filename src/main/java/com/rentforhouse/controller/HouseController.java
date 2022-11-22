@@ -43,7 +43,7 @@ public class HouseController {
 	FilesStorageService storageService;
 
 	@GetMapping("/all")
-	public ResponseEntity<?> findAll(@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit) {
+	public ResponseEntity<?> listHouses(@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit) {
 		HouseGetResponse response = houseService.findAll(page, limit);
 		if (response.getTotal_page() != 0) {
 			return ResponseEntity.status(HttpStatus.OK)
@@ -54,7 +54,7 @@ public class HouseController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<?> findHouse(@ModelAttribute SearchHouseRequest request) {
+	public ResponseEntity<?> searchHousesByName(@ModelAttribute SearchHouseRequest request) {
 		List<HouseDto> houses = new ArrayList<>();
 		houses = houseService.findHouse(request);
 		if (houses != null) {
@@ -67,7 +67,7 @@ public class HouseController {
 
 	@PostMapping("/user/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-	public ResponseEntity<?> findAllHouseByUserId(@PathVariable(value = "id") Long id,
+	public ResponseEntity<?> findHousesByUserId(@PathVariable(value = "id") Long id,
 			@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit) {
 
 		HouseGetResponse houseResponse = (HouseGetResponse) houseService.findAllByUserId(id, page, limit);
@@ -81,7 +81,7 @@ public class HouseController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> findById(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<?> findHouseById(@PathVariable(value = "id") Long id) {
 		HouseDto houseDto = houseService.findById(id);
 		if (houseDto.getId() != null) {
 			return ResponseEntity.status(HttpStatus.OK)
@@ -93,7 +93,7 @@ public class HouseController {
 
 	@GetMapping("/status/{trueOrfalse}")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	public ResponseEntity<?> findAllHouseStatusFalse(@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit, @PathVariable Boolean trueOrfalse) {
+	public ResponseEntity<?> findHousesStatusFalse(@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit, @PathVariable Boolean trueOrfalse) {
 		HouseGetResponse response = houseService.findHousesByStatus(trueOrfalse, page, limit);
 		if (response.getTotal_page() != 0 && response.getHouses() != null) {
 			return ResponseEntity.status(HttpStatus.OK)
@@ -171,7 +171,7 @@ public class HouseController {
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-	public ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
+	public ResponseEntity<?> deleteHouseById(@PathVariable("id") Long id) {
 		if (houseService.delete(id)) {
 			return ResponseEntity.status(HttpStatus.OK).body(
 					new SuccessReponse("success", new MessageResponse("successful delete"), HttpStatus.OK.name()));
