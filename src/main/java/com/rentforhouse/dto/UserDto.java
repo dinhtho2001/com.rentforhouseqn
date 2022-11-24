@@ -1,11 +1,6 @@
 package com.rentforhouse.dto;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.Column;
-
-import com.rentforhouse.entity.House;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,6 +30,8 @@ public class UserDto {
 	
 	private String image;
 	//private List<House> houses = new ArrayList<>();
+	
+	private List<RoleDto> roles;
 
 	
 }

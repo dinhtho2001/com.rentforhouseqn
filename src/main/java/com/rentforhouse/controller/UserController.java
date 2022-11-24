@@ -41,6 +41,7 @@ public class UserController {
 	}
 	
 	@GetMapping
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<?> findAll(@RequestParam(name = "page") int page, 
 									 @RequestParam(name = "limit") int limit){
 		DataGetResponse dataGetResponse = new DataGetResponse();

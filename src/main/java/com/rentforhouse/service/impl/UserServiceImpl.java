@@ -65,10 +65,16 @@ public class UserServiceImpl implements IUserService{
 			userDto = userConverter.convertToDto(user);
 			userDtos.add(userDto);
 		}
-		dataGetResponse.setTotal_page(users.getTotalPages());
-		dataGetResponse.setPage(page);
-		dataGetResponse.setData(userDtos);
-		return dataGetResponse;
+		
+		if (userDtos.get(0) != null) {
+			dataGetResponse.setTotal_page(users.getTotalPages());
+			dataGetResponse.setPage(page);
+			dataGetResponse.setData(userDtos);
+			return dataGetResponse;
+		}
+		else {
+			return new DataGetResponse();
+		}
 	}
 	
 }
