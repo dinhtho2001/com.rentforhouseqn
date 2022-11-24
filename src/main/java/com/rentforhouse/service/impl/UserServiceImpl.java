@@ -9,13 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.rentforhouse.common.UserRole;
+import com.rentforhouse.converter.RoleConverter;
 import com.rentforhouse.converter.UserConverter;
+import com.rentforhouse.dto.RoleDto;
 import com.rentforhouse.dto.UserDto;
+import com.rentforhouse.entity.Role;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.MyFileNotFoundException;
+import com.rentforhouse.payload.request.SignupRequest;
 import com.rentforhouse.payload.response.DataGetResponse;
+import com.rentforhouse.repository.IRoleRepository;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.IUserService;
 
@@ -27,23 +34,55 @@ public class UserServiceImpl implements IUserService{
 	
 	@Autowired
 	private UserConverter userConverter;
+	
+	@Autowired
+	private RoleConverter roleConverter;
+	
+	@Autowired
+	private IRoleRepository roleRepository;
+	
+	@Autowired
+	PasswordEncoder passwordEncoder;
+
 
 	@Override
 	@Transactional
-	public UserDto saveUser(UserDto userDto) throws MyFileNotFoundException{
-		if(userRepository.existsByUserName(userDto.getUserName())) {
-			throw new MyFileNotFoundException("Tên đăng nhập đã tồn tại!");
+	public UserDto save(UserDto dto){
+		UserDto userDto = new UserDto();
+		if (userRepository.existsByUserName(dto.getUserName())) {
+			userDto.setUserName(dto.getUserName());
+			return userDto;
 		}
-		if(userRepository.existsByEmail(userDto.getEmail())){
-			throw new MyFileNotFoundException("Email đã tồn tại!");
+		if (userRepository.existsByEmail(dto.getEmail())) {
+			userDto.setEmail(dto.getEmail());
+			return userDto;
 		}
-		if(userRepository.existsByPhone(userDto.getPhone())) {
-			throw new MyFileNotFoundException("Số điện thoại đã tồn tại!");
+		if (userRepository.existsByPhone(dto.getPhone())) {
+			userDto.setPhone(dto.getPhone());
+			return userDto;
 		}
-		
-		User user = new User();
-		user = userConverter.convertToEntity(userDto);
-		return userConverter.convertToDto(userRepository.save(user));
+		else {
+			if (dto.getId() != null) {
+				userDto.setId(dto.getId());
+			}
+			User user = new User();	
+			userDto.setLastName(dto.getLastName());
+			userDto.setFirstName(dto.getFirstName());
+			userDto.setUserName(dto.getUserName());
+			userDto.setEmail(dto.getEmail());
+			userDto.setPhone(dto.getPhone());
+			userDto.setImage(dto.getImage());
+			userDto.setPassword(passwordEncoder.encode(dto.getPassword()));
+			userDto.setStatus(dto.getStatus());
+			userDto.setRoles(dto.getRoles());
+			user = userConverter.convertToEntity(userDto);
+			if (userRepository.save(user).getId() != null) {
+				return userConverter.convertToDto(userRepository.save(user));
+			}
+			else {
+				return new UserDto();
+			}		
+		}	
 	}
 
 	@Override
@@ -74,6 +113,16 @@ public class UserServiceImpl implements IUserService{
 		}
 		else {
 			return new DataGetResponse();
+		}
+	}
+	
+	@Override
+	public Boolean delete(Long id) {
+		try {
+			userRepository.deleteById(id);
+			return true;
+		} catch (Exception e) {
+			return false;
 		}
 	}
 	

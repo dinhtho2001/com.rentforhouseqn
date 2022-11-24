@@ -1,16 +1,13 @@
 package com.rentforhouse.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.rentforhouse.dto.UserDto;
+import com.rentforhouse.entity.User;
+import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.MyFileNotFoundException;
+import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseSaveRequest;
-import com.rentforhouse.repository.IUserRepository;
+import com.rentforhouse.payload.request.SignupRequest;
 
 public class ValidateUtils {
-
-	@Autowired
-	private IUserRepository userRepository;
 	
 	public static boolean checkNullAndEmpty(String value) {
 		if(value != null && value != "") {
@@ -20,18 +17,27 @@ public class ValidateUtils {
 		
 	}
 	
-	public static void validateUser(UserDto userDto) throws MyFileNotFoundException{
-		if(checkNullAndEmpty(userDto.getUserName())) {
-			throw new MyFileNotFoundException("UserName is require!");
+	public static SysError validateUser(SignupRequest request) { 
+		if(checkNullAndEmpty(request.getUserName())) {
+			return new SysError("empty-username", new ErrorParam("username"));
 		}
-		if(checkNullAndEmpty(userDto.getEmail())){
-			throw new MyFileNotFoundException("Email is require!");
+		else if(checkNullAndEmpty(request.getEmail())){
+			return new SysError("empty-email", new ErrorParam("email"));
 		}
-		if(checkNullAndEmpty(userDto.getPhone())) {
-			throw new MyFileNotFoundException("Phone is require!");
+		else if(checkNullAndEmpty(request.getPhone())) {
+			return new SysError("empty-phone", new ErrorParam("phone"));
 		}
+		else if(checkNullAndEmpty(request.getPassword())) {
+			return new SysError("empty-password", new ErrorParam("password"));
+		}
+		else if(checkNullAndEmpty(request.getLastName())){
+			return new SysError("empty-lastname", new ErrorParam("lastname"));
+		}
+		else if(checkNullAndEmpty(request.getFirstName())) {
+			return new SysError("empty-firstname", new ErrorParam("firstname"));
+		}
+		return new SysError();
 	}
-	
 	
 	public static void validateHouse(HouseSaveRequest houseSaveRequest) throws MyFileNotFoundException{
 		if(checkNullAndEmpty(houseSaveRequest.getName())) {

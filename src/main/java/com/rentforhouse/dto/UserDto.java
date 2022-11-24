@@ -11,9 +11,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+public class UserDto extends AbstractDto<UserDto>{
 
-	private Long Id;
 	private String firstName;
 
 	private String lastName;
@@ -29,7 +28,6 @@ public class UserDto {
 	private Boolean status;
 	
 	private String image;
-	//private List<House> houses = new ArrayList<>();
 	
 	private List<RoleDto> roles;
 

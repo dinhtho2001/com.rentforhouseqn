@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rentforhouse.common.Param;
 import com.rentforhouse.dto.HouseTypeDto;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IHouseTypeService;
@@ -25,7 +26,7 @@ public class HouseTypeController {
 	@GetMapping
 	public ResponseEntity<?> findAll() {
 		List<HouseTypeDto> houseTypeDtos = houseTypeService.findAll();
-		return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
+		return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.seccess.name(),
 				houseTypeDtos, HttpStatus.OK.name()));
 
 	}
