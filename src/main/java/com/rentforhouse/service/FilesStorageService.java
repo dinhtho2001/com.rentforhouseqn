@@ -8,18 +8,17 @@ import com.rentforhouse.dto.FileInfo;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
-
 public interface FilesStorageService {
 
-	 public void init();
+	void init();
 
-	  public void save(MultipartFile file);
+	void save(MultipartFile file);
 
-	  public Resource load(String filename);
+	Resource download(String filename);
 
-	  public void deleteAll();
+	void deleteAll();
 
-	  public Stream<Path> loadAll();
-	  
-	  List<FileInfo> getListFile();
+	Stream<Path> loadAll();
+
+	List<FileInfo> getListFile();
 }
