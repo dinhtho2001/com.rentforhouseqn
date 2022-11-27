@@ -100,8 +100,7 @@ public class AuthService implements IAuthService {
 		} else {
 			User user = new User();
 			List<RoleDto> roleDtos = new ArrayList<>();
-			List<Role> roles = roleRepository.findByName(UserRole.ROLE_USER.name());
-			Role role = (roles.get(0));
+			Role role = roleRepository.findByName(UserRole.ROLE_USER.name());
 			RoleDto roleDto = roleConverter.convertToDto(role);
 			roleDtos.add(roleDto);
 			dto.setLastName(request.getLastName());
