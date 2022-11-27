@@ -33,9 +33,10 @@ public class UserConverter {
 			roles.add(role);
 		}
 		  user.setRoles(roles);
-		  user.setStatus(true);
-		  user.setPassword(
-		  passwordEncoder.encode(userDto.getPassword()));
+			/*
+			 * user.setStatus(true); user.setPassword(
+			 * passwordEncoder.encode(userDto.getPassword()));
+			 */
 		 
 		return user;
 	}
