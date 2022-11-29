@@ -1,6 +1,5 @@
 package com.rentforhouse.utils;
 
-import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.exception.SysError;
@@ -24,9 +23,10 @@ public class ValidateUtils {
 		else if(checkNullAndEmpty(request.getEmail())){
 			return new SysError("empty-email", new ErrorParam("email"));
 		}
-		else if(checkNullAndEmpty(request.getPhone())) {
-			return new SysError("empty-phone", new ErrorParam("phone"));
-		}
+		/*
+		 * else if(checkNullAndEmpty(request.getPhone())) { return new
+		 * SysError("empty-phone", new ErrorParam("phone")); }
+		 */
 		else if(checkNullAndEmpty(request.getPassword())) {
 			return new SysError("empty-password", new ErrorParam("password"));
 		}

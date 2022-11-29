@@ -26,7 +26,7 @@ public class HouseTypeController {
 	@GetMapping
 	public ResponseEntity<?> findAll() {
 		List<HouseTypeDto> houseTypeDtos = houseTypeService.findAll();
-		return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.seccess.name(),
+		return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
 				houseTypeDtos, HttpStatus.OK.name()));
 
 	}

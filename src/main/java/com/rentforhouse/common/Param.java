@@ -1,7 +1,7 @@
 package com.rentforhouse.common;
 
 public enum Param {
-	seccess,
+	success,
 	email,
 	username,
 	password,

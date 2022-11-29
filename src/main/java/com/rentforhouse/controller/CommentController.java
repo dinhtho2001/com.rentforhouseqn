@@ -44,7 +44,7 @@ public class CommentController {
 		CommentDto response = commentService.save(request);
 		if (response != null) {
 			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(new SuccessReponse(Param.seccess.name(), response, HttpStatus.CREATED.name()));
+					.body(new SuccessReponse(Param.success.name(), response, HttpStatus.CREATED.name()));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
@@ -62,7 +62,7 @@ public class CommentController {
 		CommentDto response = commentService.save(request);
 		if (response.getId() != null) {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new SuccessReponse(Param.seccess.name(), response, HttpStatus.OK.name()));
+					.body(new SuccessReponse(Param.success.name(), response, HttpStatus.OK.name()));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
@@ -73,7 +73,7 @@ public class CommentController {
 	public ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
 		if (commentService.delete(id)) {
 			return ResponseEntity.status(HttpStatus.OK).body(
-					new SuccessReponse(Param.seccess.name(), new MessageResponse("successful delete"), HttpStatus.OK.name()));
+					new SuccessReponse(Param.success.name(), new MessageResponse("successful delete"), HttpStatus.OK.name()));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));

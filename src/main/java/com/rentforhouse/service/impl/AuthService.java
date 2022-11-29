@@ -94,10 +94,10 @@ public class AuthService implements IAuthService {
 			dto.setEmail(request.getEmail());
 			return dto;
 		}
-		if (userRepository.existsByPhone(request.getPhone())) {
-			dto.setPhone(request.getPhone());
-			return dto;
-		} else {
+		/*
+		 * if (userRepository.existsByPhone(request.getPhone())) {
+		 * dto.setPhone(request.getPhone()); return dto; }
+		 */ else {
 			User user = new User();
 			List<RoleDto> roleDtos = new ArrayList<>();
 			Role role = roleRepository.findByName(UserRole.ROLE_USER.name());
@@ -107,7 +107,7 @@ public class AuthService implements IAuthService {
 			dto.setFirstName(request.getFirstName());
 			dto.setUserName(request.getUserName());
 			dto.setEmail(request.getEmail());
-			dto.setPhone(request.getPhone());
+			dto.setPhone(null);
 			dto.setImage(null);
 			dto.setPassword(passwordEncoder.encode(request.getPassword()));
 			dto.setStatus(true);

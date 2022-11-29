@@ -35,7 +35,7 @@ public class AuthController {
 		JwtResponse jwtResponse = authService.signin(loginRequest);
 		if (jwtResponse.getUsername() != null) {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new SuccessReponse(Param.seccess.name(), jwtResponse, HttpStatus.OK.name()));
+					.body(new SuccessReponse(Param.success.name(), jwtResponse, HttpStatus.OK.name()));
 		} else {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));			
@@ -52,7 +52,7 @@ public class AuthController {
 			UserDto userDto = authService.signup(request);
 			if (userDto.getId() != null) {
 				return ResponseEntity.status(HttpStatus.OK)
-						.body(new SuccessReponse(Param.seccess.name(), userDto, HttpStatus.OK.name()));
+						.body(new SuccessReponse(Param.success.name(), userDto, HttpStatus.OK.name()));
 			} else if (userDto.getEmail() != null) {
 				return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
 						new SysError("exist-email", new ErrorParam(Param.email.name()))));

@@ -43,7 +43,7 @@ public class UserController {
 
 		if (userDto.getId() != null) {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new SuccessReponse(Param.seccess.name(), userDto, HttpStatus.OK.name()));
+					.body(new SuccessReponse(Param.success.name(), userDto, HttpStatus.OK.name()));
 		} else if (userDto.getEmail() != null) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
 					new SysError("exist-email", new ErrorParam(Param.email.name()))));
@@ -65,7 +65,7 @@ public class UserController {
 		dataGetResponse = userService.findAll(page, limit);
 		if (dataGetResponse.getTotal_page() != 0) {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new SuccessReponse(Param.seccess.name(), dataGetResponse, HttpStatus.OK.name()));
+					.body(new SuccessReponse(Param.success.name(), dataGetResponse, HttpStatus.OK.name()));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
@@ -75,7 +75,7 @@ public class UserController {
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> deleteUserById(@PathVariable("id") Long id) {
 		if (userService.delete(id)) {
-			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.seccess.name(),
+			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
 					new MessageResponse("successful delete"), HttpStatus.OK.name()));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -88,7 +88,7 @@ public class UserController {
 		UserDto userDto = userService.save(request);
 		if (userDto.getId() != null) {
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new SuccessReponse(Param.seccess.name(), userDto, HttpStatus.OK.name()));
+					.body(new SuccessReponse(Param.success.name(), userDto, HttpStatus.OK.name()));
 		} else if (userDto.getEmail() != null) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
 					new SysError("exist-email", new ErrorParam(Param.email.name()))));
