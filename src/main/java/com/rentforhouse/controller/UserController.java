@@ -75,20 +75,12 @@ public class UserController {
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> deleteUserById(@PathVariable("id") Long id) {
-		switch (userService.delete(id)) {
-		case "SUCCESS":
+		if (userService.delete(id)) {
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
-					new MessageResponse("successful delete"), HttpStatus.OK.name()));
-
-		case "FAIL":
+					new MessageResponse("successful delete"), HttpStatus.OK.name()));		
+		}else {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("id-not-found", new ErrorParam("id"))));
-		case "CONFLICT":
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("can-not-delete", new ErrorParam("id"))));
-		default:
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("id-not-found", new ErrorParam("id"))));
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("can-not-delete", new ErrorParam())));
 		}
 		
 	}

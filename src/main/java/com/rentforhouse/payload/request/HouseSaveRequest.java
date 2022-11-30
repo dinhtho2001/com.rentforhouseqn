@@ -34,9 +34,10 @@ public class HouseSaveRequest {
     
     private Integer roomNumber;
     
-    private Boolean status;
-    
     private List<Long> typeIds;
+    
+    @ApiModelProperty(hidden = true)
+	private Boolean status;
     
 	/* private MultipartFile files; */ 
     

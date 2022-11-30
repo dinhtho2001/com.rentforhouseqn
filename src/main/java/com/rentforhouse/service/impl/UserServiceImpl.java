@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,52 +119,50 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public String delete(Long id) {
+	@Transactional
+	public Boolean delete(Long id) {
 		try {
-			@SuppressWarnings("unchecked")
-			Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) SecurityContextHolder.getContext()
-					.getAuthentication().getAuthorities();
-			List<String> roles = new ArrayList<>();
-			for (GrantedAuthority authority : authorities) {
-				roles.add(authority.getAuthority());
-			}
-			Role role = roleRepository.findById(id).orElse(new Role());
+			User user = userRepository.findById(id).orElse(new User());
+			if (user.getId() != null) {
+				@SuppressWarnings("unchecked")
+				Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) SecurityContextHolder
+						.getContext().getAuthentication().getAuthorities();
+				List<String> roles = new ArrayList<>();
+				for (GrantedAuthority authority : authorities) {
+					roles.add(authority.getAuthority());
+					//
+					System.out.println("authority Role: " + authority.getAuthority());
+				}		
+				for (String strRole : roles) {
+					if (strRole.equals(UserRole.ROLE_ADMIN.name())) {
+						userRepository.deleteById(id);
+						return true;
+					}else {
+						switch (strRole) {
+						case "ROLE_ADMIN":
+							System.out.println("đã vào Role ADMIN");			
+							return false;
+						case "ROLE_STAFF":
+							System.out.println("đã vào ROLE_STAFF");			
+							return false;
 
-			System.out.println(id);
-			System.out.println(role.getName());
-			for (String item : roles) {
-				System.out.println(item);
-				switch (item) {
-				case "ROLE_ADMIN":
-					System.out.println("đã vào");
-					System.out.println(role.getName());
-					if (role.getName().equals(UserRole.ROLE_ADMIN.name())) {
-						System.out.println("đã vào 1 ");
-						return Delete.CONFLICT.name();
-						
+						case "ROLE_USER":
+							System.out.println("đã vào ROLE_USER");
+							userRepository.deleteById(id);
+							return true;
+
+						default:
+							return false;
+						}
 					}
-					else {
-						System.out.println("đã vào 2");
-						userRepository.deleteById(id);
-						return Delete.SUCCESS.name();
-					}		
-				case "ROLE_STAFF":
-					System.out.println("đã vào ROLE_STAFF");
-					if (role.getName().equals(UserRole.ROLE_ADMIN.name())) {
-						return Delete.CONFLICT.name();					
-					}
-					else {
-						userRepository.deleteById(id);
-						return Delete.SUCCESS.name();
-					}
-				default:
-					return Delete.FAIL.name();
 				}
+			}else {
+				return false;
 			}
-			return Delete.FAIL.name();
 		} catch (Exception e) {
-			return Delete.FAIL.name();
+			// TODO: handle exception
 		}
+		return false;
 	}
 
 }
