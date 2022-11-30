@@ -261,4 +261,21 @@ public class HouseServiceImpl implements IHouseService {
 			return new HouseGetResponse();
 		}
 	}
+
+	@Override
+	@Transactional
+	public Boolean updateStatus(Long id, Boolean status) {
+		try {
+			House house = new House();
+			house = houseRepository.findById(id).orElse(new House());
+			if(house.getId() != null) {
+				house.setStatus(status);
+				houseRepository.save(house);
+				return true;
+			}
+		} catch (Exception e) {
+			System.out.println(e);			
+		}
+		return false;	
+	}
 }

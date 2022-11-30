@@ -27,8 +27,6 @@ public class HouseSaveRequest {
     private String area;
 	
     private String description;
-	
-    private String detailSumary;
 
     private Float price;
     

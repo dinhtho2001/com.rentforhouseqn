@@ -8,5 +8,5 @@ public interface IUserService {
 	UserDto save(UserDto dto);
 	UserDto findbyId(Long id);
 	DataGetResponse findAll(int page, int limit);
-	Boolean delete(Long id);
+	String delete(Long id);
 }

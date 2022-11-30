@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rentforhouse.common.Delete;
 import com.rentforhouse.common.Param;
 import com.rentforhouse.common.UserRole;
 import com.rentforhouse.dto.HouseDto;
@@ -74,12 +75,22 @@ public class UserController {
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> deleteUserById(@PathVariable("id") Long id) {
-		if (userService.delete(id)) {
+		switch (userService.delete(id)) {
+		case "SUCCESS":
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
 					new MessageResponse("successful delete"), HttpStatus.OK.name()));
+
+		case "FAIL":
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("id-not-found", new ErrorParam("id"))));
+		case "CONFLICT":
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("can-not-delete", new ErrorParam("id"))));
+		default:
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("id-not-found", new ErrorParam("id"))));
 		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-				new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("id-not-found", new ErrorParam("id"))));
+		
 	}
 
 	@PutMapping()

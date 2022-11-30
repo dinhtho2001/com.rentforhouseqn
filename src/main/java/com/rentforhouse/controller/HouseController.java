@@ -140,6 +140,18 @@ public class HouseController {
 				new SysError("house-not-found", new ErrorParam("id"))));
 
 	}
+	
+	@PutMapping("/{idHouse}/status")
+	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
+	public ResponseEntity<?> updateStatus(@PathVariable("id") Long id, @RequestParam("status") Boolean status) {	
+		if (houseService.updateStatus(id, status)) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), null, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+				new SysError("house-not-found", new ErrorParam("id"))));
+
+	}
 
 	/*
 	 * @PostMapping("/upload") public ResponseEntity<?> upload(@RequestParam
