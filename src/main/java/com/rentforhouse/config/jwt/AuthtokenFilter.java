@@ -18,6 +18,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.rentforhouse.service.impl.userdetail.UserDetailsServiceImpl;
+import com.rentforhouse.utils.JwtUtils;
 
 public class AuthtokenFilter extends OncePerRequestFilter{
 

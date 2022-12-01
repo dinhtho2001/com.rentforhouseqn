@@ -264,7 +264,7 @@ public class HouseServiceImpl implements IHouseService {
 
 	@Override
 	@Transactional
-	public Boolean updateStatus(Long id, Boolean status) {
+	public boolean updateStatus(Long id, Boolean status) {
 		try {
 			House house = new House();
 			house = houseRepository.findById(id).orElse(new House());

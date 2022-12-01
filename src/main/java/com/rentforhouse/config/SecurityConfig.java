@@ -1,4 +1,4 @@
-package com.rentforhouse.config.security;
+package com.rentforhouse.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -60,11 +60,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/swagger-ui.html").antMatchers("/webjars/springfox-swagger-ui/**")
-				.antMatchers("/swagger-resources/**").antMatchers("/v2/api-docs").antMatchers("/api/auth/**")
+		web.ignoring().antMatchers("/swagger-ui.html/**").antMatchers("/swagger-ui.html#/**")
+				.antMatchers("/webjars/springfox-swagger-ui/**").antMatchers("/swagger-resources/**")
+				.antMatchers("/v2/api-docs").antMatchers("/api/auth/**")
 				.antMatchers(HttpMethod.GET, "/api/houses", "/api/houses/all", "/api/houses/{id}",
 						"/api/houses/typeId/{typeId}", "/api/houseTypes", "/api/comments/**")
-				.antMatchers(HttpMethod.PUT, "/api/houses/{id}/viewPlus");
+				.antMatchers(HttpMethod.PUT, "/api/houses/viewPlus/{id}");
 	}
 
 	@Bean

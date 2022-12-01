@@ -1,4 +1,4 @@
-package com.rentforhouse.config.jwt;
+package com.rentforhouse.utils;
 
 import java.util.Date;
 import org.slf4j.Logger;

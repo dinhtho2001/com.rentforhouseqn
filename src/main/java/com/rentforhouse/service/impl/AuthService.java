@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.rentforhouse.common.UserRole;
-import com.rentforhouse.config.jwt.JwtUtils;
 import com.rentforhouse.converter.RoleConverter;
 import com.rentforhouse.converter.UserConverter;
 import com.rentforhouse.dto.RoleDto;
@@ -28,6 +27,7 @@ import com.rentforhouse.repository.IRoleRepository;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.IAuthService;
 import com.rentforhouse.service.impl.userdetail.UserDetailsImpl;
+import com.rentforhouse.utils.JwtUtils;
 
 @Service
 public class AuthService implements IAuthService {
