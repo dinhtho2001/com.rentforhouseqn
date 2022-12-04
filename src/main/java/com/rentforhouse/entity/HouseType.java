@@ -3,6 +3,7 @@ package com.rentforhouse.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,5 +28,10 @@ public class HouseType extends BaseEntity {
 
 	@ManyToMany(mappedBy = "houseTypes", fetch = FetchType.LAZY)
 	private List<House> houses = new ArrayList<>();
+	
+	public void remove(House b) {
+		houses.remove(b);
+		b.getHouseTypes().remove(this);
+	}  
 
 }
