@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import com.rentforhouse.dto.RoleDto;
 import com.rentforhouse.entity.Role;
+import com.rentforhouse.payload.request.RoleRequest;
 
 @Component
 public class RoleConverter {
@@ -14,11 +15,15 @@ public class RoleConverter {
 	private ModelMapper modelMapper;
 
 	public Role convertToEntity(RoleDto dto) {
-
 		Role role = modelMapper.map(dto, Role.class);
 		return role;
 	}
 
+	public Role convertToEntity(RoleRequest request) {
+		Role role = modelMapper.map(request, Role.class);
+		return role;
+	}
+	
 	public RoleDto convertToDto(Role role) {
 		RoleDto dto = modelMapper.map(role, RoleDto.class);
 		return dto;

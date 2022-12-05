@@ -1,5 +1,6 @@
 package com.rentforhouse.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,8 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 	Boolean existsByUserName(String username);
 
 	Boolean existsByPassword(String password);
+	
+	List<User> findByRoles_Id(Long id);
 
 	@Query(value = "SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.userName = ?1")
 	Boolean existsByUserNameAndPassword(String username/* , String password */);

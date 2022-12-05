@@ -31,5 +31,9 @@ public class Role extends BaseEntity {
 	@ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
 	private List<User> users = new ArrayList<>();
 
+	public void remove(User b) {
+		users.remove(b);
+		b.getRoles().remove(this);
+	}  
 
 }
