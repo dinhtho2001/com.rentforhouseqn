@@ -104,6 +104,17 @@ public class HouseController {
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam())));
 	}
 
+	@GetMapping("/user")
+	public ResponseEntity<?> findAllHouseByUserId(@RequestParam("id") Long id, @RequestParam("page") int page, @RequestParam("limit") int limit) {
+		HouseGetResponse houseResponse = houseService.findAllByUserId(id, page, limit);
+		if (houseResponse.getTotal_page() != 0) {
+			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
+					houseResponse, HttpStatus.OK.name()));
+		}	
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
+	}
+	
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
 	public ResponseEntity<?> saveHouse(@ModelAttribute HouseSaveRequest request

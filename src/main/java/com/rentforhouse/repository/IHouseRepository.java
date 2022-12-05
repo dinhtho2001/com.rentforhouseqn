@@ -17,7 +17,11 @@ public interface IHouseRepository extends JpaRepository<House, Long>{
 	List<House> findByNameContaining(@Param("name")String name);
 	Page<House> findByHouseTypes_Id(Long typeId, Pageable pageable);
 	Page<House> findByNameLikeAndHouseTypes_Id(String name, Long typeId,Pageable pageable);
-	Page<House> findByUser_Id(Long id, Pageable pageable);
+	
+	@Query(value="SELECT * FROM House u WHERE u.user_id=:userId ORDER BY u.createddate DESC", 
+            countQuery = "SELECT COUNT(id) FROM House u WHERE u.user_id=:userId ORDER BY u.createddate DESC", 
+            nativeQuery = true)
+	Page<House> findByUser_Id(@Param("userId")Long userId, Pageable pageable);
 	Page<House> findByStatus(Boolean status,Pageable pageable);
 	List<House> findByHouseTypes_Id(Long id);
 }

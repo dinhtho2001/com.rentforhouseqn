@@ -124,14 +124,14 @@ public class HouseServiceImpl implements IHouseService {
 	}
 
 	@Override
-	public HouseGetResponse findAllByUserId(Long id, int page, int limit) {
+	public HouseGetResponse findAllByUserId(Long userId, int page, int limit) {
 		HouseGetResponse response = new HouseGetResponse();
 		List<HouseDto> houseDtos = new ArrayList<>();
 		HouseDto houseDto;
 		Page<House> houseEntities = null;
 		try {
 			Pageable pageable = PageRequest.of(page - 1, limit);
-			houseEntities = houseRepository.findByUser_Id(id, pageable);
+			houseEntities = houseRepository.findByUser_Id(userId, pageable);
 			for (House item : houseEntities) {
 				houseDto = houseConverter.convertToDto(item);
 				houseDto.setUser(null);

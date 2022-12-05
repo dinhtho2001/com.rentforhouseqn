@@ -11,7 +11,7 @@ public interface IHouseService {
 	List<HouseDto> findHouse(SearchHouseRequest request);
 	HouseDto findById(Long id);
 	Boolean delete(Long id);
-	Object findAllByUserId(Long id, int page, int limit);
+	HouseGetResponse findAllByUserId(Long id, int page, int limit);
 	HouseGetResponse findAll(int page, int limit);
 	HouseGetResponse findHousesByStatus(Boolean status, int page, int limit);
 	Boolean viewPlus(Long id);
