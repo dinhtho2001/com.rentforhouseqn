@@ -68,6 +68,7 @@ public class HouseController {
 	}
 
 	@GetMapping("/all")
+	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> listHouses(@RequestParam(name = "page") int page,
 			@RequestParam(name = "limit") int limit) {
 		HouseGetResponse response = houseService.findAll(page, limit);
@@ -80,7 +81,7 @@ public class HouseController {
 	}
 
 	@GetMapping("/status/{trueOrfalse}")
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<?> findHousesByStatus(@RequestParam(name = "page") int page,
 			@RequestParam(name = "limit") int limit, @PathVariable Boolean trueOrfalse) {
 		HouseGetResponse response = houseService.findHousesByStatus(trueOrfalse, page, limit);

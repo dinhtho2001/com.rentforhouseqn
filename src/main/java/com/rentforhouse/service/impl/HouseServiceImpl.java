@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.rentforhouse.converter.HouseConverter;
@@ -17,12 +18,10 @@ import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.User;
-import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.payload.response.HouseGetResponse;
 import com.rentforhouse.repository.IHouseRepository;
-import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
 
@@ -100,20 +99,22 @@ public class HouseServiceImpl implements IHouseService {
 		HouseDto houseDto;
 		Page<House> houseEntities = null;
 		try {
-			Pageable pageable = PageRequest.of(page - 1, limit);
+			Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("createdDate").descending());
 			houseEntities = houseRepository.findAll(pageable);
-			for (House item : houseEntities) {
-				houseDto = houseConverter.convertToDto(item);
-				houseDto.getUser().setPassword(null);
-				//houseDto.setUser(null);
-				houseDtos.add(houseDto);
-			}			
-			if (houseDtos.get(0).getId() != null) {
-				response.setHouses(houseDtos);
-				response.setPage(page);
-				response.setTotal_page(houseEntities.getTotalPages());
+			if (houseEntities.hasContent()) {
+				for (House item : houseEntities) {
+					houseDto = houseConverter.convertToDto(item);
+					houseDto.getUser().setPassword(null);
+					//houseDto.setUser(null);
+					houseDtos.add(houseDto);
+				}	
+				if (houseDtos.get(0).getId() != null) {
+					response.setHouses(houseDtos);
+					response.setPage(page);
+					response.setTotal_page(houseEntities.getTotalPages());			
+				}
 				return response;
-			}
+			}			
 			else {
 				return new HouseGetResponse();
 			}
