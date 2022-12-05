@@ -43,6 +43,7 @@ public class HouseController {
 	@Autowired
 	FilesStorageService storageService;
 
+	/* search Houses theo name  sắp xếp theo số view gem den*/
 	@GetMapping
 	public ResponseEntity<?> searchHousesByName(@ModelAttribute SearchHouseRequest request) {
 		List<HouseDto> houses = new ArrayList<>();
