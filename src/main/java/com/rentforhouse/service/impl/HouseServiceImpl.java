@@ -279,4 +279,18 @@ public class HouseServiceImpl implements IHouseService {
 		}
 		return false;	
 	}
+
+	@Override
+	public List<HouseDto> findTop5HouseByView() {
+		List<HouseDto> houseDtos = new ArrayList<>();
+		try {
+			List<House> houses = houseRepository.findTop5ThanOrderByViewDesc();
+			for (House house : houses) {
+				houseDtos.add(houseConverter.convertToDto(house));
+			}
+			return houseDtos;
+		} catch (Exception e) {
+			return new ArrayList<>();
+		}	
+	}
 }

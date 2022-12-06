@@ -55,6 +55,18 @@ public class HouseController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
+	
+	@GetMapping("/top-5")
+	public ResponseEntity<?> findTop5HousesByView() {
+		List<HouseDto> houses = new ArrayList<>();
+		houses = houseService.findTop5HouseByView();
+		if (houses.get(0) != null) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), houses, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> findHouseById(@PathVariable(value = "id") Long id) {
