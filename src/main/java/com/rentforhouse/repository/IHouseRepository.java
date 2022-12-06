@@ -27,6 +27,6 @@ public interface IHouseRepository extends JpaRepository<House, Long> {
 
 	List<House> findByHouseTypes_Id(Long id);
 
-	@Query(nativeQuery = true, value = "SELECT * FROM House WHERE status = 1 ORDER BY view DESC Limit 0, 5")
+	@Query(nativeQuery = true, value = "SELECT * FROM House WHERE status = 1 ORDER BY view DESC Limit 0, 4")
 	List<House> findTop5ThanOrderByViewDesc();
 }
