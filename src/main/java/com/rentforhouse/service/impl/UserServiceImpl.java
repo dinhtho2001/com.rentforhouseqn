@@ -15,9 +15,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.rentforhouse.common.Delete;
 import com.rentforhouse.common.Param;
+import com.rentforhouse.common.Storage;
 import com.rentforhouse.common.UserRole;
 import com.rentforhouse.converter.RoleConverter;
 import com.rentforhouse.converter.UserConverter;
@@ -28,8 +30,10 @@ import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.payload.request.SignupRequest;
 import com.rentforhouse.payload.response.DataGetResponse;
+import com.rentforhouse.payload.response.FileUploadResponse;
 import com.rentforhouse.repository.IRoleRepository;
 import com.rentforhouse.repository.IUserRepository;
+import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IUserService;
 
 @Service
@@ -49,6 +53,9 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private FilesStorageService fileService;
 
 	@Override
 	@Transactional
@@ -163,6 +170,21 @@ public class UserServiceImpl implements IUserService {
 			// TODO: handle exception
 		}
 		return false;
+	}
+
+	@Override
+	@Transactional
+	public FileUploadResponse updateImage(Long id, MultipartFile file) {
+		FileUploadResponse fileResponse = fileService.save(file, Storage.users.name());
+		User user =  userRepository.findById(id).orElse(new User());
+		user.setImage(fileResponse.getFileName());
+		try {
+			userRepository.save(user);
+		} catch (Exception e) {
+			return new FileUploadResponse();
+		}
+		
+		return fileResponse;
 	}
 
 }
