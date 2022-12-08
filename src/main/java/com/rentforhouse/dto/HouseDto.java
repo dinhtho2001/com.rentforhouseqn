@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HouseDto extends AbstractDto<HouseDto>{
+public class HouseDto extends AbstractDto{
 
     private String name;
 	
@@ -30,6 +30,14 @@ public class HouseDto extends AbstractDto<HouseDto>{
     private Float price;
 
     private String image;
+    
+    private String image2;
+    
+    private String image3;
+    
+    private String image4;
+    
+    private String image5;
      
     private List<Long> typeIds;
     

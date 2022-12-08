@@ -53,7 +53,19 @@ public class House extends BaseEntity {
 	private Float price;
 
 	@Column(name = "image")
-	private String image;	
+	private String image;
+	
+	@Column(name = "image2")
+	private String image2;
+	
+	@Column(name = "image3")
+	private String image3;
+	
+	@Column(name = "image4")
+	private String image4;
+	
+	@Column(name = "image5")
+	private String image5;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")

@@ -103,6 +103,12 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 			throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
 		}
 	}
+	
+	@Override
+	public String getUrlImage(String fileName) {
+		
+		return"/api/file/" + fileName;
+	}
 
 	@Override
 	public Resource download(String filename) {	

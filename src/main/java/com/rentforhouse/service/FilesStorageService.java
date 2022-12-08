@@ -24,4 +24,6 @@ public interface FilesStorageService {
 	List<FileInfo> getListFile();
 
 	byte[] GetImage(String fileName)throws IOException;
+
+	String getUrlImage(String fileName);
 }

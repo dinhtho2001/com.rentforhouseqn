@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HouseTypeDto extends AbstractDto<HouseTypeDto> {
+public class HouseTypeDto extends AbstractDto {
 
 	 private String name;
 	 

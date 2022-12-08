@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleDto extends AbstractDto<RoleDto>{
+public class RoleDto extends AbstractDto{
 
 	private String name;
 	private String description;

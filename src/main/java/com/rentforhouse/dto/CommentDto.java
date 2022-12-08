@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentDto  extends AbstractDto<CommentDto>{
+public class CommentDto  extends AbstractDto{
 
 	private Long id;
 	

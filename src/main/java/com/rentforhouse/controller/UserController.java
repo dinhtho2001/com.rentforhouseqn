@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.rentforhouse.common.Delete;
 import com.rentforhouse.common.Param;
@@ -22,6 +24,7 @@ import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseSaveRequest;
+import com.rentforhouse.payload.request.UserRequest;
 import com.rentforhouse.payload.response.DataGetResponse;
 import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.MessageResponse;
@@ -87,8 +90,8 @@ public class UserController {
 
 	@PutMapping()
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> updateUser(@ModelAttribute UserDto request) {
-		UserDto userDto = userService.save(request);
+	public ResponseEntity<?> updateUser(@ModelAttribute UserRequest request, MultipartFile image) {
+		UserDto userDto = userService.save(request, image);
 		if (userDto.getId() != null) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new SuccessReponse(Param.success.name(), userDto, HttpStatus.OK.name()));
@@ -105,5 +108,25 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
-
+	
+	@PostMapping()
+	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
+	public ResponseEntity<?> save(@ModelAttribute UserRequest request, MultipartFile image) {
+		UserDto userDto = userService.save(request, image);
+		if (userDto.getId() != null) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), userDto, HttpStatus.OK.name()));
+		} else if (userDto.getEmail() != null) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+					new SysError("exist-email", new ErrorParam(Param.email.name()))));
+		} else if (userDto.getPhone() != null) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+					new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
+		} else if (userDto.getUserName() != null) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+					new SysError("exist-username", new ErrorParam(Param.username.name()))));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	}
 }

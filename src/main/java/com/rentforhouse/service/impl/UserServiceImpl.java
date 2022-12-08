@@ -2,6 +2,7 @@ package com.rentforhouse.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.text.StyledEditorKit.BoldAction;
@@ -29,6 +30,7 @@ import com.rentforhouse.entity.Role;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.payload.request.SignupRequest;
+import com.rentforhouse.payload.request.UserRequest;
 import com.rentforhouse.payload.response.DataGetResponse;
 import com.rentforhouse.payload.response.FileUploadResponse;
 import com.rentforhouse.repository.IRoleRepository;
@@ -59,39 +61,52 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	@Transactional
-	public UserDto save(UserDto dto) {
+	public UserDto save(UserRequest request, MultipartFile image) {
 		UserDto userDto = new UserDto();
-		if (userRepository.existsByUserName(dto.getUserName())) {
-			userDto.setUserName(dto.getUserName());
+		if (userRepository.existsByUserName(request.getUserName())) {
+			userDto.setUserName(request.getUserName());
 			return userDto;
 		}
-		if (userRepository.existsByEmail(dto.getEmail())) {
-			userDto.setEmail(dto.getEmail());
+		if (userRepository.existsByEmail(request.getEmail())) {
+			userDto.setEmail(request.getEmail());
 			return userDto;
 		}
-		if (userRepository.existsByPhone(dto.getPhone())) {
-			userDto.setPhone(dto.getPhone());
+		if (userRepository.existsByPhone(request.getPhone())) {
+			userDto.setPhone(request.getPhone());
 			return userDto;
 		} else {
-			if (dto.getId() != null) {
-				userDto.setId(dto.getId());
+			if (request.getId() != null) {
+				userDto.setId(request.getId());
 			}
-			User user = new User();
-			userDto.setLastName(dto.getLastName());
-			userDto.setFirstName(dto.getFirstName());
-			userDto.setUserName(dto.getUserName());
-			userDto.setEmail(dto.getEmail());
-			userDto.setPhone(dto.getPhone());
-			userDto.setImage(dto.getImage());
-			userDto.setPassword(passwordEncoder.encode(dto.getPassword()));
-			userDto.setStatus(dto.getStatus());
-			userDto.setRoles(dto.getRoles());
-			user = userConverter.convertToEntity(userDto);
-			if (userRepository.save(user).getId() != null) {
-				return userConverter.convertToDto(userRepository.save(user));
-			} else {
-				return new UserDto();
-			}
+			try {
+				FileUploadResponse fileUploadResponse = fileService.save(image, Storage.users.name());
+				List<RoleDto> roleDtos = new ArrayList<>();
+				for (UserRole item : request.getRoles()) {
+					if (item == null) {
+						continue;
+					}else {
+						roleDtos.add(roleConverter.convertToDto(roleRepository.findByName(item.name())));
+					}	
+				}
+				userDto.setLastName(request.getLastName());
+				userDto.setFirstName(request.getFirstName());
+				userDto.setUserName(request.getUserName());
+				userDto.setEmail(request.getEmail());
+				userDto.setPhone(request.getPhone());
+				userDto.setImage(fileUploadResponse.getFileName());
+				userDto.setPassword(passwordEncoder.encode(request.getPassword()));
+				userDto.setStatus(request.getStatus());
+				userDto.setRoles(roleDtos);
+				User user = userRepository.save(userConverter.convertToEntity(userDto));
+				if (user.getId() != null) {
+					return userConverter.convertToDto(user);
+				} else {
+					return new UserDto();
+				}
+			} catch (Exception e) {
+				userDto.setImage("Error");
+				return userDto;
+			}		
 		}
 	}
 
@@ -99,7 +114,8 @@ public class UserServiceImpl implements IUserService {
 	public UserDto findbyId(Long id) {
 		User user = userRepository.findById(id).get();
 		UserDto userDto = userConverter.convertToDto(user);
-		userDto.setPassword(null);
+		userDto.setPassword("co cai nit");
+		userDto.setImage(fileService.getUrlImage(userDto.getImage()));
 		return userDto;
 	}
 
@@ -112,6 +128,7 @@ public class UserServiceImpl implements IUserService {
 		for (User user : users) {
 			UserDto userDto = new UserDto();
 			userDto = userConverter.convertToDto(user);
+			userDto.setImage(fileService.getUrlImage(userDto.getImage()));
 			userDtos.add(userDto);
 		}
 
