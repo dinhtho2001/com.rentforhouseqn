@@ -39,6 +39,10 @@ public class HouseSaveRequest {
     @ApiModelProperty(hidden = true)
 	private Boolean status;
     
+    private String toilet;
+    
+    private String floor;
+    
     public MultipartFile image;
     
 }

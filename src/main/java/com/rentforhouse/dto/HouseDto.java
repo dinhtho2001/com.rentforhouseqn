@@ -38,6 +38,10 @@ public class HouseDto extends AbstractDto{
     private String image4;
     
     private String image5;
+    
+    private String toilet;
+    
+    private String floor;
      
 	/* private List<Long> typeIds; */
     

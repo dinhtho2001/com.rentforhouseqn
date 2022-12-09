@@ -35,16 +35,15 @@ public class House extends BaseEntity {
 
 	@Column(name = "area")
 	private String area;
-	
+
 	@Column(name = "room_number")
 	private Integer roomNumber;
 
 	@Column(name = "description", columnDefinition = "TEXT")
 	private String description;
-	
+
 	@Column(name = "view")
 	private Integer view;
-	
 
 	@Column(name = "status")
 	private Boolean status;
@@ -54,26 +53,31 @@ public class House extends BaseEntity {
 
 	@Column(name = "image")
 	private String image;
-	
+
 	@Column(name = "image2")
 	private String image2;
-	
+
 	@Column(name = "image3")
 	private String image3;
-	
+
 	@Column(name = "image4")
 	private String image4;
-	
+
 	@Column(name = "image5")
 	private String image5;
+
+	@Column(name = "toilet")
+	private String toilet;
+
+	@Column(name = "floor")
+	private String floor;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "house_type", joinColumns = @JoinColumn(name = "house_id", nullable = false),
-				inverseJoinColumns = @JoinColumn(name = "type_id", nullable = false))
+	@JoinTable(name = "house_type", joinColumns = @JoinColumn(name = "house_id", nullable = false), inverseJoinColumns = @JoinColumn(name = "type_id", nullable = false))
 	private List<HouseType> houseTypes = new ArrayList<>();
 
 	@OneToMany(mappedBy = "house", fetch = FetchType.LAZY)
