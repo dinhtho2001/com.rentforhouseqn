@@ -23,6 +23,7 @@ import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseSaveRequest;
+import com.rentforhouse.payload.request.ImageHouseRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.HouseGetResponse;
@@ -129,19 +130,19 @@ public class HouseController {
 	}
 	
 	@PostMapping
-	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-	public ResponseEntity<?> saveHouse(@ModelAttribute HouseSaveRequest request
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")	
+	public ResponseEntity<?> saveHouse(@ModelAttribute ImageHouseRequest request
 	/* ,@RequestParam MultipartFile file */) {
 		/* houseSaveRequest.setFiles(file); */
-		ValidateUtils.validateHouse(request);
-		HouseDto houseDto = houseService.save(request);
+		//ValidateUtils.validateHouse(request);
+		//HouseDto houseDto = houseService.save(request);
 		/*
 		 * try { storageService.save(file); } catch (Exception e) { return
 		 * ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new
 		 * ResponseMessage("Add Image Failed!")); }
 		 */
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(new SuccessReponse(Param.success.name(), houseDto, HttpStatus.OK.name()));
+				.body(new SuccessReponse(Param.success.name(),null /*houseDto*/, HttpStatus.OK.name()));
 
 	}
 

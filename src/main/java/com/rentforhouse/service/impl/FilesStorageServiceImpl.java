@@ -183,5 +183,21 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 		}).collect(Collectors.toList());
 		return fileInfos;
 	}
+	
+	@Override
+	  public Resource load(String filename) {
+	    try {
+	      Path file = rootPath.resolve(filename);
+	      Resource resource = new UrlResource(file.toUri());
+
+	      if (resource.exists() || resource.isReadable()) {
+	        return resource;
+	      } else {
+	        throw new RuntimeException("Could not read the file!");
+	      }
+	    } catch (MalformedURLException e) {
+	      throw new RuntimeException("Error: " + e.getMessage());
+	    }
+	  }
 
 }

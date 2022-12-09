@@ -26,4 +26,6 @@ public interface FilesStorageService {
 	byte[] GetImage(String fileName)throws IOException;
 
 	String getUrlImage(String fileName);
+
+	Resource load(String filename);
 }

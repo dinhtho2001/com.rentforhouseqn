@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.rentforhouse.common.TypeHouse;
 import com.rentforhouse.entity.House;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -17,6 +18,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HouseSaveRequest {
+	
 	@ApiModelProperty(hidden = true)
 	private Long id;
 	
@@ -30,15 +32,13 @@ public class HouseSaveRequest {
 
     private Float price;
     
-    private String image;
-    
     private Integer roomNumber;
     
-    private List<Long> typeIds;
+    private List<TypeHouse> typeHouses;
     
     @ApiModelProperty(hidden = true)
 	private Boolean status;
     
-	/* private MultipartFile files; */ 
+    public MultipartFile image;
     
 }

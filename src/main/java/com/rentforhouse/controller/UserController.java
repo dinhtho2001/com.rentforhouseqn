@@ -48,15 +48,6 @@ public class UserController {
 		if (userDto.getId() != null) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new SuccessReponse(Param.success.name(), userDto, HttpStatus.OK.name()));
-		} else if (userDto.getEmail() != null) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-email", new ErrorParam(Param.email.name()))));
-		} else if (userDto.getPhone() != null) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
-		} else if (userDto.getUserName() != null) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-username", new ErrorParam(Param.username.name()))));
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));

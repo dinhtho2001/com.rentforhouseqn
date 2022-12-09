@@ -43,9 +43,10 @@ public class ValidateUtils {
 		if(checkNullAndEmpty(houseSaveRequest.getName())) {
 			throw new MyFileNotFoundException("Name is require!");
 		}
-		if(houseSaveRequest.getTypeIds() == null){
-			throw new MyFileNotFoundException("Type is require!");
-		}
+		/*
+		 * if(houseSaveRequest.getTypeIds() == null){ throw new
+		 * MyFileNotFoundException("Type is require!"); }
+		 */
 		if(checkNullAndEmpty(houseSaveRequest.getAddress())) {
 			throw new MyFileNotFoundException("Address is require!");
 		}

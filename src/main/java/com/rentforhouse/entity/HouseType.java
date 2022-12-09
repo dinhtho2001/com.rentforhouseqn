@@ -25,6 +25,9 @@ public class HouseType extends BaseEntity {
 
 	@Column(name = "name")
 	private String name;
+	
+	@Column(name= "code")
+	private String code;
 
 	@ManyToMany(mappedBy = "houseTypes", fetch = FetchType.LAZY)
 	private List<House> houses = new ArrayList<>();

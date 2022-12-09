@@ -59,10 +59,6 @@ public class HouseServiceImpl implements IHouseService {
 
 	@Override
 	public HouseDto findById(Long id) {
-		/*
-		 * House house = houseRepository.findById(id) .orElseThrow(() -> new
-		 * MyFileNotFoundException("Id : " + id + " không tồn tại"));
-		 */
 		House house = houseRepository.findById(id).orElse(new House());
 		if (house.getId() != null) {
 			HouseDto houseDto = houseConverter.convertToDto(house);
@@ -74,7 +70,7 @@ public class HouseServiceImpl implements IHouseService {
 		}
 	}
 
-	public int totalTtem() {
+	private int totalTtem() {
 		try {
 			return (int) houseRepository.count();
 		} catch (Exception e) {
@@ -155,15 +151,11 @@ public class HouseServiceImpl implements IHouseService {
 	@Override
 	public List<HouseDto> findHouse(SearchHouseRequest request) {
 		List<HouseDto> houseDtos = new ArrayList<>();
-		List<House> houses = new ArrayList<>();
-		User user;
-		UserDto userDto;
-		HouseDto houseDto;
-
+		List<House> houses = new ArrayList<>();	 
 		if (request.getName() != "") {
 			houses = houseRepository.findByNameContaining(request.getName());
 		} else {
-			houses = null;
+			houses = houseRepository.findAll();
 		}
 		/*
 		 * List<FileInfo> fileInfos = storageService.loadAll().map(path -> { String
@@ -173,18 +165,19 @@ public class HouseServiceImpl implements IHouseService {
 		 * 
 		 * return new FileInfo(filename, url); }).collect(Collectors.toList());
 		 */
-
-		for (House item : houses) {
-			houseDto = houseConverter.convertToDto(item);
-			user = item.getUser();
-			userDto = userConverter.convertToDto(user);
-			houseDto.setUser(userDto);
+		for (House house : houses) {
+			HouseDto houseDto = houseConverter.convertToDto(house);
+			houseDto.setUser(userConverter.convertToDto(house.getUser()));
 			/*
 			 * for (FileInfo fileInfo : fileInfos) { if
 			 * (houseDto.getImage().equals(fileInfo.getName())) {
 			 * houseDto.setImage(fileInfo.getUrl()); } }
 			 */
-
+			houseDto.setImage(storageService.getUrlImage(house.getImage()));
+			houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+			houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+			houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+			houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
 			houseDtos.add(houseDto);
 		}
 		return houseDtos;
@@ -216,9 +209,14 @@ public class HouseServiceImpl implements IHouseService {
 		try {
 			Pageable pageable = PageRequest.of(page - 1, limit);
 			houses = houseRepository.findByStatus(status, pageable);
-			for (House item : houses) {
-				houseDto = houseConverter.convertToDto(item);
-				houseDto.getUser().setPassword(null);			
+			for (House house : houses) {
+				houseDto = houseConverter.convertToDto(house);
+				houseDto.getUser().setPassword(null);		
+				houseDto.setImage(storageService.getUrlImage(house.getImage()));
+				houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+				houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+				houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+				houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
 				houseDtos.add(houseDto);
 			}			
 			if (houseDtos.get(0).getId() != null) {
@@ -244,9 +242,14 @@ public class HouseServiceImpl implements IHouseService {
 		try {
 			Pageable pageable = PageRequest.of(page - 1, limit);
 			houses = houseRepository.findByHouseTypes_Id(id, pageable);
-			for (House item : houses) {
-				houseDto = houseConverter.convertToDto(item);
+			for (House house : houses) {
+				houseDto = houseConverter.convertToDto(house);
 				houseDto.getUser().setPassword(null);
+				houseDto.setImage(storageService.getUrlImage(house.getImage()));
+				houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+				houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+				houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+				houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
 				houseDtos.add(houseDto);
 			}			
 			if (houseDtos.get(0).getId() != null) {
@@ -286,7 +289,9 @@ public class HouseServiceImpl implements IHouseService {
 		try {
 			List<House> houses = houseRepository.findTop5ThanOrderByViewDesc();
 			for (House house : houses) {
-				houseDtos.add(houseConverter.convertToDto(house));
+				HouseDto houseDto = houseConverter.convertToDto(house);
+				houseDto.setImage(storageService.getUrlImage(house.getImage()));
+				houseDtos.add(houseDto);
 			}
 			return houseDtos;
 		} catch (Exception e) {

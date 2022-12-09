@@ -39,9 +39,9 @@ public class HouseDto extends AbstractDto{
     
     private String image5;
      
-    private List<Long> typeIds;
+	/* private List<Long> typeIds; */
     
-    private List<String> typeNames;
+    private List<HouseTypeDto> houseTypes;
 
     private UserDto user;
     

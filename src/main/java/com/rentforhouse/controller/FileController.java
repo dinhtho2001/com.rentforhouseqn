@@ -68,4 +68,16 @@ public class FileController {
 		}
 		
 	}
+	
+	@GetMapping("/load/{filename}")
+	public ResponseEntity<?> loadfile(@PathVariable("filename") String filename) throws IOException {
+		Resource imageData = service.load(filename);
+		if (imageData.getURI() != null) {
+			return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(imageData);
+		}else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("", new ErrorParam(""))));
+		}
+		
+	}
 }
