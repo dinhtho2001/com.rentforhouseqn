@@ -10,7 +10,7 @@ import com.rentforhouse.entity.House;
 
 public interface ICommentRepository extends JpaRepository<Comment, Long>{
 
-	@Query(value = "SELECT * FROM comment u WHERE u.house_id = ?1", 
+	@Query(value = "SELECT * FROM comment u WHERE u.house_id = ?1 ORDER BY u.createddate DESC", 
 			  nativeQuery = true)
 	List<Comment> findAllByHouse_id(Long id);
 }
