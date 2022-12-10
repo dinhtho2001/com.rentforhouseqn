@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import com.rentforhouse.common.Constant;
 import com.rentforhouse.common.Storage;
 import com.rentforhouse.controller.HouseController;
 import com.rentforhouse.dto.FileInfo;
@@ -106,8 +107,8 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 	
 	@Override
 	public String getUrlImage(String fileName) {
-		
-		return"/api/file/" + fileName;
+		Constant constant = new Constant();
+		return constant.getBASE_URL() +"/api/file/" + fileName;
 	}
 
 	@Override
@@ -116,12 +117,12 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 		String lastPath = null;
 		try {
 			Path file = null;
-			if (filename.contains("users")) {
+			if (filename.contains(Storage.users.name())) {
 				lastPath = rootPath.getParent()+"\\"+ rootPath.getFileName() +"\\images\\users";
 				path = Paths.get(lastPath);
 				file = path.resolve(filename);
 			}
-			if (filename.contains("houses")) {
+			if (filename.contains(Storage.houses.name())) {
 				lastPath = rootPath.getParent()+"\\"+ rootPath.getFileName() +"\\images\\houses";
 				path = Paths.get(lastPath);
 			}else {
@@ -158,11 +159,10 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 	public byte[] GetImage(String filename) throws IOException{
 		Path path = null;
 		String lastPath = null;
-		if (filename.contains("users")) {
+		if (filename.contains(Storage.users.name())) {
 			lastPath = rootPath.getParent()+"\\"+ rootPath.getFileName() +"\\images\\users";
 			path = Paths.get(lastPath);
-		}
-		if (filename.contains("houses")) {
+		}else if (filename.contains(Storage.houses.name())) {
 			lastPath = rootPath.getParent()+"\\"+ rootPath.getFileName() +"\\images\\houses";
 			path = Paths.get(lastPath);
 		}else {

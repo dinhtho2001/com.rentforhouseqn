@@ -10,18 +10,34 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.rentforhouse.common.Param;
+import com.rentforhouse.common.Storage;
+import com.rentforhouse.common.TypeHouse;
 import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.converter.UserConverter;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.dto.UserDto;
+import com.rentforhouse.entity.Comment;
 import com.rentforhouse.entity.House;
+import com.rentforhouse.entity.HouseType;
 import com.rentforhouse.entity.User;
-import com.rentforhouse.payload.request.HouseSaveRequest;
+import com.rentforhouse.exception.ErrorParam;
+import com.rentforhouse.exception.SysError;
+import com.rentforhouse.payload.request.HouseRequest;
+import com.rentforhouse.payload.request.SaveHouseRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
+import com.rentforhouse.payload.response.ErrorResponse;
+import com.rentforhouse.payload.response.FileUploadResponse;
 import com.rentforhouse.payload.response.HouseGetResponse;
+import com.rentforhouse.payload.response.SuccessReponse;
+import com.rentforhouse.repository.ICommentRepository;
 import com.rentforhouse.repository.IHouseRepository;
+import com.rentforhouse.repository.IHouseTypeRepository;
+import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
 
@@ -30,6 +46,15 @@ public class HouseServiceImpl implements IHouseService {
 
 	@Autowired
 	private IHouseRepository houseRepository;
+
+	@Autowired
+	private IUserRepository userRepository;
+
+	@Autowired
+	private IHouseTypeRepository houseTypeRepository;
+
+	@Autowired
+	private ICommentRepository commentRepository;
 
 	@Autowired
 	private HouseConverter houseConverter;
@@ -42,18 +67,66 @@ public class HouseServiceImpl implements IHouseService {
 
 	@Override
 	@Transactional
-	public HouseDto save(HouseSaveRequest request) {
-		if (request.getId() != null) {
-			House house = new House();
-			house = houseConverter.convertToEntity(request);
-			return houseConverter.convertToDto(houseRepository.save(house));
-		}
-		else {
-			House house = new House();
-			house = houseConverter.convertToEntity(request);
-			house.setView(0);
-			house.setStatus(false);
-			return houseConverter.convertToDto(houseRepository.save(house));
+	public ResponseEntity<?> save(SaveHouseRequest request) {
+		try {
+			House house = houseConverter.convertToEntity(request);
+			
+			/* request Save */
+			if (request.getId() == null) {
+				house.setView(0);
+				house.setStatus(false);
+			}else {
+				/* request Update */
+				house.setUser(userRepository.findById(request.getId()).orElse(new User()));
+				house.setComments(commentRepository.findAllByHouse_id(request.getId()));
+			}
+			List<HouseType> typeHouses = new ArrayList<>(); 
+			for (TypeHouse item : request.getTypeHouses()) {
+				if (item == null) {
+					continue;
+				}else {
+					typeHouses.add(houseTypeRepository.findByCode(item.name()));
+				}
+			}
+			house.setHouseTypes(typeHouses);
+			try {
+				if (request.getImage().getResource().exists()) {
+					storageService.save(request.getImage(), Storage.houses.name());
+					house.setImage(request.getImage().getName());
+				}
+				if (request.getImage2().getResource().exists()) {
+					storageService.save(request.getImage2(), Storage.houses.name());
+					house.setImage2(request.getImage2().getName());
+				}
+				if (request.getImage3().getResource().exists()) {
+					storageService.save(request.getImage3(), Storage.houses.name());
+					house.setImage3(request.getImage3().getName());
+				}
+				if (request.getImage4().getResource().exists()) {
+					storageService.save(request.getImage4(), Storage.houses.name());
+					house.setImage4(request.getImage4().getName());
+				}
+				if (request.getImage5().getResource().exists()) {
+					storageService.save(request.getImage5(), Storage.houses.name());
+					house.setImage5(request.getImage5().getName());
+				}
+			} catch (Exception e) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
+						HttpStatus.BAD_REQUEST.name(), new SysError("unable-to-save-image", new ErrorParam("image"))));
+			}
+			HouseDto houseDto = houseConverter.convertToDto(houseRepository.save(house));
+			houseDto.setUser(houseDto.setPassword(houseDto.getUser()));
+			houseDto.setImage(storageService.getUrlImage(house.getImage()));
+			houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+			houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+			houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+			houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), houseDto, HttpStatus.OK.name()));
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("unable-to-save", new ErrorParam())));
 		}
 	}
 
@@ -63,18 +136,14 @@ public class HouseServiceImpl implements IHouseService {
 		if (house.getId() != null) {
 			HouseDto houseDto = houseConverter.convertToDto(house);
 			houseDto.setUser(houseDto.setPassword(houseDto.getUser()));
+			houseDto.setImage(storageService.getUrlImage(house.getImage()));
+			houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+			houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+			houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+			houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
 			return houseDto;
-		}
-		else {
+		} else {
 			return new HouseDto();
-		}
-	}
-
-	private int totalTtem() {
-		try {
-			return (int) houseRepository.count();
-		} catch (Exception e) {
-			return 0;
 		}
 	}
 
@@ -98,23 +167,26 @@ public class HouseServiceImpl implements IHouseService {
 			Pageable pageable = PageRequest.of(page - 1, limit, Sort.by("createdDate").descending());
 			houseEntities = houseRepository.findAll(pageable);
 			if (houseEntities.hasContent()) {
-				for (House item : houseEntities) {
-					houseDto = houseConverter.convertToDto(item);
+				for (House house : houseEntities) {
+					houseDto = houseConverter.convertToDto(house);
 					houseDto.getUser().setPassword(null);
-					//houseDto.setUser(null);
+					houseDto.setImage(storageService.getUrlImage(house.getImage()));
+					houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+					houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+					houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+					houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
 					houseDtos.add(houseDto);
-				}	
+				}
 				if (houseDtos.get(0).getId() != null) {
 					response.setHouses(houseDtos);
 					response.setPage(page);
-					response.setTotal_page(houseEntities.getTotalPages());			
+					response.setTotal_page(houseEntities.getTotalPages());
 				}
 				return response;
-			}			
-			else {
+			} else {
 				return new HouseGetResponse();
 			}
-			
+
 		} catch (Exception e) {
 			return new HouseGetResponse();
 		}
@@ -129,9 +201,15 @@ public class HouseServiceImpl implements IHouseService {
 		try {
 			Pageable pageable = PageRequest.of(page - 1, limit);
 			houseEntities = houseRepository.findByUser_Id(userId, pageable);
-			for (House item : houseEntities) {
-				houseDto = houseConverter.convertToDto(item);
+			for (House house : houseEntities) {
+				houseDto = houseConverter.convertToDto(house);
 				houseDto.setUser(null);
+				houseDto.setUser(userConverter.convertToDto(house.getUser()));
+				houseDto.setImage(storageService.getUrlImage(house.getImage()));
+				houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+				houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+				houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+				houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
 				houseDtos.add(houseDto);
 			}
 			if (houseDtos.get(0).getId() != null) {
@@ -139,8 +217,7 @@ public class HouseServiceImpl implements IHouseService {
 				response.setPage(page);
 				response.setTotal_page(houseEntities.getTotalPages());
 				return response;
-			}
-			else {
+			} else {
 				return new HouseGetResponse();
 			}
 		} catch (Exception e) {
@@ -151,28 +228,15 @@ public class HouseServiceImpl implements IHouseService {
 	@Override
 	public List<HouseDto> findHouse(SearchHouseRequest request) {
 		List<HouseDto> houseDtos = new ArrayList<>();
-		List<House> houses = new ArrayList<>();	 
+		List<House> houses = new ArrayList<>();
 		if (request.getName() != "") {
 			houses = houseRepository.findByNameContaining(request.getName());
 		} else {
 			houses = houseRepository.findAll();
 		}
-		/*
-		 * List<FileInfo> fileInfos = storageService.loadAll().map(path -> { String
-		 * filename = path.getFileName().toString(); String url =
-		 * MvcUriComponentsBuilder .fromMethodName(HouseController.class, "getFile",
-		 * path.getFileName().toString()).build().toString();
-		 * 
-		 * return new FileInfo(filename, url); }).collect(Collectors.toList());
-		 */
 		for (House house : houses) {
 			HouseDto houseDto = houseConverter.convertToDto(house);
 			houseDto.setUser(userConverter.convertToDto(house.getUser()));
-			/*
-			 * for (FileInfo fileInfo : fileInfos) { if
-			 * (houseDto.getImage().equals(fileInfo.getName())) {
-			 * houseDto.setImage(fileInfo.getUrl()); } }
-			 */
 			houseDto.setImage(storageService.getUrlImage(house.getImage()));
 			houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
 			houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
@@ -189,15 +253,15 @@ public class HouseServiceImpl implements IHouseService {
 		try {
 			House house = new House();
 			house = houseRepository.findById(id).orElse(new House());
-			if(house.getId() != null) {
-				house.setView(house.getView()+1);
+			if (house.getId() != null) {
+				house.setView(house.getView() + 1);
 				houseRepository.save(house);
 				return true;
 			}
 		} catch (Exception e) {
-			System.out.println(e);			
+			System.out.println(e);
 		}
-		return false;				
+		return false;
 	}
 
 	@Override
@@ -211,26 +275,25 @@ public class HouseServiceImpl implements IHouseService {
 			houses = houseRepository.findByStatus(status, pageable);
 			for (House house : houses) {
 				houseDto = houseConverter.convertToDto(house);
-				houseDto.getUser().setPassword(null);		
+				houseDto.getUser().setPassword(null);
 				houseDto.setImage(storageService.getUrlImage(house.getImage()));
 				houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
 				houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
 				houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
 				houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
 				houseDtos.add(houseDto);
-			}			
+			}
 			if (houseDtos.get(0).getId() != null) {
 				response.setHouses(houseDtos);
 				response.setPage(page);
-				response.setTotal_page( houses.getTotalPages());
+				response.setTotal_page(houses.getTotalPages());
 				return response;
-			}
-			else {
+			} else {
 				return new HouseGetResponse();
 			}
 		} catch (Exception e) {
 			return new HouseGetResponse();
-		}	
+		}
 	}
 
 	@Override
@@ -251,14 +314,13 @@ public class HouseServiceImpl implements IHouseService {
 				houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
 				houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
 				houseDtos.add(houseDto);
-			}			
+			}
 			if (houseDtos.get(0).getId() != null) {
 				response.setHouses(houseDtos);
 				response.setPage(page);
 				response.setTotal_page(houses.getTotalPages());
 				return response;
-			}
-			else {
+			} else {
 				return new HouseGetResponse();
 			}
 		} catch (Exception e) {
@@ -272,15 +334,15 @@ public class HouseServiceImpl implements IHouseService {
 		try {
 			House house = new House();
 			house = houseRepository.findById(id).orElse(new House());
-			if(house.getId() != null) {
+			if (house.getId() != null) {
 				house.setStatus(status);
 				houseRepository.save(house);
 				return true;
 			}
 		} catch (Exception e) {
-			System.out.println(e);			
+			System.out.println(e);
 		}
-		return false;	
+		return false;
 	}
 
 	@Override
@@ -291,11 +353,15 @@ public class HouseServiceImpl implements IHouseService {
 			for (House house : houses) {
 				HouseDto houseDto = houseConverter.convertToDto(house);
 				houseDto.setImage(storageService.getUrlImage(house.getImage()));
+				houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+				houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+				houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+				houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
 				houseDtos.add(houseDto);
 			}
 			return houseDtos;
 		} catch (Exception e) {
 			return new ArrayList<>();
-		}	
+		}
 	}
 }

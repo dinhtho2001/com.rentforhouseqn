@@ -16,21 +16,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.rentforhouse.common.Delete;
 import com.rentforhouse.common.Param;
-import com.rentforhouse.common.UserRole;
-import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
-import com.rentforhouse.payload.request.HouseSaveRequest;
 import com.rentforhouse.payload.request.UserRequest;
 import com.rentforhouse.payload.response.DataGetResponse;
 import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.MessageResponse;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IUserService;
-import com.rentforhouse.utils.ValidateUtils;
 
 @CrossOrigin(origins = "http://localhost:3000/")
 @RestController(value = "userAPIOfWeb")

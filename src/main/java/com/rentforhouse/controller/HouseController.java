@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.rentforhouse.common.Param;
+import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
-import com.rentforhouse.payload.request.HouseSaveRequest;
-import com.rentforhouse.payload.request.ImageHouseRequest;
+import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.HouseGetResponse;
@@ -42,9 +43,9 @@ public class HouseController {
 	private IHouseService houseService;
 
 	@Autowired
-	FilesStorageService storageService;
+	private HouseConverter houseConverter;
 
-	/* search Houses theo name  sắp xếp theo số view gem den*/
+	/* search Houses theo name sắp xếp theo số view gem den */
 	@GetMapping
 	public ResponseEntity<?> searchHousesByName(@ModelAttribute SearchHouseRequest request) {
 		List<HouseDto> houses = new ArrayList<>();
@@ -56,7 +57,7 @@ public class HouseController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
-	
+
 	@GetMapping("/top-5")
 	public ResponseEntity<?> findTop5HousesByView() {
 		List<HouseDto> houses = new ArrayList<>();
@@ -94,7 +95,7 @@ public class HouseController {
 	}
 
 	@GetMapping("/status/{trueOrfalse}")
-	//@PreAuthorize("hasRole('ROLE_ADMIN')")
+	// @PreAuthorize("hasRole('ROLE_ADMIN')")
 	public ResponseEntity<?> findHousesByStatus(@RequestParam(name = "page") int page,
 			@RequestParam(name = "limit") int limit, @PathVariable Boolean trueOrfalse) {
 		HouseGetResponse response = houseService.findHousesByStatus(trueOrfalse, page, limit);
@@ -119,41 +120,35 @@ public class HouseController {
 	}
 
 	@GetMapping("/user")
-	public ResponseEntity<?> findAllHouseByUserId(@RequestParam("id") Long id, @RequestParam("page") int page, @RequestParam("limit") int limit) {
+	public ResponseEntity<?> findAllHouseByUserId(@RequestParam("id") Long id, @RequestParam("page") int page,
+			@RequestParam("limit") int limit) {
 		HouseGetResponse houseResponse = houseService.findAllByUserId(id, page, limit);
 		if (houseResponse.getTotal_page() != 0) {
-			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse("success",
-					houseResponse, HttpStatus.OK.name()));
-		}	
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse("success", houseResponse, HttpStatus.OK.name()));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+				new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
 	}
-	
+
 	@PostMapping
-	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")	
-	public ResponseEntity<?> saveHouse(@ModelAttribute ImageHouseRequest request
-	/* ,@RequestParam MultipartFile file */) {
-		/* houseSaveRequest.setFiles(file); */
-		//ValidateUtils.validateHouse(request);
-		//HouseDto houseDto = houseService.save(request);
-		/*
-		 * try { storageService.save(file); } catch (Exception e) { return
-		 * ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new
-		 * ResponseMessage("Add Image Failed!")); }
-		 */
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new SuccessReponse(Param.success.name(),null /*houseDto*/, HttpStatus.OK.name()));
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN', 'ROLE_STAFF')")
+	public ResponseEntity<?> saveHouse(@ModelAttribute HouseRequest request, @RequestParam MultipartFile image,
+			@RequestParam MultipartFile image2, @RequestParam MultipartFile image3, @RequestParam MultipartFile image4,
+			@RequestParam MultipartFile image5) {
+		return houseService.save(houseConverter.toSaveHouseRequest(request, image, image2, image3, image4, image5));
 
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-	public ResponseEntity<?> updateHouse(@ModelAttribute HouseSaveRequest request, @PathVariable("id") Long id) {
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN', 'ROLE_STAFF')")
+	public ResponseEntity<?> updateHouse(@ModelAttribute HouseRequest request, @PathVariable("id") Long id,
+			@RequestParam Boolean status, @RequestParam MultipartFile image, @RequestParam MultipartFile image2,
+			@RequestParam MultipartFile image3, @RequestParam MultipartFile image4,
+			@RequestParam MultipartFile image5) {
 		request.setId(id);
-		ValidateUtils.validateHouse(request);
-		HouseDto houseDto = houseService.save(request);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(new SuccessReponse(Param.success.name(), houseDto, HttpStatus.OK.name()));
+		request.setStatus(status);
+		return houseService.save(houseConverter.toSaveHouseRequest(request, image, image2, image3, image4, image5));
 	}
 
 	@PutMapping("/viewPlus/{id}")
@@ -166,10 +161,11 @@ public class HouseController {
 				new SysError("house-not-found", new ErrorParam("id"))));
 
 	}
-	
+
 	@PutMapping("/house/{idHouse}/status/{trueOrfalse}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> updateStatus(@PathVariable("idHouse") Long id, @PathVariable("trueOrfalse") Boolean status) {	
+	public ResponseEntity<?> updateStatus(@PathVariable("idHouse") Long id,
+			@PathVariable("trueOrfalse") Boolean status) {
 		if (houseService.updateStatus(id, status)) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new SuccessReponse(Param.success.name(), "successfully", HttpStatus.OK.name()));

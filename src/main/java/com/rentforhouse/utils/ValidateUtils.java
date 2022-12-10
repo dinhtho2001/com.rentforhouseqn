@@ -3,7 +3,7 @@ package com.rentforhouse.utils;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.MyFileNotFoundException;
 import com.rentforhouse.exception.SysError;
-import com.rentforhouse.payload.request.HouseSaveRequest;
+import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.SignupRequest;
 
 public class ValidateUtils {
@@ -39,15 +39,15 @@ public class ValidateUtils {
 		return new SysError();
 	}
 	
-	public static void validateHouse(HouseSaveRequest houseSaveRequest) throws MyFileNotFoundException{
-		if(checkNullAndEmpty(houseSaveRequest.getName())) {
+	public static void validateHouse(HouseRequest request) throws MyFileNotFoundException{
+		if(checkNullAndEmpty(request.getName())) {
 			throw new MyFileNotFoundException("Name is require!");
 		}
 		/*
 		 * if(houseSaveRequest.getTypeIds() == null){ throw new
 		 * MyFileNotFoundException("Type is require!"); }
 		 */
-		if(checkNullAndEmpty(houseSaveRequest.getAddress())) {
+		if(checkNullAndEmpty(request.getAddress())) {
 			throw new MyFileNotFoundException("Address is require!");
 		}
 	}

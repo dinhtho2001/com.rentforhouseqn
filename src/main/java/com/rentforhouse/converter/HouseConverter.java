@@ -1,34 +1,21 @@
 package com.rentforhouse.converter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.entity.House;
-import com.rentforhouse.entity.HouseType;
-import com.rentforhouse.entity.User;
-import com.rentforhouse.exception.MyFileNotFoundException;
-import com.rentforhouse.payload.request.HouseSaveRequest;
-import com.rentforhouse.repository.IHouseTypeRepository;
-import com.rentforhouse.repository.IUserRepository;
-import com.rentforhouse.service.impl.userdetail.UserDetailsImpl;
-import com.rentforhouse.utils.ValidateUtils;
+import com.rentforhouse.payload.request.HouseRequest;
+import com.rentforhouse.payload.request.SaveHouseRequest;
 
 @Component
 public class HouseConverter {
 
 	@Autowired
 	private ModelMapper modelMapper;
-	@Autowired
-	private IUserRepository userRepository;
-	@Autowired
-	private IHouseTypeRepository houseTypeRepository;
 
 	public HouseDto convertToDto(House houseEntity) {
 		HouseDto houseDto = modelMapper.map(houseEntity, HouseDto.class);
@@ -42,9 +29,14 @@ public class HouseConverter {
 		 */
 		return houseDto;
 	}
+	
+	public HouseDto convertToDto(SaveHouseRequest saveHouseRequest) {
+		HouseDto houseDto = modelMapper.map(saveHouseRequest, HouseDto.class);
+		return houseDto;
+	}
 
-	public House convertToEntity(HouseSaveRequest houseSaveRequest) {
-		House house = modelMapper.map(houseSaveRequest, House.class);
+	public House convertToEntity(Object request) {
+		House house = modelMapper.map(request, House.class);
 		/*
 		 * List<HouseType> houseTypes = new ArrayList<>(); if (houseSaveRequest.getId()
 		 * == null) { house.setImage(houseSaveRequest.getFiles().getOriginalFilename());
@@ -64,9 +56,30 @@ public class HouseConverter {
 		return house;
 	}
 
-	public House convertToEntity(HouseSaveRequest houseSaveRequest, House house) {
-		house = modelMapper.map(houseSaveRequest, House.class);
+	public House convertToEntity(Object request, House house) {
+		house = modelMapper.map(request, House.class);
 		return house;
+	}
+
+	public SaveHouseRequest toSaveHouseRequest(HouseRequest request, MultipartFile image, MultipartFile image2,
+			MultipartFile image3, MultipartFile image4, MultipartFile image5) {
+		SaveHouseRequest saveHouseRequest = modelMapper.map(request, SaveHouseRequest.class);
+		if (image.getResource()!= null) {
+			saveHouseRequest.setImage(image);
+		}
+		if (image2.getResource()!= null) {
+			saveHouseRequest.setImage(image2);
+		}
+		if (image3.getResource()!= null) {
+			saveHouseRequest.setImage(image3);
+		}
+		if (image4.getResource()!= null) {
+			saveHouseRequest.setImage(image4);
+		}
+		if (image5.getResource()!= null) {
+			saveHouseRequest.setImage(image5);
+		}
+		return saveHouseRequest;
 	}
 
 }

@@ -8,5 +8,5 @@ import com.rentforhouse.entity.HouseType;
 
 public interface IHouseTypeRepository extends JpaRepository<HouseType, Long>{
 	List<HouseType> findByHouses_Id(Long id);
-
+	HouseType findByCode(String code);
 }
