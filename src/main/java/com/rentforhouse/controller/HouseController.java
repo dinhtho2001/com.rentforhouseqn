@@ -135,8 +135,8 @@ public class HouseController {
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN', 'ROLE_STAFF')")
 	public ResponseEntity<?> saveHouse(@ModelAttribute HouseRequest request, @RequestParam MultipartFile image,
-			@RequestPart(required = false) MultipartFile image2, @RequestParam(required = false) MultipartFile image3, @RequestParam MultipartFile image4,
-			@RequestParam MultipartFile image5) {
+			@RequestParam(required = false) MultipartFile image2, @RequestParam(required = false) MultipartFile image3, @RequestParam(required = false) MultipartFile image4,
+			@RequestParam(required = false) MultipartFile image5) {
 		return houseService.save(houseConverter.toSaveHouseRequest(request, image, image2, image3, image4, image5));
 
 	}
@@ -144,9 +144,9 @@ public class HouseController {
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN', 'ROLE_STAFF')")
 	public ResponseEntity<?> updateHouse(@ModelAttribute HouseRequest request, @PathVariable("id") Long id,
-			@RequestParam Boolean status, @RequestParam MultipartFile image, @RequestParam MultipartFile image2,
-			@RequestParam MultipartFile image3, @RequestParam MultipartFile image4,
-			@RequestParam MultipartFile image5) {
+			@RequestParam Boolean status, @RequestParam(required = false) MultipartFile image, @RequestParam(required = false) MultipartFile image2,
+			@RequestParam(required = false) MultipartFile image3, @RequestParam(required = false) MultipartFile image4,
+			@RequestParam(required = false) MultipartFile image5) {
 		request.setId(id);
 		request.setStatus(status);
 		return houseService.save(houseConverter.toSaveHouseRequest(request, image, image2, image3, image4, image5));
