@@ -52,7 +52,7 @@ public class ProfileController {
 	}
 	
 	@PutMapping()
-	@PreAuthorize("hasAnyRole('ROLE_USER')")
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> update(@ModelAttribute ProfileRequest request){
 		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -60,7 +60,7 @@ public class ProfileController {
 	}
 	
 	@PostMapping("/image/{userId}/")
-	@PreAuthorize("hasAnyRole('ROLE_USER')")
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> updateImage(@PathVariable(value = "userId") Long id, @RequestParam MultipartFile file){
 		if (SecurityUtils.getPrincipal().getId() != id) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)

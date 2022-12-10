@@ -45,7 +45,7 @@ public class SaveHouseRequest {
 
 	private MultipartFile image5;
 
-	private MultipartFile toilet;
+	private String toilet;
 
 	private String floor;
 	

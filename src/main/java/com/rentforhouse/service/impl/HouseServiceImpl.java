@@ -40,6 +40,7 @@ import com.rentforhouse.repository.IHouseTypeRepository;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IHouseService;
+import com.rentforhouse.utils.SecurityUtils;
 
 @Service
 public class HouseServiceImpl implements IHouseService {
@@ -69,12 +70,12 @@ public class HouseServiceImpl implements IHouseService {
 	@Transactional
 	public ResponseEntity<?> save(SaveHouseRequest request) {
 		try {
-			House house = houseConverter.convertToEntity(request);
-			
+			House house = houseConverter.convertToEntity(request);		
 			/* request Save */
 			if (request.getId() == null) {
 				house.setView(0);
 				house.setStatus(false);
+				house.setUser(userRepository.findById(SecurityUtils.getPrincipal().getId()).orElse(new User()));
 			}else {
 				/* request Update */
 				house.setUser(userRepository.findById(request.getId()).orElse(new User()));
@@ -90,23 +91,23 @@ public class HouseServiceImpl implements IHouseService {
 			}
 			house.setHouseTypes(typeHouses);
 			try {
-				if (request.getImage().getResource().exists()) {
+				if (request.getImage()!= null) {
 					storageService.save(request.getImage(), Storage.houses.name());
 					house.setImage(request.getImage().getName());
 				}
-				if (request.getImage2().getResource().exists()) {
+				if (request.getImage2()!= null) {
 					storageService.save(request.getImage2(), Storage.houses.name());
 					house.setImage2(request.getImage2().getName());
 				}
-				if (request.getImage3().getResource().exists()) {
+				if (request.getImage3()!= null) {
 					storageService.save(request.getImage3(), Storage.houses.name());
 					house.setImage3(request.getImage3().getName());
 				}
-				if (request.getImage4().getResource().exists()) {
+				if (request.getImage4()!= null) {
 					storageService.save(request.getImage4(), Storage.houses.name());
 					house.setImage4(request.getImage4().getName());
 				}
-				if (request.getImage5().getResource().exists()) {
+				if (request.getImage5()!= null) {
 					storageService.save(request.getImage5(), Storage.houses.name());
 					house.setImage5(request.getImage5().getName());
 				}

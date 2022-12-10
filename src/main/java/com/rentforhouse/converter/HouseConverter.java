@@ -29,7 +29,7 @@ public class HouseConverter {
 		 */
 		return houseDto;
 	}
-	
+
 	public HouseDto convertToDto(SaveHouseRequest saveHouseRequest) {
 		HouseDto houseDto = modelMapper.map(saveHouseRequest, HouseDto.class);
 		return houseDto;
@@ -64,20 +64,20 @@ public class HouseConverter {
 	public SaveHouseRequest toSaveHouseRequest(HouseRequest request, MultipartFile image, MultipartFile image2,
 			MultipartFile image3, MultipartFile image4, MultipartFile image5) {
 		SaveHouseRequest saveHouseRequest = modelMapper.map(request, SaveHouseRequest.class);
-		if (image.getResource()!= null) {
+		if (image != null) {
 			saveHouseRequest.setImage(image);
 		}
-		if (image2.getResource()!= null) {
-			saveHouseRequest.setImage(image2);
+		if (image2 != null) {
+			saveHouseRequest.setImage2(image2);
 		}
-		if (image3.getResource()!= null) {
-			saveHouseRequest.setImage(image3);
+		if (image3 != null) {
+			saveHouseRequest.setImage3(image3);
 		}
-		if (image4.getResource()!= null) {
-			saveHouseRequest.setImage(image4);
+		if (image4 != null) {
+			saveHouseRequest.setImage4(image4);
 		}
-		if (image5.getResource()!= null) {
-			saveHouseRequest.setImage(image5);
+		if (image5 != null) {
+			saveHouseRequest.setImage5(image5);
 		}
 		return saveHouseRequest;
 	}

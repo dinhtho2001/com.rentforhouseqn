@@ -91,11 +91,12 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 				Path filePath = path.resolve(fileName);
 				Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);			
 				FileUploadResponse response = new FileUploadResponse();
+				Constant constant = new Constant();
 				response.setFileName(fileName);
 				response.setSize(file.getSize());
 				response.setType(file.getContentType());
 				response.setDownloadUrl("/api/file/downloadFile/" + fileName);
-				response.setUrl("/api/file/" + fileName);
+				response.setUrl(constant.getBASE_URL() + "/api/file/" + fileName);
 				return response;
 			} catch (IOException e) {
 				throw new IOException("Could not save file: " + fileName, e);
