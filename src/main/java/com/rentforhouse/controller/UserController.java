@@ -69,7 +69,8 @@ public class UserController {
 
 	@PutMapping()
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> updateUser(@ModelAttribute UserRequest request, @RequestParam(required = false) MultipartFile image) {
+	public ResponseEntity<?> updateUser(@RequestParam Long id,@ModelAttribute UserRequest request, @RequestParam(required = false) MultipartFile image) {
+		request.setId(id);
 		return userService.save(request, image);
 	}
 	
