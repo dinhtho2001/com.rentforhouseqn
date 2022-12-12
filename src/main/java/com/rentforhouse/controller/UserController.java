@@ -65,16 +65,16 @@ public class UserController {
 		return userService.delete(id);
 	}
 
-	@PutMapping()
+	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> updateUser(@RequestParam("id") Integer id,@ModelAttribute UserRequest request, @RequestParam(required = false) MultipartFile image) {
+	public ResponseEntity<?> updateUser(@PathVariable("id") Integer id,@ModelAttribute UserRequest request, @RequestParam(required = false, name = "image") MultipartFile image) {
 		request.setId(id.longValue());
 		return userService.save(request, image);
 	}
 	
 	@PostMapping()
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> save(@ModelAttribute UserRequest request, @RequestParam(required = false)MultipartFile image) {
+	public ResponseEntity<?> save(@ModelAttribute UserRequest request, @RequestParam(required = false, name = "file")MultipartFile image) {
 		return userService.save(request, image);
 	}
 	
