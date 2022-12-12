@@ -64,55 +64,24 @@ public class UserController {
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> deleteUserById(@PathVariable("id") Long id) {
-		if (userService.delete(id)) {
-			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
-					new MessageResponse("successful delete"), HttpStatus.OK.name()));		
-		}else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("can-not-delete", new ErrorParam())));
-		}
-		
+		return userService.delete(id);
 	}
 
 	@PutMapping()
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> updateUser(@ModelAttribute UserRequest request, MultipartFile image) {
-		UserDto userDto = userService.save(request, image);
-		if (userDto.getId() != null) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new SuccessReponse(Param.success.name(), userDto, HttpStatus.OK.name()));
-		} else if (userDto.getEmail() != null) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-email", new ErrorParam(Param.email.name()))));
-		} else if (userDto.getPhone() != null) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
-		} else if (userDto.getUserName() != null) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-username", new ErrorParam(Param.username.name()))));
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	public ResponseEntity<?> updateUser(@ModelAttribute UserRequest request, @RequestParam(required = false) MultipartFile image) {
+		return userService.save(request, image);
 	}
 	
 	@PostMapping()
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> save(@ModelAttribute UserRequest request, MultipartFile image) {
-		UserDto userDto = userService.save(request, image);
-		if (userDto.getId() != null) {
-			return ResponseEntity.status(HttpStatus.OK)
-					.body(new SuccessReponse(Param.success.name(), userDto, HttpStatus.OK.name()));
-		} else if (userDto.getEmail() != null) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-email", new ErrorParam(Param.email.name()))));
-		} else if (userDto.getPhone() != null) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
-		} else if (userDto.getUserName() != null) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-username", new ErrorParam(Param.username.name()))));
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+	public ResponseEntity<?> save(@ModelAttribute UserRequest request, @RequestParam(required = false)MultipartFile image) {
+		return userService.save(request, image);
+	}
+	
+	@PutMapping("/update-role/{id}")
+	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
+	public ResponseEntity<?> updateUser(@PathVariable("id") Long id) {
+		return userService.updateRoles(id);
 	}
 }
