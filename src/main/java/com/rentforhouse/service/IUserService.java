@@ -16,4 +16,5 @@ public interface IUserService {
 	
 	FileUploadResponse updateImage(Long id, MultipartFile file);
 	ResponseEntity<?> updateRoles(Long id);
+	ResponseEntity<?> search(String content, int limit, int page);
 }

@@ -67,20 +67,30 @@ public class UserController {
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> updateUser(@PathVariable("id") Integer id,@ModelAttribute UserRequest request, @RequestParam(required = false, name = "image") MultipartFile image) {
+	public ResponseEntity<?> updateUser(@PathVariable("id") Integer id, @ModelAttribute UserRequest request,
+			@RequestParam(required = false, name = "image") MultipartFile image) {
 		request.setId(id.longValue());
 		return userService.save(request, image);
 	}
-	
+
 	@PostMapping()
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> save(@ModelAttribute UserRequest request, @RequestParam(required = false, name = "file")MultipartFile image) {
+	public ResponseEntity<?> save(@ModelAttribute UserRequest request,
+			@RequestParam(required = false, name = "file") MultipartFile image) {
 		return userService.save(request, image);
 	}
-	
+
 	@PutMapping("/update-role/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> updateUser(@PathVariable("id") Long id) {
 		return userService.updateRoles(id);
+	}
+
+	@PostMapping("/search/")
+	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
+	public ResponseEntity<?> searchAll(
+			@RequestParam(required = false, name = "content") String content,
+			@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit) {
+		return userService.search(content, limit, page);
 	}
 }
