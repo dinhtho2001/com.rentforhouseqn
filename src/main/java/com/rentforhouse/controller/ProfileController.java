@@ -50,8 +50,7 @@ public class ProfileController {
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> update(@ModelAttribute ProfileRequest request){
 		
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Chua lam", new ErrorParam())));
+		return userService.updateProfile(request);
 	}
 	
 	@PostMapping("/image/{userId}/")

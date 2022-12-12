@@ -29,6 +29,7 @@ import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
+import com.rentforhouse.payload.request.ProfileRequest;
 import com.rentforhouse.payload.request.UserRequest;
 import com.rentforhouse.payload.response.DataGetResponse;
 import com.rentforhouse.payload.response.ErrorResponse;
@@ -262,6 +263,31 @@ public class UserServiceImpl implements IUserService {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
 					new SysError("error: " + e.toString(), new ErrorParam())));
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> updateProfile(ProfileRequest request) {
+		if (userRepository.existsByEmail(request.getEmail())) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+					new SysError("exist-email", new ErrorParam(Param.email.name()))));
+		}
+		if (userRepository.existsByPhone(request.getPhone())) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+					new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
+		}
+		User user = new User();
+		try {
+			user = (userRepository.findById(SecurityUtils.getPrincipal().getId()).get());
+			user.setLastName(request.getLastName());
+			user.setFirstName(request.getFirstName());
+			user.setPhone(request.getPhone());
+			user.setEmail(request.getEmail());
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), userRepository.save(user), HttpStatus.OK.name()));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+					new SysError("error: " + e, new ErrorParam(Param.phone.name()))));
 		}
 	}
 
