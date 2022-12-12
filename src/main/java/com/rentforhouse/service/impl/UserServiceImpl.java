@@ -89,8 +89,7 @@ public class UserServiceImpl implements IUserService {
 			if (image != null) {
 				FileUploadResponse fileUploadResponse = fileService.save(image, Storage.users.name());
 				userDto.setImage(fileUploadResponse.getFileName());
-			}
-			else {
+			} else {
 				userDto.setImage(userRepository.findById(userDto.getId()).get().getImage());
 			}
 			List<RoleDto> roleDtos = new ArrayList<>();
@@ -239,34 +238,31 @@ public class UserServiceImpl implements IUserService {
 			Page<User> users = null;
 			if (content != null) {
 				users = userRepository.findAllByContent(content, pageable);
-			}else {
+			} else {
 				users = userRepository.findAll(pageable);
 			}
 			List<UserDto> userDtos = new ArrayList<>();
-			for (User user : users) {
-				UserDto userDto = new UserDto();
-				userDto = userConverter.convertToDto(user);
-				userDto.setImage(fileService.getUrlImage(userDto.getImage()));
-				userDtos.add(userDto);
-			}
-
-			if (userDtos.get(0) != null) {
+			if (users.hasNext()) {
+				for (User user : users) {
+					UserDto userDto = new UserDto();
+					userDto = userConverter.convertToDto(user);
+					userDto.setImage(fileService.getUrlImage(userDto.getImage()));
+					userDtos.add(userDto);
+				}
 				dataGetResponse.setTotal_page(users.getTotalPages());
 				dataGetResponse.setPage(page);
 				dataGetResponse.setData(userDtos);
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new SuccessReponse(Param.success.name(), dataGetResponse, HttpStatus.OK.name()));
 			} else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
-						HttpStatus.BAD_REQUEST.name(), new SysError("", new ErrorParam())));
-			}		
-				
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("", new ErrorParam())));
+			}
+
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
 					new SysError("error: " + e.toString(), new ErrorParam())));
 		}
 	}
-
-	
 
 }
