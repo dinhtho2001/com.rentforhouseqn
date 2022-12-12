@@ -20,19 +20,16 @@ import com.rentforhouse.common.TypeHouse;
 import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.converter.UserConverter;
 import com.rentforhouse.dto.HouseDto;
-import com.rentforhouse.dto.UserDto;
-import com.rentforhouse.entity.Comment;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.HouseType;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
-import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.SaveHouseRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
-import com.rentforhouse.payload.response.FileUploadResponse;
 import com.rentforhouse.payload.response.HouseGetResponse;
+import com.rentforhouse.payload.response.MessageResponse;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.repository.ICommentRepository;
 import com.rentforhouse.repository.IHouseRepository;
@@ -132,7 +129,7 @@ public class HouseServiceImpl implements IHouseService {
 	}
 
 	@Override
-	public HouseDto findById(Long id) {
+	public ResponseEntity<?> findById(Long id) {
 		House house = houseRepository.findById(id).orElse(new House());
 		if (house.getId() != null) {
 			HouseDto houseDto = houseConverter.convertToDto(house);
@@ -142,24 +139,28 @@ public class HouseServiceImpl implements IHouseService {
 			houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
 			houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
 			houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
-			return houseDto;
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), houseDto, HttpStatus.OK.name()));
 		} else {
-			return new HouseDto();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
 		}
 	}
 
 	@Override
-	public Boolean delete(Long id) {
+	public ResponseEntity<?> delete(Long id) {
 		try {
 			houseRepository.deleteById(id);
-			return true;
+			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
+					new MessageResponse("successful delete"), HttpStatus.OK.name()));
 		} catch (Exception e) {
-			return false;
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("id-not-found", new ErrorParam("id"))));
 		}
 	}
 
 	@Override
-	public HouseGetResponse findAll(int page, int limit) {
+	public ResponseEntity<?> findAll(int page, int limit) {
 		HouseGetResponse response = new HouseGetResponse();
 		List<HouseDto> houseDtos = new ArrayList<>();
 		HouseDto houseDto;
@@ -183,18 +184,21 @@ public class HouseServiceImpl implements IHouseService {
 					response.setPage(page);
 					response.setTotal_page(houseEntities.getTotalPages());
 				}
-				return response;
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new SuccessReponse(Param.success.name(), response, HttpStatus.OK.name()));
 			} else {
-				return new HouseGetResponse();
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 			}
 
 		} catch (Exception e) {
-			return new HouseGetResponse();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 		}
 	}
 
 	@Override
-	public HouseGetResponse findAllByUserId(Long userId, int page, int limit) {
+	public ResponseEntity<?> findAllByUserId(Long userId, int page, int limit) {
 		HouseGetResponse response = new HouseGetResponse();
 		List<HouseDto> houseDtos = new ArrayList<>();
 		HouseDto houseDto;
@@ -217,56 +221,67 @@ public class HouseServiceImpl implements IHouseService {
 				response.setHouses(houseDtos);
 				response.setPage(page);
 				response.setTotal_page(houseEntities.getTotalPages());
-				return response;
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new SuccessReponse("success", response, HttpStatus.OK.name()));
 			} else {
-				return new HouseGetResponse();
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+						new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
 			}
 		} catch (Exception e) {
-			return new HouseGetResponse();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
 		}
 	}
 
 	@Override
-	public List<HouseDto> findHouse(SearchHouseRequest request) {
-		List<HouseDto> houseDtos = new ArrayList<>();
-		List<House> houses = new ArrayList<>();
-		if (request.getName() != "") {
-			houses = houseRepository.findByNameContaining(request.getName());
-		} else {
-			houses = houseRepository.findAll();
+	public ResponseEntity<?> findHouse(SearchHouseRequest request) {
+		try {
+			List<HouseDto> houseDtos = new ArrayList<>();
+			List<House> houses = new ArrayList<>();
+			if (request.getName() != "") {
+				houses = houseRepository.findByNameContaining(request.getName());
+			} else {
+				houses = houseRepository.findAll();
+			}
+			for (House house : houses) {
+				HouseDto houseDto = houseConverter.convertToDto(house);
+				houseDto.setUser(userConverter.convertToDto(house.getUser()));
+				houseDto.setImage(storageService.getUrlImage(house.getImage()));
+				houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+				houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+				houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+				houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
+				houseDtos.add(houseDto);
+			}
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), houseDtos, HttpStatus.OK.name()));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 		}
-		for (House house : houses) {
-			HouseDto houseDto = houseConverter.convertToDto(house);
-			houseDto.setUser(userConverter.convertToDto(house.getUser()));
-			houseDto.setImage(storageService.getUrlImage(house.getImage()));
-			houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
-			houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
-			houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
-			houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
-			houseDtos.add(houseDto);
-		}
-		return houseDtos;
 	}
 
 	@Override
 	@Transactional
-	public Boolean viewPlus(Long id) {
+	public ResponseEntity<?> viewPlus(Long id) {
 		try {
 			House house = new House();
 			house = houseRepository.findById(id).orElse(new House());
 			if (house.getId() != null) {
 				house.setView(house.getView() + 1);
 				houseRepository.save(house);
-				return true;
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new SuccessReponse(Param.success.name(), "successfully", HttpStatus.OK.name()));
 			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		return false;
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+				new SysError("house-not-found", new ErrorParam("id"))));
 	}
 
 	@Override
-	public HouseGetResponse findHousesByStatus(Boolean status, int page, int limit) {
+	public ResponseEntity<?> findHousesByStatus(Boolean status, int page, int limit) {
 		HouseGetResponse response = new HouseGetResponse();
 		List<HouseDto> houseDtos = new ArrayList<>();
 		Page<House> houses = null;
@@ -288,17 +303,20 @@ public class HouseServiceImpl implements IHouseService {
 				response.setHouses(houseDtos);
 				response.setPage(page);
 				response.setTotal_page(houses.getTotalPages());
-				return response;
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new SuccessReponse(Param.success.name(), response, HttpStatus.OK.name()));
 			} else {
-				return new HouseGetResponse();
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 			}
 		} catch (Exception e) {
-			return new HouseGetResponse();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 		}
 	}
 
 	@Override
-	public HouseGetResponse findByTypeId(Long id, int page, int limit) {
+	public ResponseEntity<?> findByTypeId(Long id, int page, int limit) {
 		HouseGetResponse response = new HouseGetResponse();
 		Page<House> houses = null;
 		List<HouseDto> houseDtos = new ArrayList<>();
@@ -320,34 +338,41 @@ public class HouseServiceImpl implements IHouseService {
 				response.setHouses(houseDtos);
 				response.setPage(page);
 				response.setTotal_page(houses.getTotalPages());
-				return response;
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new SuccessReponse(Param.success.name(), response, HttpStatus.OK.name()));
 			} else {
-				return new HouseGetResponse();
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam())));
 			}
 		} catch (Exception e) {
-			return new HouseGetResponse();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam())));
 		}
 	}
 
 	@Override
 	@Transactional
-	public boolean updateStatus(Long id, Boolean status) {
+	public ResponseEntity<?> updateStatus(Long id, Boolean status) {
 		try {
 			House house = new House();
 			house = houseRepository.findById(id).orElse(new House());
 			if (house.getId() != null) {
 				house.setStatus(status);
 				houseRepository.save(house);
-				return true;
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new SuccessReponse(Param.success.name(), "successfully", HttpStatus.OK.name()));
 			}
 		} catch (Exception e) {
 			System.out.println(e);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+					new SysError("house-not-found", new ErrorParam("id"))));
 		}
-		return false;
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+				new SysError("house-not-found", new ErrorParam("id"))));
 	}
 
 	@Override
-	public List<HouseDto> findTop5HouseByView() {
+	public ResponseEntity<?> findTop5HouseByView() {
 		List<HouseDto> houseDtos = new ArrayList<>();
 		try {
 			List<House> houses = houseRepository.findTop5ThanOrderByViewDesc();
@@ -360,9 +385,11 @@ public class HouseServiceImpl implements IHouseService {
 				houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
 				houseDtos.add(houseDto);
 			}
-			return houseDtos;
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), houseDtos, HttpStatus.OK.name()));
 		} catch (Exception e) {
-			return new ArrayList<>();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 		}
 	}
 }

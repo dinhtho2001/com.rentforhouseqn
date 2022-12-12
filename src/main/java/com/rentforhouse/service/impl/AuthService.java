@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,16 +15,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.rentforhouse.common.Param;
 import com.rentforhouse.common.UserRole;
 import com.rentforhouse.converter.RoleConverter;
 import com.rentforhouse.converter.UserConverter;
 import com.rentforhouse.dto.RoleDto;
 import com.rentforhouse.dto.UserDto;
-import com.rentforhouse.entity.Role;
 import com.rentforhouse.entity.User;
+import com.rentforhouse.exception.ErrorParam;
+import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.LoginRequest;
 import com.rentforhouse.payload.request.SignupRequest;
+import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.JwtResponse;
+import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.repository.IRoleRepository;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.IAuthService;
@@ -84,25 +90,25 @@ public class AuthService implements IAuthService {
 
 	@Override
 	@Transactional
-	public UserDto signup(SignupRequest request) {
+	public ResponseEntity<?>  signup(SignupRequest request) {
 		UserDto dto = new UserDto();
 		if (userRepository.existsByUserName(request.getUserName())) {
 			dto.setUserName(request.getUserName());
-			return dto;
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+					new SysError("exist-username", new ErrorParam(Param.username.name()))));
 		}
 		if (userRepository.existsByEmail(request.getEmail())) {
 			dto.setEmail(request.getEmail());
-			return dto;
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+					new SysError("exist-email", new ErrorParam(Param.email.name()))));
 		}
 		/*
 		 * if (userRepository.existsByPhone(request.getPhone())) {
-		 * dto.setPhone(request.getPhone()); return dto; }
+		 * dto.setPhone(request.getPhone()); return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+						new SysError("exist-phone", new ErrorParam(Param.phone.name())))); }
 		 */ else {
-			User user = new User();
 			List<RoleDto> roleDtos = new ArrayList<>();
-			Role role = roleRepository.findByName(UserRole.ROLE_USER.name());
-			RoleDto roleDto = roleConverter.convertToDto(role);
-			roleDtos.add(roleDto);
+			roleDtos.add(roleConverter.convertToDto(roleRepository.findByName(UserRole.ROLE_USER.name())));
 			dto.setLastName(request.getLastName());
 			dto.setFirstName(request.getFirstName());
 			dto.setUserName(request.getUserName());
@@ -112,11 +118,13 @@ public class AuthService implements IAuthService {
 			dto.setPassword(passwordEncoder.encode(request.getPassword()));
 			dto.setStatus(true);
 			dto.setRoles(roleDtos);
-			user = userRepository.save(userConverter.convertToEntity(dto));
+			User user = userRepository.save(userConverter.convertToEntity(dto));
 			if (user.getId() != null) {
-				return userConverter.convertToDto(user);
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new SuccessReponse(Param.success.name(), userConverter.convertToDto(user), HttpStatus.OK.name()));
 			} else {
-				return new UserDto();
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 			}
 		}
 	}

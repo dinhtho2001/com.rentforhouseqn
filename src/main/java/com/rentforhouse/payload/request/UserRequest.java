@@ -2,10 +2,7 @@ package com.rentforhouse.payload.request;
 
 import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
 import com.rentforhouse.common.UserRole;
-import com.rentforhouse.dto.RoleDto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

@@ -19,7 +19,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
@@ -32,9 +31,6 @@ import com.rentforhouse.service.FilesStorageService;
 
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService {
-
-	private static final Path rootPath = Paths.get("src/main/resources/assets");
-
 	
 	protected void init(Path path) throws IOException {
 		try {
@@ -68,17 +64,17 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 		switch (lastContainerName) {
 		case "users":
 			
-			lastPath = rootPath.getParent()+"\\"+ rootPath.getFileName() +"\\images\\users";
+			lastPath = Constant.rootPath.getParent()+"\\"+ Constant.rootPath.getFileName() +"\\images\\users";
 			path = Paths.get(lastPath);
 			break;
 
 		case "houses":
-			lastPath = rootPath.getParent()+"\\"+ rootPath.getFileName() +"\\images\\houses";
+			lastPath = Constant.rootPath.getParent()+"\\"+ Constant.rootPath.getFileName() +"\\images\\houses";
 			System.out.println(lastPath);
 			path = Paths.get(lastPath);
 			break;
 		default:
-			path = rootPath;
+			path = Constant.rootPath;
 			break;
 		}
 		try {
@@ -91,12 +87,11 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 				Path filePath = path.resolve(fileName);
 				Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);			
 				FileUploadResponse response = new FileUploadResponse();
-				Constant constant = new Constant();
 				response.setFileName(fileName);
 				response.setSize(file.getSize());
 				response.setType(file.getContentType());
 				response.setDownloadUrl("/api/file/downloadFile/" + fileName);
-				response.setUrl(constant.getBASE_URL() + "/api/file/" + fileName);
+				response.setUrl(Constant.BASE_URL + "/api/file/" + fileName);
 				return response;
 			} catch (IOException e) {
 				throw new IOException("Could not save file: " + fileName, e);
@@ -108,8 +103,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 	
 	@Override
 	public String getUrlImage(String fileName) {
-		Constant constant = new Constant();
-		return constant.getBASE_URL() +"/api/file/" + fileName;
+		return Constant.BASE_URL +"/api/file/" + fileName;
 	}
 
 	@Override
@@ -119,15 +113,15 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 		try {
 			Path file = null;
 			if (filename.contains(Storage.users.name())) {
-				lastPath = rootPath.getParent()+"\\"+ rootPath.getFileName() +"\\images\\users";
+				lastPath = Constant.rootPath.getParent()+"\\"+ Constant.rootPath.getFileName() +"\\images\\users";
 				path = Paths.get(lastPath);
 				file = path.resolve(filename);
 			}
 			if (filename.contains(Storage.houses.name())) {
-				lastPath = rootPath.getParent()+"\\"+ rootPath.getFileName() +"\\images\\houses";
+				lastPath = Constant.rootPath.getParent()+"\\"+ Constant.rootPath.getFileName() +"\\images\\houses";
 				path = Paths.get(lastPath);
 			}else {
-				file = rootPath.resolve(filename);
+				file = Constant.rootPath.resolve(filename);
 			}
 			
 			Resource resource = new UrlResource(file.toUri());
@@ -144,13 +138,13 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
 	@Override
 	public void deleteAll() {
-		FileSystemUtils.deleteRecursively(rootPath.toFile());
+		FileSystemUtils.deleteRecursively(Constant.rootPath.toFile());
 	}
 
 	@Override
 	public Stream<Path> loadAll() {
 		try {
-			return Files.walk(this.rootPath, 1).filter(path -> !path.equals(this.rootPath)).map(this.rootPath::relativize);
+			return Files.walk(Constant.rootPath, 1).filter(path -> !path.equals(Constant.rootPath)).map(Constant.rootPath::relativize);
 		} catch (IOException e) {
 			throw new RuntimeException("Could not load the files!");
 		}
@@ -161,13 +155,13 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 		Path path = null;
 		String lastPath = null;
 		if (filename.contains(Storage.users.name())) {
-			lastPath = rootPath.getParent()+"\\"+ rootPath.getFileName() +"\\images\\users";
+			lastPath = Constant.rootPath.getParent()+"\\"+ Constant.rootPath.getFileName() +"\\images\\users";
 			path = Paths.get(lastPath);
 		}else if (filename.contains(Storage.houses.name())) {
-			lastPath = rootPath.getParent()+"\\"+ rootPath.getFileName() +"\\images\\houses";
+			lastPath = Constant.rootPath.getParent()+"\\"+ Constant.rootPath.getFileName() +"\\images\\houses";
 			path = Paths.get(lastPath);
 		}else {
-			path = rootPath;
+			path = Constant.rootPath;
 		}
 		String filePath = (path + "\\" + filename);
 		byte[] image = Files.readAllBytes(new File(filePath).toPath());
@@ -188,7 +182,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 	@Override
 	  public Resource load(String filename) {
 	    try {
-	      Path file = rootPath.resolve(filename);
+	      Path file = Constant.rootPath.resolve(filename);
 	      Resource resource = new UrlResource(file.toUri());
 
 	      if (resource.exists() || resource.isReadable()) {

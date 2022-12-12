@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rentforhouse.converter.CommentConverter;
 import com.rentforhouse.converter.UserConverter;
 import com.rentforhouse.dto.CommentDto;
-import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.entity.Comment;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.User;
@@ -23,7 +22,6 @@ import com.rentforhouse.repository.ICommentRepository;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.ICommentService;
-import com.rentforhouse.service.IDateService;
 import com.rentforhouse.service.impl.userdetail.UserDetailsImpl;
 
 @Service
@@ -43,9 +41,6 @@ public class CommentService implements ICommentService {
 
 	@Autowired
 	private UserConverter userConverter;
-
-	@Autowired
-	private IDateService date;
 
 	@Override
 	@Transactional

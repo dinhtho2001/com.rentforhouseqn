@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.rentforhouse.converter.RoleConverter;
 import com.rentforhouse.dto.RoleDto;
-import com.rentforhouse.entity.House;
-import com.rentforhouse.entity.HouseType;
 import com.rentforhouse.entity.Role;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.payload.request.RoleRequest;

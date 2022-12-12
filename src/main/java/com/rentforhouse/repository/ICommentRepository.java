@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.rentforhouse.entity.Comment;
-import com.rentforhouse.entity.House;
 
 public interface ICommentRepository extends JpaRepository<Comment, Long>{
 

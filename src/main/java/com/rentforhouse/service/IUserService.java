@@ -3,7 +3,6 @@ package com.rentforhouse.service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.rentforhouse.dto.UserDto;
-import com.rentforhouse.payload.request.SignupRequest;
 import com.rentforhouse.payload.request.UserRequest;
 import com.rentforhouse.payload.response.DataGetResponse;
 import com.rentforhouse.payload.response.FileUploadResponse;
