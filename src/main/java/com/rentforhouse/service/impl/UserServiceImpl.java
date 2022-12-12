@@ -86,7 +86,13 @@ public class UserServiceImpl implements IUserService {
 			}
 		}
 		try {
-			FileUploadResponse fileUploadResponse = fileService.save(image, Storage.users.name());
+			if (image != null) {
+				FileUploadResponse fileUploadResponse = fileService.save(image, Storage.users.name());
+				userDto.setImage(fileUploadResponse.getFileName());
+			}
+			else {
+				userDto.setImage(userRepository.findById(userDto.getId()).get().getImage());
+			}
 			List<RoleDto> roleDtos = new ArrayList<>();
 			for (UserRole item : request.getRoles()) {
 				if (item == null) {
@@ -100,7 +106,6 @@ public class UserServiceImpl implements IUserService {
 			userDto.setUserName(request.getUserName());
 			userDto.setEmail(request.getEmail());
 			userDto.setPhone(request.getPhone());
-			userDto.setImage(fileUploadResponse.getFileName());
 			userDto.setPassword(passwordEncoder.encode(request.getPassword()));
 			userDto.setStatus(request.getStatus());
 			userDto.setRoles(roleDtos);
