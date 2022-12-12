@@ -18,12 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.rentforhouse.common.Param;
 import com.rentforhouse.dto.UserDto;
-import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.UserRequest;
 import com.rentforhouse.payload.response.DataGetResponse;
 import com.rentforhouse.payload.response.ErrorResponse;
-import com.rentforhouse.payload.response.MessageResponse;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IUserService;
 
@@ -69,8 +67,8 @@ public class UserController {
 
 	@PutMapping()
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> updateUser(@RequestParam("id") Long id,@ModelAttribute UserRequest request, @RequestParam(required = false) MultipartFile image) {
-		request.setId(id);
+	public ResponseEntity<?> updateUser(@RequestParam("id") Integer id,@ModelAttribute UserRequest request, @RequestParam(required = false) MultipartFile image) {
+		request.setId(id.longValue());
 		return userService.save(request, image);
 	}
 	

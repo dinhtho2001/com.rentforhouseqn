@@ -58,60 +58,63 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private FilesStorageService fileService;
 
 	@Override
 	@Transactional
 	public ResponseEntity<?> save(UserRequest request, MultipartFile image) {
-		if (userRepository.existsByUserName(request.getUserName())) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-username", new ErrorParam(Param.username.name()))));
+		UserDto userDto = new UserDto();
+		/* sửa */
+		if (request.getId() != null) {
+			userDto.setId(request.getId());
 		}
-		if (userRepository.existsByEmail(request.getEmail())) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-email", new ErrorParam(Param.email.name()))));
-		}
-		if (userRepository.existsByPhone(request.getPhone())) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
-		} else {
-			UserDto userDto = new UserDto();
-			if (request.getId() != null) {
-				userDto.setId(request.getId());
+		/* save */
+		else {
+			if (userRepository.existsByUserName(request.getUserName())) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+						new SysError("exist-username", new ErrorParam(Param.username.name()))));
 			}
-			try {
-				FileUploadResponse fileUploadResponse = fileService.save(image, Storage.users.name());
-				List<RoleDto> roleDtos = new ArrayList<>();
-				for (UserRole item : request.getRoles()) {
-					if (item == null) {
-						continue;
-					}else {
-						roleDtos.add(roleConverter.convertToDto(roleRepository.findByName(item.name())));
-					}	
-				}
-				userDto.setLastName(request.getLastName());
-				userDto.setFirstName(request.getFirstName());
-				userDto.setUserName(request.getUserName());
-				userDto.setEmail(request.getEmail());
-				userDto.setPhone(request.getPhone());
-				userDto.setImage(fileUploadResponse.getFileName());
-				userDto.setPassword(passwordEncoder.encode(request.getPassword()));
-				userDto.setStatus(request.getStatus());
-				userDto.setRoles(roleDtos);
-				User user = userRepository.save(userConverter.convertToEntity(userDto));
-				if (user.getId() != null) {
-					return ResponseEntity.status(HttpStatus.OK)
-							.body(new SuccessReponse(Param.success.name(), userConverter.convertToDto(user), HttpStatus.OK.name()));
+			if (userRepository.existsByEmail(request.getEmail())) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+						new SysError("exist-email", new ErrorParam(Param.email.name()))));
+			}
+			if (userRepository.existsByPhone(request.getPhone())) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+						new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
+			}
+		}
+		try {
+			FileUploadResponse fileUploadResponse = fileService.save(image, Storage.users.name());
+			List<RoleDto> roleDtos = new ArrayList<>();
+			for (UserRole item : request.getRoles()) {
+				if (item == null) {
+					continue;
 				} else {
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-							.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+					roleDtos.add(roleConverter.convertToDto(roleRepository.findByName(item.name())));
 				}
-			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError(e.toString(),new ErrorParam())));
 			}
+			userDto.setLastName(request.getLastName());
+			userDto.setFirstName(request.getFirstName());
+			userDto.setUserName(request.getUserName());
+			userDto.setEmail(request.getEmail());
+			userDto.setPhone(request.getPhone());
+			userDto.setImage(fileUploadResponse.getFileName());
+			userDto.setPassword(passwordEncoder.encode(request.getPassword()));
+			userDto.setStatus(request.getStatus());
+			userDto.setRoles(roleDtos);
+			User user = userRepository.save(userConverter.convertToEntity(userDto));
+			if (user.getId() != null) {
+				return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
+						userConverter.convertToDto(user), HttpStatus.OK.name()));
+			} else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+			}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError(e.toString(), new ErrorParam())));
 		}
 	}
 
@@ -153,9 +156,10 @@ public class UserServiceImpl implements IUserService {
 		try {
 			/* không được xóa id đang đăng nhập */
 			if (SecurityUtils.getPrincipal().getId().equals(id)) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-						new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("you-do-not-have-permission-to-delete", new ErrorParam())));
-			}else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+								new SysError("you-do-not-have-permission-to-delete", new ErrorParam())));
+			} else {
 				List<String> roles = new ArrayList<>();
 				for (GrantedAuthority authority : SecurityUtils.getPrincipal().getAuthorities()) {
 					roles.add(authority.getAuthority());
@@ -171,32 +175,33 @@ public class UserServiceImpl implements IUserService {
 					userRepository.deleteById(id);
 					return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
 							new MessageResponse("successful delete"), HttpStatus.OK.name()));
-				}else {
+				} else {
 					for (String item : roles) {
 						switch (item) {
-						
+
 						/* không được xóa id cùng cấp */
 						case "ROLE_STAFF":
-							System.out.println("đã vào ROLE_STAFF");			
-							return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-									new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("you-do-not-have-permission-to-delete", new ErrorParam())));
+							System.out.println("đã vào ROLE_STAFF");
+							return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+									.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+											new SysError("you-do-not-have-permission-to-delete", new ErrorParam())));
 
 						case "ROLE_USER":
 							userRepository.deleteById(id);
 							return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
 									new MessageResponse("successful delete"), HttpStatus.OK.name()));
 						default:
-							return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-									new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("can-not-delete", new ErrorParam())));
+							return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
+									HttpStatus.BAD_REQUEST.name(), new SysError("can-not-delete", new ErrorParam())));
 						}
 					}
-					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-							new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("can-not-delete", new ErrorParam())));
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
+							HttpStatus.BAD_REQUEST.name(), new SysError("can-not-delete", new ErrorParam())));
 				}
 			}
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("error: " + e.toString(), new ErrorParam())));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+					new SysError("error: " + e.toString(), new ErrorParam())));
 		}
 	}
 
@@ -204,14 +209,14 @@ public class UserServiceImpl implements IUserService {
 	@Transactional
 	public FileUploadResponse updateImage(Long id, MultipartFile file) {
 		FileUploadResponse fileResponse = fileService.save(file, Storage.users.name());
-		User user =  userRepository.findById(id).orElse(new User());
+		User user = userRepository.findById(id).orElse(new User());
 		user.setImage(fileResponse.getFileName());
 		try {
 			userRepository.save(user);
 		} catch (Exception e) {
 			return new FileUploadResponse();
 		}
-		
+
 		return fileResponse;
 	}
 
