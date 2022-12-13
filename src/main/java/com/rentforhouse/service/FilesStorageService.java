@@ -8,12 +8,13 @@ import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.payload.response.FileUploadResponse;
 
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FilesStorageService {
 
 
-	FileUploadResponse save(MultipartFile file, String lastContainerName);
+	ResponseEntity<?> save(MultipartFile file, String lastContainerName);
 
 	Resource download(String filename);
 
@@ -27,5 +28,6 @@ public interface FilesStorageService {
 
 	String getUrlImage(String fileName);
 
-	Resource load(String filename);
+	ResponseEntity<?> load(String filename);
+
 }

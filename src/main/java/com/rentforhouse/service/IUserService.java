@@ -14,7 +14,7 @@ public interface IUserService {
 	UserDto findbyId(Long id);
 	DataGetResponse findAll(int page, int limit);
 	ResponseEntity<?> delete(Long id);
-	FileUploadResponse updateImage(Long id, MultipartFile file);
+	ResponseEntity<?> updateImage(Long id, MultipartFile file);
 	ResponseEntity<?> updateRoles(Long id);
 	ResponseEntity<?> search(String content, int limit, int page);
 	ResponseEntity<?> updateProfile(ProfileRequest request);

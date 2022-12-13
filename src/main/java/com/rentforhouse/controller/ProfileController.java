@@ -49,7 +49,6 @@ public class ProfileController {
 	@PutMapping()
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> update(@ModelAttribute ProfileRequest request){
-		
 		return userService.updateProfile(request);
 	}
 	
@@ -60,12 +59,7 @@ public class ProfileController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("You have no right to change", new ErrorParam())));
 		}else {
-			FileUploadResponse fileResponse =userService.updateImage(id,file);
-			if (fileResponse.getUrl() != null) {
-				return ResponseEntity.status(HttpStatus.OK)	.body(new SuccessReponse(Param.success.name(), fileResponse, HttpStatus.OK.name()));
-			}
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error", new ErrorParam())));
+			return userService.updateImage(id,file);
 		}
 		
 	}

@@ -76,7 +76,7 @@ public class UserController {
 	@PostMapping()
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> save(@ModelAttribute UserRequest request,
-			@RequestParam(required = false, name = "file") MultipartFile image) {
+			@RequestParam(required = false, name = "image") MultipartFile image) {
 		return userService.save(request, image);
 	}
 

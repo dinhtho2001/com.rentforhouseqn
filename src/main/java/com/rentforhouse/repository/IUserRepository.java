@@ -15,6 +15,8 @@ import com.rentforhouse.entity.User;
 public interface IUserRepository extends JpaRepository<User, Long> {
 
 	User findOneById(User id);
+	User findByEmail(String email);
+	User findByPhone(String phone);
 
 	Optional<User> findByUserName(String username);
 

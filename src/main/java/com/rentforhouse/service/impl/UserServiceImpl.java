@@ -88,7 +88,8 @@ public class UserServiceImpl implements IUserService {
 		}
 		try {
 			if (image != null) {
-				FileUploadResponse fileUploadResponse = fileService.save(image, Storage.users.name());
+				ResponseEntity<?> uploadResponse = fileService.save(image, Storage.users.name());
+				FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
 				userDto.setImage(fileUploadResponse.getFileName());
 			} else {
 				userDto.setImage(userRepository.findById(userDto.getId()).get().getImage());
@@ -212,17 +213,18 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	@Transactional
-	public FileUploadResponse updateImage(Long id, MultipartFile file) {
-		FileUploadResponse fileResponse = fileService.save(file, Storage.users.name());
-		User user = userRepository.findById(id).orElse(new User());
-		user.setImage(fileResponse.getFileName());
-		try {
+	public ResponseEntity<?> updateImage(Long id, MultipartFile file) {
+		ResponseEntity<?> fileResponse = fileService.save(file, Storage.users.name());
+		if (fileResponse.getStatusCode().equals(HttpStatus.OK)) {
+			User user = userRepository.findById(id).orElse(new User());
+			FileUploadResponse fileUploadResponse = (FileUploadResponse) fileResponse.getBody();
+			user.setImage(fileUploadResponse.getUrl());
 			userRepository.save(user);
-		} catch (Exception e) {
-			return new FileUploadResponse();
+			return ResponseEntity.ok(fileResponse);
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error", new ErrorParam())));
 		}
-
-		return fileResponse;
 	}
 
 	@Override
@@ -268,21 +270,26 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public ResponseEntity<?> updateProfile(ProfileRequest request) {
-		if (userRepository.existsByEmail(request.getEmail())) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-email", new ErrorParam(Param.email.name()))));
-		}
-		if (userRepository.existsByPhone(request.getPhone())) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-					new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
-		}
 		User user = new User();
 		try {
 			user = (userRepository.findById(SecurityUtils.getPrincipal().getId()).get());
 			user.setLastName(request.getLastName());
 			user.setFirstName(request.getFirstName());
-			user.setPhone(request.getPhone());
-			user.setEmail(request.getEmail());
+			if (userRepository.existsByEmail(request.getEmail())) {
+				if (userRepository.findById(SecurityUtils.getPrincipal().getId()).get().equals(userRepository.findByEmail(request.getEmail()))) {
+					user.setEmail(request.getEmail());
+				} else {
+					return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+							new SysError("exist-email", new ErrorParam(Param.email.name()))));
+				}	
+			}
+			if (userRepository.existsByPhone(request.getPhone())) {
+				if (userRepository.findById(SecurityUtils.getPrincipal().getId()).get().equals(userRepository.findByPhone(request.getPhone()))) {
+					user.setPhone(request.getPhone());
+				} 
+				return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+						new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
+			}	
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new SuccessReponse(Param.success.name(), userRepository.save(user), HttpStatus.OK.name()));
 		} catch (Exception e) {

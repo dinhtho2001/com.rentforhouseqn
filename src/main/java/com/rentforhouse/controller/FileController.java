@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,13 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.rentforhouse.common.Param;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
-import com.rentforhouse.payload.request.FileRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
-import com.rentforhouse.payload.response.FileUploadResponse;
-import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.FilesStorageService;
 
 @RestController
@@ -37,14 +32,7 @@ public class FileController {
 
 	@PostMapping("/uploadFile")
 	public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile multipartFile) {
-		FileUploadResponse response = new FileUploadResponse();
-		response = service.save(multipartFile, "");
-		if (response.getDownloadUrl() != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
-					response, HttpStatus.OK.name()));
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("", new ErrorParam(""))));
+		return service.save(multipartFile, "");
 	}
 
 	@GetMapping("/downloadFile/{filename}")
@@ -61,39 +49,24 @@ public class FileController {
 		
 	}
 
-	@GetMapping("/{filename}")
-	public ResponseEntity<?> getfile(@PathVariable("filename") String filename) throws IOException {
-		byte[] imageData = service.GetImage(filename);
-		if (imageData.length != 0) {
-			return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(imageData);
-		}else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("", new ErrorParam(""))));
-		}
-		
-	}
+	/*
+	 * @GetMapping("/{filename}") public ResponseEntity<?>
+	 * getfile(@PathVariable("filename") String filename) throws IOException {
+	 * byte[] imageData = service.GetImage(filename); if (imageData.length != 0) {
+	 * return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf(
+	 * "image/png")).body(imageData); }else { return
+	 * ResponseEntity.status(HttpStatus.BAD_REQUEST) .body(new
+	 * ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("", new
+	 * ErrorParam("")))); }
+	 * 
+	 * }
+	 */
+	
+
 	
 	@GetMapping("/load/{filename}")
 	public ResponseEntity<?> loadfile(@PathVariable("filename") String filename) throws IOException {
-		Resource imageData = service.load(filename);
-		if (imageData.getURI() != null) {
-			return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(imageData);
-		}else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("", new ErrorParam(""))));
-		}
-		
+		return service.load(filename);		
 	}
-	
-	@PostMapping("/test/uploadFileModelAttribute")
-	public ResponseEntity<?> uploadFileModelAttribute(@ModelAttribute FileRequest file) throws IOException {
-		FileUploadResponse response = new FileUploadResponse();
-		response = service.save(file.file, "");
-		if (response.getDownloadUrl() != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
-					response, HttpStatus.OK.name()));
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("", new ErrorParam(""))));
-	}
+
 }
