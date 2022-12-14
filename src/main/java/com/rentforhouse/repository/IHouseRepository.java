@@ -20,13 +20,19 @@ public interface IHouseRepository extends JpaRepository<House, Long> {
 
 	Page<House> findByNameLikeAndHouseTypes_Id(String name, Long typeId, Pageable pageable);
 
-	@Query(value = "SELECT * FROM House u WHERE u.user_id=:userId ORDER BY u.createddate DESC", countQuery = "SELECT COUNT(id) FROM House u WHERE u.user_id=:userId ORDER BY u.createddate DESC", nativeQuery = true)
+	@Query(nativeQuery = true, value = "SELECT * FROM rentforhouse.house u WHERE u.user_id=:userId ORDER BY u.createddate DESC", countQuery = "SELECT COUNT(id) FROM House u WHERE u.user_id=:userId ORDER BY u.createddate DESC")
 	Page<House> findByUser_Id(@Param("userId") Long userId, Pageable pageable);
 
 	Page<House> findByStatus(Boolean status, Pageable pageable);
 
 	List<House> findByHouseTypes_Id(Long id);
 
-	@Query(nativeQuery = true, value = "SELECT * FROM House WHERE status = 1 ORDER BY view DESC Limit 0, 4")
+	@Query(nativeQuery = true, value = "SELECT * FROM rentforhouse.house WHERE status = 1 ORDER BY view DESC Limit 0, 4")
 	List<House> findTop5ThanOrderByViewDesc();
+
+	/*
+	 * //@Query(nativeQuery = true, value =
+	 * "SELECT * FROM House WHERE status = 1 ORDER BY view DESC Limit 0, 4")
+	 * List<House> findTop5ByStatusLikeOrderByViewDesc(Boolean status);
+	 */
 }

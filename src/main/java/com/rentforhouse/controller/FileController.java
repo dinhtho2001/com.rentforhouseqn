@@ -62,7 +62,11 @@ public class FileController {
 	 * }
 	 */
 	
-
+	
+	@GetMapping("/all/load/")
+	public ResponseEntity<?> findAll() throws IOException {
+		return service.getListFile();		
+	}
 	
 	@GetMapping("/load/{filename}")
 	public ResponseEntity<?> loadfile(@PathVariable("filename") String filename) throws IOException {

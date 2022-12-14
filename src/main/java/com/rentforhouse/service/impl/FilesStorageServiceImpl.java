@@ -93,7 +93,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 				response.setDownloadUrl("/api/file/downloadFile/" + fileName);
 				response.setUrl(Constant.BASE_URL + "/api/file/load/" + fileName);
 				return ResponseEntity.status(HttpStatus.OK)
-						.body(new SuccessReponse(Param.success.name(), response, HttpStatus.OK.name()));
+						.body(response);
 			} catch (IOException e) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError(
@@ -203,15 +203,21 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 		return image;
 	}
 
-	public List<FileInfo> getListFile() {
-		List<FileInfo> fileInfos = loadAll().map(path -> {
-			String filename = path.getFileName().toString();
-			String url = MvcUriComponentsBuilder
-					.fromMethodName(HouseController.class, "getFile", path.getFileName().toString()).build().toString();
+	public ResponseEntity<?> getListFile() {
+		try {
+			List<FileInfo> fileInfos = loadAll().map(path -> {
+				String filename = path.getFileName().toString();
+				String url = getUrlImage(filename);
 
-			return new FileInfo(filename, url);
-		}).collect(Collectors.toList());
-		return fileInfos;
+				return new FileInfo(filename, url);
+			}).collect(Collectors.toList());
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), fileInfos, HttpStatus.OK.name()));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+					new SysError("Error: " + e.toString(), new ErrorParam(""))));
+		}
+		
 	}
 
 	@Override

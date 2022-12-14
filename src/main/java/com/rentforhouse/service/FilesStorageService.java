@@ -22,7 +22,7 @@ public interface FilesStorageService {
 
 	Stream<Path> loadAll();
 
-	List<FileInfo> getListFile();
+	ResponseEntity<?> getListFile();
 
 	byte[] GetImage(String fileName)throws IOException;
 

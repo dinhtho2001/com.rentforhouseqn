@@ -389,7 +389,7 @@ public class HouseServiceImpl implements IHouseService {
 					.body(new SuccessReponse(Param.success.name(), houseDtos, HttpStatus.OK.name()));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
+					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("error: "+e.toString(), new ErrorParam())));
 		}
 	}
 }

@@ -213,18 +213,23 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	@Transactional
-	public ResponseEntity<?> updateImage(Long id, MultipartFile file) {
-		ResponseEntity<?> fileResponse = fileService.save(file, Storage.users.name());
-		if (fileResponse.getStatusCode().equals(HttpStatus.OK)) {
-			User user = userRepository.findById(id).orElse(new User());
-			FileUploadResponse fileUploadResponse = (FileUploadResponse) fileResponse.getBody();
-			user.setImage(fileUploadResponse.getUrl());
-			userRepository.save(user);
-			return ResponseEntity.ok(fileResponse);
-		} else {
+	public ResponseEntity<?> updateImage(MultipartFile file) {
+		try {
+			ResponseEntity<?> fileResponse = fileService.save(file, Storage.users.name());
+			if (fileResponse.getStatusCode().equals(HttpStatus.OK)) {
+				User user = userRepository.findById(SecurityUtils.getPrincipal().getId()).get();
+				FileUploadResponse fileUploadResponse =  (FileUploadResponse) fileResponse.getBody();
+				user.setImage(fileUploadResponse.getFileName());
+				return ResponseEntity.ok(userConverter.convertToDto(userRepository.save(user)));
+			} else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error", new ErrorParam())));
+			}
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error", new ErrorParam())));
+					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error: "+ e, new ErrorParam())));
 		}
+		
 	}
 
 	@Override
@@ -270,26 +275,35 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public ResponseEntity<?> updateProfile(ProfileRequest request) {
-		User user = new User();
 		try {
-			user = (userRepository.findById(SecurityUtils.getPrincipal().getId()).get());
+			User user = (userRepository.findById(SecurityUtils.getPrincipal().getId()).get());
 			user.setLastName(request.getLastName());
 			user.setFirstName(request.getFirstName());
-			if (userRepository.existsByEmail(request.getEmail())) {
-				if (userRepository.findById(SecurityUtils.getPrincipal().getId()).get().equals(userRepository.findByEmail(request.getEmail()))) {
-					user.setEmail(request.getEmail());
-				} else {
-					return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-							new SysError("exist-email", new ErrorParam(Param.email.name()))));
-				}	
+			
+			if (request.getEmail() != null) {
+				if (userRepository.existsByEmail(request.getEmail())) {
+					if (userRepository.findById(SecurityUtils.getPrincipal().getId()).get().equals(userRepository.findByEmail(request.getEmail()))) {
+						user.setEmail(request.getEmail());
+					} else {
+						return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+								new SysError("exist-email", new ErrorParam(Param.email.name()))));
+					}	
+				}
+				
+			}else {
+				user.setEmail(null);
 			}
-			if (userRepository.existsByPhone(request.getPhone())) {
-				if (userRepository.findById(SecurityUtils.getPrincipal().getId()).get().equals(userRepository.findByPhone(request.getPhone()))) {
-					user.setPhone(request.getPhone());
-				} 
-				return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-						new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
-			}	
+			if (request.getPhone() != null) {
+				if (userRepository.existsByPhone(request.getPhone())) {
+					if (userRepository.findById(SecurityUtils.getPrincipal().getId()).get().equals(userRepository.findByPhone(request.getPhone()))) {
+						user.setPhone(request.getPhone());
+					} 
+					return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+							new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
+				}
+			}else {
+				user.setPhone("");
+			}
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new SuccessReponse(Param.success.name(), userRepository.save(user), HttpStatus.OK.name()));
 		} catch (Exception e) {

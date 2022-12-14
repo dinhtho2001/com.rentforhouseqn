@@ -33,7 +33,7 @@ public class ProfileController {
 
 	@Autowired
 	private IUserService userService;
-	
+
 	@GetMapping("/")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> findUserById() {
@@ -45,22 +45,16 @@ public class ProfileController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
-	
+
 	@PutMapping()
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> update(@ModelAttribute ProfileRequest request){
+	public ResponseEntity<?> update(@ModelAttribute ProfileRequest request) {
 		return userService.updateProfile(request);
 	}
-	
-	@PostMapping("/image/{userId}/")
+
+	@PostMapping("/image/")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> updateImage(@PathVariable(value = "userId") Long id, @RequestParam MultipartFile file){
-		if (SecurityUtils.getPrincipal().getId() != id) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("You have no right to change", new ErrorParam())));
-		}else {
-			return userService.updateImage(id,file);
-		}
-		
+	public ResponseEntity<?> updateImage(@RequestParam MultipartFile file) {
+		return userService.updateImage(file);
 	}
 }

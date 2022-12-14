@@ -33,7 +33,7 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 	@Query(value = "SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.userName = ?1")
 	Boolean existsByUserNameAndPassword(String username/* , String password */);
 
-	@Query(nativeQuery = true, value = "SELECT * FROM User u WHERE u.phone LIKE %:content% OR u.first_name LIKE %:content% OR u.last_name LIKE %:content% OR u.username LIKE %:content% OR u.email LIKE %:content% ORDER BY u.createddate DESC", 
-			      countQuery = "SELECT COUNT(id) FROM User u WHERE u.phone LIKE %:content% OR u.first_name LIKE %:content% OR u.last_name LIKE %:content% OR u.username LIKE %:content% OR u.email LIKE %:content% ORDER BY u.createddate DESC")
+	@Query(nativeQuery = true, value = "SELECT * FROM rentforhouse.user u WHERE u.phone LIKE %:content% OR u.first_name LIKE %:content% OR u.last_name LIKE %:content% OR u.username LIKE %:content% OR u.email LIKE %:content% ORDER BY u.createddate DESC", 
+			      countQuery = "SELECT COUNT(id) FROM rentforhouse.user u WHERE u.phone LIKE %:content% OR u.first_name LIKE %:content% OR u.last_name LIKE %:content% OR u.username LIKE %:content% OR u.email LIKE %:content% ORDER BY u.createddate DESC")
 	Page<User> findAllByContent(@Param("content") String content, Pageable pageable);
 }
