@@ -28,6 +28,7 @@ import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.SaveHouseRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
+import com.rentforhouse.payload.response.FileUploadResponse;
 import com.rentforhouse.payload.response.HouseGetResponse;
 import com.rentforhouse.payload.response.MessageResponse;
 import com.rentforhouse.payload.response.SuccessReponse;
@@ -89,28 +90,33 @@ public class HouseServiceImpl implements IHouseService {
 			house.setHouseTypes(typeHouses);
 			try {
 				if (request.getImage()!= null) {
-					storageService.save(request.getImage(), Storage.houses.name());
-					house.setImage(request.getImage().getName());
+					ResponseEntity<?> uploadResponse = storageService.save(request.getImage(), Storage.houses.name());
+					FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
+					house.setImage(fileUploadResponse.getFileName());		
 				}
 				if (request.getImage2()!= null) {
-					storageService.save(request.getImage2(), Storage.houses.name());
-					house.setImage2(request.getImage2().getName());
+					ResponseEntity<?> uploadResponse = storageService.save(request.getImage2(), Storage.houses.name());
+					FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
+					house.setImage2(fileUploadResponse.getFileName());
 				}
 				if (request.getImage3()!= null) {
-					storageService.save(request.getImage3(), Storage.houses.name());
-					house.setImage3(request.getImage3().getName());
+					ResponseEntity<?> uploadResponse = storageService.save(request.getImage3(), Storage.houses.name());
+					FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
+					house.setImage3(fileUploadResponse.getFileName());
 				}
 				if (request.getImage4()!= null) {
-					storageService.save(request.getImage4(), Storage.houses.name());
-					house.setImage4(request.getImage4().getName());
+					ResponseEntity<?> uploadResponse = storageService.save(request.getImage4(), Storage.houses.name());
+					FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
+					house.setImage4(fileUploadResponse.getFileName());
 				}
 				if (request.getImage5()!= null) {
-					storageService.save(request.getImage5(), Storage.houses.name());
-					house.setImage5(request.getImage5().getName());
+					ResponseEntity<?> uploadResponse = storageService.save(request.getImage5(), Storage.houses.name());
+					FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
+					house.setImage5(fileUploadResponse.getFileName());
 				}
 			} catch (Exception e) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
-						HttpStatus.BAD_REQUEST.name(), new SysError("unable-to-save-image", new ErrorParam("image"))));
+						HttpStatus.BAD_REQUEST.name(), new SysError("unable-to-save-image: "+e, new ErrorParam("image"))));
 			}
 			HouseDto houseDto = houseConverter.convertToDto(houseRepository.save(house));
 			houseDto.setUser(houseDto.setPassword(houseDto.getUser()));
@@ -124,7 +130,7 @@ public class HouseServiceImpl implements IHouseService {
 
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("unable-to-save", new ErrorParam())));
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("unable-to-save: error: "+e, new ErrorParam())));
 		}
 	}
 
@@ -229,7 +235,7 @@ public class HouseServiceImpl implements IHouseService {
 			}
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("error: "+e, new ErrorParam("id"))));
 		}
 	}
 
