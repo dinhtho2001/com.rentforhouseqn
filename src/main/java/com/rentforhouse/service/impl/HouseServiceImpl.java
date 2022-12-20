@@ -1,6 +1,7 @@
 package com.rentforhouse.service.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -17,11 +18,13 @@ import org.springframework.stereotype.Service;
 import com.rentforhouse.common.Param;
 import com.rentforhouse.common.Storage;
 import com.rentforhouse.common.TypeHouse;
+import com.rentforhouse.common.UserRole;
 import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.converter.UserConverter;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.HouseType;
+import com.rentforhouse.entity.Role;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
@@ -76,8 +79,32 @@ public class HouseServiceImpl implements IHouseService {
 				house.setUser(userRepository.findById(SecurityUtils.getPrincipal().getId()).orElse(new User()));
 			}else {
 				/* request Update */
-				house.setUser(userRepository.findById(request.getId()).orElse(new User()));
-				house.setComments(commentRepository.findAllByHouse_id(request.getId()));
+				Boolean checkRoleUser = false;
+				List<Role> roles = userRepository.findById(SecurityUtils.getPrincipal().getId()).orElse(new User()).getRoles();
+				for (Role role : roles) {
+					if (role.getName().equals(UserRole.ROLE_USER.name())) {
+						checkRoleUser=true;
+					}
+				}
+				if (checkRoleUser) {
+					Boolean checkHouse = false;
+					List<House> houses = houseRepository.findByUser(userRepository.findById(SecurityUtils.getPrincipal().getId()).get());
+					for (House h : houses) {
+						if (h.getId().equals(request.getId())) {
+							checkHouse = true;
+							break;
+						}
+					}
+					if (!checkHouse) {
+						return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+								new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Ban khong co quyen sua: ", new ErrorParam())));
+					}
+				}
+				House oldHouse = houseRepository.findById(request.getId()).get();
+				house.setUser(oldHouse.getUser());
+				house.setComments(oldHouse.getComments());
+				house.setStatus(oldHouse.getStatus());
+				house.setView(oldHouse.getView());
 			}
 			List<HouseType> typeHouses = new ArrayList<>(); 
 			for (TypeHouse item : request.getTypeHouses()) {
@@ -378,10 +405,10 @@ public class HouseServiceImpl implements IHouseService {
 	}
 
 	@Override
-	public ResponseEntity<?> findTop5HouseByView() {
+	public ResponseEntity<?> findTop6HouseByView() {
 		List<HouseDto> houseDtos = new ArrayList<>();
 		try {
-			List<House> houses = houseRepository.findTop5ThanOrderByViewDesc();
+			List<House> houses = houseRepository.findTopThanOrderByViewDesc(6);
 			for (House house : houses) {
 				HouseDto houseDto = houseConverter.convertToDto(house);
 				houseDto.setImage(storageService.getUrlImage(house.getImage()));

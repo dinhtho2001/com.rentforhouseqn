@@ -25,7 +25,7 @@ import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IUserService;
 
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = {"http://random-quotes-webs.s3-website-ap-southeast-1.amazonaws.com/", "http://localhost:3000/"})
 @RestController(value = "userAPIOfWeb")
 @RequestMapping("/api/users")
 public class UserController {

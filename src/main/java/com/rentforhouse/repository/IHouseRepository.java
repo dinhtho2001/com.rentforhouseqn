@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.rentforhouse.entity.House;
+import com.rentforhouse.entity.User;
 
 public interface IHouseRepository extends JpaRepository<House, Long> {
 	Page<House> findByNameLike(String name, Pageable pageable);
@@ -29,9 +30,10 @@ public interface IHouseRepository extends JpaRepository<House, Long> {
 
 	List<House> findByHouseTypes_Id(Long id);
 
-	@Query(nativeQuery = true, value = "SELECT * FROM rentforhouse.house WHERE status = 1 ORDER BY view DESC Limit 0, 4")
-	List<House> findTop5ThanOrderByViewDesc();
+	@Query(nativeQuery = true, value = "SELECT * FROM rentforhouse.house WHERE status = 1 ORDER BY view DESC Limit 0, :limit")
+	List<House> findTopThanOrderByViewDesc(@Param("limit") Integer limit);
 
+	List<House> findByUser(User user);
 	/*
 	 * //@Query(nativeQuery = true, value =
 	 * "SELECT * FROM House WHERE status = 1 ORDER BY view DESC Limit 0, 4")

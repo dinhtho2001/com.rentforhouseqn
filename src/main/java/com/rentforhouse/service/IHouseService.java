@@ -16,5 +16,5 @@ public interface IHouseService {
 	ResponseEntity<?> save(SaveHouseRequest request);
 	ResponseEntity<?> findByTypeId(Long id, int page, int limit);
 	ResponseEntity<?> updateStatus(Long id, Boolean status);
-	ResponseEntity<?> findTop5HouseByView();
+	ResponseEntity<?> findTop6HouseByView();
 }

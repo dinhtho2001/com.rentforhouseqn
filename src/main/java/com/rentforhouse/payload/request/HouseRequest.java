@@ -33,8 +33,9 @@ public class HouseRequest {
     
     private List<TypeHouse> typeHouses;
     
-    @ApiModelProperty(hidden = true)
-	private Boolean status;
+	/*
+	 * @ApiModelProperty(hidden = true) private Boolean status;
+	 */
     
     private String toilet;
     

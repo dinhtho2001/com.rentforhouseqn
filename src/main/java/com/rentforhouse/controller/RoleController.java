@@ -27,7 +27,7 @@ import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IRoleService;
 import com.rentforhouse.utils.ValidateUtils;
 
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = {"http://random-quotes-webs.s3-website-ap-southeast-1.amazonaws.com/", "http://localhost:3000/"})
 @RestController
 @RequestMapping("/api/role")
 public class RoleController {

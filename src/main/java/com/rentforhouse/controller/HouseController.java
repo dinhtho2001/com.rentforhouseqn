@@ -20,7 +20,7 @@ import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
 import com.rentforhouse.service.IHouseService;
 
-@CrossOrigin(origins = "http://localhost:3000/")
+@CrossOrigin(origins = {"http://random-quotes-webs.s3-website-ap-southeast-1.amazonaws.com/", "http://localhost:3000/"})
 @RestController(value = "houseAPIOfWeb")
 @RequestMapping("/api/houses")
 public class HouseController {
@@ -37,9 +37,9 @@ public class HouseController {
 		return houseService.findHouse(request);
 	}
 
-	@GetMapping("/top-5")
-	public ResponseEntity<?> findTop5HousesByView() {
-		return houseService.findTop5HouseByView();
+	@GetMapping("/top-6")
+	public ResponseEntity<?> findTop6HousesByView() {
+		return houseService.findTop6HouseByView();
 	}
 
 	@GetMapping("/{id}")
@@ -86,12 +86,11 @@ public class HouseController {
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN', 'ROLE_STAFF')")
 	public ResponseEntity<?> updateHouse(@ModelAttribute HouseRequest request, @PathVariable("id") Long id,
-			@RequestParam Boolean status, @RequestParam(required = false) MultipartFile image,
+			@RequestParam(required = false) MultipartFile image,
 			@RequestParam(required = false) MultipartFile image2, @RequestParam(required = false) MultipartFile image3,
 			@RequestParam(required = false) MultipartFile image4,
 			@RequestParam(required = false) MultipartFile image5) {
 		request.setId(id);
-		request.setStatus(status);
 		return houseService.save(houseConverter.toSaveHouseRequest(request, image, image2, image3, image4, image5));
 	}
 
