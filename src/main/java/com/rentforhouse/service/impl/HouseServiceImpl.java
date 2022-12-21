@@ -321,7 +321,7 @@ public class HouseServiceImpl implements IHouseService {
 		HouseDto houseDto = new HouseDto();
 		try {
 			Pageable pageable = PageRequest.of(page - 1, limit);
-			houses = houseRepository.findByStatus(status, pageable);
+			houses = houseRepository.findByStatusOrderByCreatedDateDesc(status, pageable);
 			for (House house : houses) {
 				houseDto = houseConverter.convertToDto(house);
 				houseDto.getUser().setPassword(null);

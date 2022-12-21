@@ -26,7 +26,7 @@ public interface IHouseRepository extends JpaRepository<House, Long> {
 			countQuery = "SELECT COUNT(id) FROM rentforhouse.house u WHERE u.user_id=:userId ORDER BY u.createddate DESC")
 	Page<House> findByUser_Id(@Param("userId") Long userId, Pageable pageable);
 
-	Page<House> findByStatus(Boolean status, Pageable pageable);
+	Page<House> findByStatusOrderByCreatedDateDesc(Boolean status, Pageable pageable);
 
 	List<House> findByHouseTypes_Id(Long id);
 
