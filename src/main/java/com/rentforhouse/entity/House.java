@@ -32,7 +32,7 @@ public class House extends BaseEntity {
 	private String address;
 
 	@Column(name = "area")
-	private String area;
+	private Double area;
 
 	@Column(name = "room_number")
 	private Integer roomNumber;
@@ -65,10 +65,10 @@ public class House extends BaseEntity {
 	private String image5;
 
 	@Column(name = "toilet")
-	private String toilet;
+	private Integer toilet;
 
 	@Column(name = "floor")
-	private String floor;
+	private Integer floor;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")

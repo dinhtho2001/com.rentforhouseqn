@@ -1,7 +1,6 @@
 package com.rentforhouse.service.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -63,7 +62,11 @@ public class HouseServiceImpl implements IHouseService {
 
 	@Autowired
 	private UserConverter userConverter;
-
+	
+	/*
+	 * @Autowired private HouseExcelExporter houseExcelExporter;
+	 */
+	
 	@Autowired
 	FilesStorageService storageService;
 
@@ -71,24 +74,26 @@ public class HouseServiceImpl implements IHouseService {
 	@Transactional
 	public ResponseEntity<?> save(SaveHouseRequest request) {
 		try {
-			House house = houseConverter.convertToEntity(request);		
+			House house = houseConverter.convertToEntity(request);
 			/* request Save */
 			if (request.getId() == null) {
 				house.setView(0);
 				house.setStatus(false);
 				house.setUser(userRepository.findById(SecurityUtils.getPrincipal().getId()).orElse(new User()));
-			}else {
+			} else {
 				/* request Update */
 				Boolean checkRoleUser = false;
-				List<Role> roles = userRepository.findById(SecurityUtils.getPrincipal().getId()).orElse(new User()).getRoles();
+				List<Role> roles = userRepository.findById(SecurityUtils.getPrincipal().getId()).orElse(new User())
+						.getRoles();
 				for (Role role : roles) {
 					if (role.getName().equals(UserRole.ROLE_USER.name())) {
-						checkRoleUser=true;
+						checkRoleUser = true;
 					}
 				}
 				if (checkRoleUser) {
 					Boolean checkHouse = false;
-					List<House> houses = houseRepository.findByUser(userRepository.findById(SecurityUtils.getPrincipal().getId()).get());
+					List<House> houses = houseRepository
+							.findByUser(userRepository.findById(SecurityUtils.getPrincipal().getId()).get());
 					for (House h : houses) {
 						if (h.getId().equals(request.getId())) {
 							checkHouse = true;
@@ -96,8 +101,9 @@ public class HouseServiceImpl implements IHouseService {
 						}
 					}
 					if (!checkHouse) {
-						return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-								new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Ban khong co quyen sua: ", new ErrorParam())));
+						return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+								.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+										new SysError("Ban khong co quyen sua: ", new ErrorParam())));
 					}
 				}
 				House oldHouse = houseRepository.findById(request.getId()).get();
@@ -106,44 +112,45 @@ public class HouseServiceImpl implements IHouseService {
 				house.setStatus(oldHouse.getStatus());
 				house.setView(oldHouse.getView());
 			}
-			List<HouseType> typeHouses = new ArrayList<>(); 
+			List<HouseType> typeHouses = new ArrayList<>();
 			for (TypeHouse item : request.getTypeHouses()) {
 				if (item == null) {
 					continue;
-				}else {
+				} else {
 					typeHouses.add(houseTypeRepository.findByCode(item.name()));
 				}
 			}
 			house.setHouseTypes(typeHouses);
 			try {
-				if (request.getImage()!= null) {
+				if (request.getImage() != null) {
 					ResponseEntity<?> uploadResponse = storageService.save(request.getImage(), Storage.houses.name());
 					FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
-					house.setImage(fileUploadResponse.getFileName());		
+					house.setImage(fileUploadResponse.getFileName());
 				}
-				if (request.getImage2()!= null) {
+				if (request.getImage2() != null) {
 					ResponseEntity<?> uploadResponse = storageService.save(request.getImage2(), Storage.houses.name());
 					FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
 					house.setImage2(fileUploadResponse.getFileName());
 				}
-				if (request.getImage3()!= null) {
+				if (request.getImage3() != null) {
 					ResponseEntity<?> uploadResponse = storageService.save(request.getImage3(), Storage.houses.name());
 					FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
 					house.setImage3(fileUploadResponse.getFileName());
 				}
-				if (request.getImage4()!= null) {
+				if (request.getImage4() != null) {
 					ResponseEntity<?> uploadResponse = storageService.save(request.getImage4(), Storage.houses.name());
 					FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
 					house.setImage4(fileUploadResponse.getFileName());
 				}
-				if (request.getImage5()!= null) {
+				if (request.getImage5() != null) {
 					ResponseEntity<?> uploadResponse = storageService.save(request.getImage5(), Storage.houses.name());
 					FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
 					house.setImage5(fileUploadResponse.getFileName());
 				}
 			} catch (Exception e) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
-						HttpStatus.BAD_REQUEST.name(), new SysError("unable-to-save-image: "+e, new ErrorParam("image"))));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+								new SysError("unable-to-save-image: " + e, new ErrorParam("image"))));
 			}
 			HouseDto houseDto = houseConverter.convertToDto(houseRepository.save(house));
 			houseDto.setUser(houseDto.setPassword(houseDto.getUser()));
@@ -156,8 +163,8 @@ public class HouseServiceImpl implements IHouseService {
 					.body(new SuccessReponse(Param.success.name(), houseDto, HttpStatus.OK.name()));
 
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("unable-to-save: error: "+e, new ErrorParam())));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+					new SysError("unable-to-save: error: " + e, new ErrorParam())));
 		}
 	}
 
@@ -187,8 +194,8 @@ public class HouseServiceImpl implements IHouseService {
 			return ResponseEntity.status(HttpStatus.OK).body(new SuccessReponse(Param.success.name(),
 					new MessageResponse("successful delete"), HttpStatus.OK.name()));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("id-not-found", new ErrorParam("id"))));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+					new SysError("id-not-found", new ErrorParam("id"))));
 		}
 	}
 
@@ -257,12 +264,12 @@ public class HouseServiceImpl implements IHouseService {
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new SuccessReponse("success", response, HttpStatus.OK.name()));
 			} else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-						new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
+						HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
 			}
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("error: "+e, new ErrorParam("id"))));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+					new SysError("error: " + e, new ErrorParam("id"))));
 		}
 	}
 
@@ -374,12 +381,12 @@ public class HouseServiceImpl implements IHouseService {
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new SuccessReponse(Param.success.name(), response, HttpStatus.OK.name()));
 			} else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam())));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+						new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam())));
 			}
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam())));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam())));
 		}
 	}
 
@@ -421,8 +428,9 @@ public class HouseServiceImpl implements IHouseService {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new SuccessReponse(Param.success.name(), houseDtos, HttpStatus.OK.name()));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("error: "+e.toString(), new ErrorParam())));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+					new SysError("error: " + e.toString(), new ErrorParam())));
 		}
 	}
+	
 }
