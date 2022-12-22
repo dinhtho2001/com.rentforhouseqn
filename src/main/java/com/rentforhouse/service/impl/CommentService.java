@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rentforhouse.converter.CommentConverter;
 import com.rentforhouse.converter.UserConverter;
 import com.rentforhouse.dto.CommentDto;
+import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.entity.Comment;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.User;
@@ -21,6 +22,7 @@ import com.rentforhouse.payload.response.CommentResponse;
 import com.rentforhouse.repository.ICommentRepository;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.repository.IUserRepository;
+import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.ICommentService;
 import com.rentforhouse.service.impl.userdetail.UserDetailsImpl;
 
@@ -41,6 +43,9 @@ public class CommentService implements ICommentService {
 
 	@Autowired
 	private UserConverter userConverter;
+	
+	@Autowired
+	FilesStorageService storageService;
 
 	@Override
 	@Transactional
@@ -108,8 +113,9 @@ public class CommentService implements ICommentService {
 			List<CommentDto> commentDtos = new ArrayList<>();
 			for (Comment item : comments) {
 				commentDto = commentConverter.convertToDto(item);
-				User user = userRepository.findById(item.getUserId()).orElse(new User());
-				commentDto.setUser(userConverter.convertToDto(user));
+				UserDto userDto = userConverter.convertToDto(userRepository.findById(item.getUserId()).orElse(new User()));
+				userDto.setImage(storageService.getUrlImage(userDto.getImage()));
+				commentDto.setUser(userDto);
 				commentDtos.add(commentDto);
 			}
 			response.setComment(commentDtos);

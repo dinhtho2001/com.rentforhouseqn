@@ -21,6 +21,7 @@ import com.rentforhouse.common.UserRole;
 import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.converter.UserConverter;
 import com.rentforhouse.dto.HouseDto;
+import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.HouseType;
 import com.rentforhouse.entity.Role;
@@ -53,9 +54,6 @@ public class HouseServiceImpl implements IHouseService {
 
 	@Autowired
 	private IHouseTypeRepository houseTypeRepository;
-
-	@Autowired
-	private ICommentRepository commentRepository;
 
 	@Autowired
 	private HouseConverter houseConverter;
@@ -173,7 +171,10 @@ public class HouseServiceImpl implements IHouseService {
 		House house = houseRepository.findById(id).orElse(new House());
 		if (house.getId() != null) {
 			HouseDto houseDto = houseConverter.convertToDto(house);
-			houseDto.setUser(houseDto.setPassword(houseDto.getUser()));
+			UserDto userDto = houseDto.getUser();
+			userDto.setPassword(null);
+			userDto.setImage(storageService.getUrlImage(userDto.getImage()));
+			houseDto.setUser(userDto);
 			houseDto.setImage(storageService.getUrlImage(house.getImage()));
 			houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
 			houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
