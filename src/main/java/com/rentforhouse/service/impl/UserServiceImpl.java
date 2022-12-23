@@ -218,18 +218,18 @@ public class UserServiceImpl implements IUserService {
 			ResponseEntity<?> fileResponse = fileService.save(file, Storage.users.name());
 			if (fileResponse.getStatusCode().equals(HttpStatus.OK)) {
 				User user = userRepository.findById(SecurityUtils.getPrincipal().getId()).get();
-				FileUploadResponse fileUploadResponse =  (FileUploadResponse) fileResponse.getBody();
+				FileUploadResponse fileUploadResponse = (FileUploadResponse) fileResponse.getBody();
 				user.setImage(fileUploadResponse.getFileName());
 				return ResponseEntity.ok(userConverter.convertToDto(userRepository.save(user)));
 			} else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error", new ErrorParam())));
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+						new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error", new ErrorParam())));
 			}
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error: "+ e, new ErrorParam())));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error: " + e, new ErrorParam())));
 		}
-		
+
 	}
 
 	@Override
@@ -279,30 +279,38 @@ public class UserServiceImpl implements IUserService {
 			User user = (userRepository.findById(SecurityUtils.getPrincipal().getId()).get());
 			user.setLastName(request.getLastName());
 			user.setFirstName(request.getFirstName());
-			
+
 			if (request.getEmail() != null) {
 				if (userRepository.existsByEmail(request.getEmail())) {
-					if (userRepository.findById(SecurityUtils.getPrincipal().getId()).get().equals(userRepository.findByEmail(request.getEmail()))) {
+					if (user.getEmail().equals(request.getEmail())) {
 						user.setEmail(request.getEmail());
 					} else {
-						return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-								new SysError("exist-email", new ErrorParam(Param.email.name()))));
-					}	
+						return ResponseEntity.status(HttpStatus.CONFLICT)
+								.body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+										new SysError("exist-email", new ErrorParam(Param.email.name()))));
+					}
+				} else {
+					user.setEmail(request.getEmail());
 				}
-				
-			}else {
+
+			} else {
 				user.setEmail(null);
 			}
 			if (request.getPhone() != null) {
 				if (userRepository.existsByPhone(request.getPhone())) {
-					if (userRepository.findById(SecurityUtils.getPrincipal().getId()).get().equals(userRepository.findByPhone(request.getPhone()))) {
+					if (user.getPhone().equals(request.getPhone())) {
 						user.setPhone(request.getPhone());
-					} 
-					return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
-							new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
+					} else {
+						return ResponseEntity.status(HttpStatus.CONFLICT)
+								.body(new ErrorResponse(HttpStatus.CONFLICT.name(),
+										new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
+					}
+				} else {
+					user.setPhone(request.getPhone());
 				}
-			}else {
-				user.setPhone("");
+
+			} else {
+				user.setPhone(null);
 			}
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new SuccessReponse(Param.success.name(), userRepository.save(user), HttpStatus.OK.name()));

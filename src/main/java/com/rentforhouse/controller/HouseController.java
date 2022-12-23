@@ -134,5 +134,11 @@ public class HouseController {
 		return ResponseEntity.ok().contentType(resourceDTO.getMediaType()).headers(httpHeaders)
 				.body(resourceDTO.getResource());
 	}
+	
+	@PostMapping("import/excel")
+	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+	public ResponseEntity<?> importHousesByExcel(@RequestParam("file") MultipartFile file){
+		return excelService.importHouses(file);
+	}
 
 }
