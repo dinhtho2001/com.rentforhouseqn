@@ -88,6 +88,7 @@ public class UserController {
 	public ResponseEntity<?> updateRoles(@PathVariable("id") Long id,@RequestParam List<UserRole> roles) {
 		return userService.updateRoles(id,roles);
 	}
+	
 	@PutMapping("/update-status/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> updateStatus(@PathVariable("id") Long id,@RequestParam Boolean status) {
@@ -101,4 +102,11 @@ public class UserController {
 			@RequestParam(name = "page") int page, @RequestParam(name = "limit") int limit) {
 		return userService.search(content, limit, page);
 	}
+	@PostMapping("/search-status_user/")
+	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
+	public ResponseEntity<?> findUsersByStatus(@RequestParam Boolean status)
+			 {
+		return userService.findUsersByStatus(status);
+	}
+	
 }

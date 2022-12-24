@@ -22,4 +22,5 @@ public interface IUserService {
 	ResponseEntity<?> search(String content, int limit, int page);
 	ResponseEntity<?> updateProfile(ProfileRequest request);
 	ResponseEntity<?> updateStatus(Long id, Boolean status);
+	ResponseEntity<?> findUsersByStatus(Boolean status);
 }

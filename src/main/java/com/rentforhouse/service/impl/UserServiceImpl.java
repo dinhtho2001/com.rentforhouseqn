@@ -302,7 +302,29 @@ public class UserServiceImpl implements IUserService {
 					new SysError("error: " + e.toString(), new ErrorParam())));
 		}
 	}
-
+	@Override
+	public ResponseEntity<?> findUsersByStatus(Boolean status){
+		try {
+//			DataGetResponse dataGetResponse = new DataGetResponse();
+			List<User> users = userRepository.findByStatus(status);		
+			List<UserDto> userDtos = new ArrayList<>();
+			if (!users.isEmpty()) {
+				for (User user : users) {
+					UserDto userDto = new UserDto();
+					userDto = userConverter.convertToDto(user);
+					userDto.setImage(fileService.getUrlImage(userDto.getImage()));
+					userDtos.add(userDto);
+				}
+			}
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), userDtos, HttpStatus.OK.name()));
+			
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+					new SysError("error: " + e.toString(), new ErrorParam())));
+		}
+	}
+	
 	@Override
 	public ResponseEntity<?> updateProfile(ProfileRequest request) {
 		try {
