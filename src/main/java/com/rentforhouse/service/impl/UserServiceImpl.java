@@ -126,7 +126,7 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public UserDto findbyId(Long id) {
-		User user = userRepository.findById(id).get();
+		User user = userRepository.findById(id).orElse(new User());
 		UserDto userDto = userConverter.convertToDto(user);
 		userDto.setPassword("co cai nit");
 		userDto.setImage(fileService.getUrlImage(userDto.getImage()));

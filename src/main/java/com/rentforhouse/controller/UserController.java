@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.rentforhouse.common.Param;
+import com.rentforhouse.common.UserRole;
 import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.UserRequest;
@@ -80,9 +81,10 @@ public class UserController {
 		return userService.save(request, image);
 	}
 
+	//chưa làm
 	@PutMapping("/update-role/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> updateUser(@PathVariable("id") Long id) {
+	public ResponseEntity<?> updateRoles(@PathVariable("id") Long id, UserRole roles) {
 		return userService.updateRoles(id);
 	}
 
