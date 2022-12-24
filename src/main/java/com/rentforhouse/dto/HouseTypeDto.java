@@ -13,5 +13,4 @@ public class HouseTypeDto extends AbstractDto {
 
 	 private String name;
 	 private String code;
-	 
 }

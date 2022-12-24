@@ -23,7 +23,6 @@ import com.rentforhouse.converter.UserConverter;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.entity.House;
-import com.rentforhouse.entity.HouseType;
 import com.rentforhouse.entity.Role;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.ErrorParam;
@@ -35,7 +34,6 @@ import com.rentforhouse.payload.response.FileUploadResponse;
 import com.rentforhouse.payload.response.HouseGetResponse;
 import com.rentforhouse.payload.response.MessageResponse;
 import com.rentforhouse.payload.response.SuccessReponse;
-import com.rentforhouse.repository.ICommentRepository;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.repository.IHouseTypeRepository;
 import com.rentforhouse.repository.IUserRepository;
@@ -183,15 +181,7 @@ public class HouseServiceImpl implements IHouseService {
 									new SysError("unable-to-save-image: " + e, new ErrorParam("image"))));
 				}
 			}
-			List<HouseType> typeHouses = new ArrayList<>();
-			for (TypeHouse item : request.getTypeHouses()) {
-				if (item == null) {
-					continue;
-				} else {
-					typeHouses.add(houseTypeRepository.findByCode(item.name()));
-				}
-			}
-			house.setHouseTypes(typeHouses);
+			house.setHouseType(houseTypeRepository.findByCode(TypeHouse.nha_ban.name()));
 			HouseDto houseDto = houseConverter.convertToDto(houseRepository.save(house));
 			houseDto.setUser(houseDto.setPassword(houseDto.getUser()));
 			houseDto.setImage(storageService.getUrlImage(house.getImage()));
@@ -406,7 +396,7 @@ public class HouseServiceImpl implements IHouseService {
 		HouseDto houseDto;
 		try {
 			Pageable pageable = PageRequest.of(page - 1, limit);
-			houses = houseRepository.findByHouseTypes_Id(id, pageable);
+			houses = houseRepository.findByHouseTypeId(id, pageable);
 			for (House house : houses) {
 				houseDto = houseConverter.convertToDto(house);
 				houseDto.getUser().setPassword(null);

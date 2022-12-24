@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.rentforhouse.common.ResourceDTO;
+import com.rentforhouse.common.TypeHouse;
 import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
@@ -87,22 +88,25 @@ public class HouseController {
 
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN', 'ROLE_STAFF')")
-	public ResponseEntity<?> saveHouse(@ModelAttribute HouseRequest request, @RequestParam MultipartFile image,
+	public ResponseEntity<?> saveHouse(
+			@ModelAttribute HouseRequest request , @RequestParam() TypeHouse codeHouseType , @RequestParam MultipartFile image,
 			@RequestParam(required = false) MultipartFile image2, @RequestParam(required = false) MultipartFile image3,
 			@RequestParam(required = false) MultipartFile image4,
 			@RequestParam(required = false) MultipartFile image5) {
-		return houseService.save(houseConverter.toSaveHouseRequest(request, image, image2, image3, image4, image5));
+		return houseService.save(
+				houseConverter.toSaveHouseRequest(request, codeHouseType , image, image2, image3, image4, image5));
 
 	}
 
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN', 'ROLE_STAFF')")
-	public ResponseEntity<?> updateHouse(@ModelAttribute HouseRequest request, @PathVariable("id") Long id,
+	public ResponseEntity<?> updateHouse(@ModelAttribute HouseRequest request, @RequestParam() TypeHouse codeHouseType, @PathVariable("id") Long id,
 			@RequestParam(required = false) MultipartFile image, @RequestParam(required = false) MultipartFile image2,
 			@RequestParam(required = false) MultipartFile image3, @RequestParam(required = false) MultipartFile image4,
 			@RequestParam(required = false) MultipartFile image5) {
 		request.setId(id);
-		return houseService.save(houseConverter.toSaveHouseRequest(request, image, image2, image3, image4, image5));
+		return houseService.save(
+				houseConverter.toSaveHouseRequest(request, codeHouseType , image, image2, image3, image4, image5));
 	}
 
 	@PutMapping("/viewPlus/{id}")

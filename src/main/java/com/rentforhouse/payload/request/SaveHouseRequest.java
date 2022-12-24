@@ -1,7 +1,5 @@
 package com.rentforhouse.payload.request;
 
-import java.util.List;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import com.rentforhouse.common.TypeHouse;
@@ -23,7 +21,7 @@ public class SaveHouseRequest {
 
 	private String address;
 
-	private String area;
+	private Double area;
 
 	private Integer roomNumber;
 
@@ -45,10 +43,10 @@ public class SaveHouseRequest {
 
 	private MultipartFile image5;
 
-	private String toilet;
+	private Integer toilet;
 
-	private String floor;
+	private Integer floor;
 	
-	private List<TypeHouse> typeHouses;
+	private TypeHouse codeHouseType; 
 
 }

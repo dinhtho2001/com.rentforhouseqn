@@ -165,11 +165,7 @@ public class HouseExportExcelService implements IExcelService {
 			createCell(sheet, row, columnCount++, house.getToilet(), cellStyle);
 			createCell(sheet, row, columnCount++, house.getFloor(), cellStyle);
 			createCell(sheet, row, columnCount++, house.getUser().getUserName(), cellStyle);
-			List<String> lstHouseType = new ArrayList<>();
-			for (HouseType item : house.getHouseTypes()) {
-				lstHouseType.add(item.getName());
-			}
-			createCell(sheet, row, columnCount++, lstHouseType.toString(), cellStyle);
+			createCell(sheet, row, columnCount++, house.getHouseType().getName(), cellStyle);
 			rowNo++;
 		}
 	}
@@ -258,7 +254,7 @@ public class HouseExportExcelService implements IExcelService {
 			house.setToilet((int) row.getCell(columnCount++).getNumericCellValue());
 			house.setFloor((int) row.getCell(columnCount++).getNumericCellValue());
 			house.setUser(userRepository.findById(SecurityUtils.getPrincipal().getId()).get());
-			house.setHouseTypes(null);
+			house.setHouseType(null);
 			houses.add(house);
 		}
 		return houses;

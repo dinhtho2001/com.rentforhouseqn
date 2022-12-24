@@ -1,7 +1,5 @@
 package com.rentforhouse.payload.request;
 
-import java.util.List;
-
 import com.rentforhouse.common.TypeHouse;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -23,7 +21,7 @@ public class HouseRequest {
 	
     private String address;
 	
-    private String area;
+    private Double area;
 	
     private String description;
 
@@ -31,15 +29,11 @@ public class HouseRequest {
     
     private Integer roomNumber;
     
-    private List<TypeHouse> typeHouses;
+	/* private TypeHouse codeHouseType; */
     
-	/*
-	 * @ApiModelProperty(hidden = true) private Boolean status;
-	 */
-    
-    private String toilet;
+    private Integer toilet;
     
 	/* Tầng */
-    private String floor;
+    private Integer floor;
     
 }

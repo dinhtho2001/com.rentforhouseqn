@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -25,16 +26,11 @@ public class HouseType extends BaseEntity {
 
 	@Column(name = "name")
 	private String name;
-	
-	@Column(name= "code")
+
+	@Column(name = "code")
 	private String code;
 
-	@ManyToMany(mappedBy = "houseTypes", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "houseType", fetch = FetchType.LAZY)
 	private List<House> houses = new ArrayList<>();
-	
-	public void remove(House b) {
-		houses.remove(b);
-		b.getHouseTypes().remove(this);
-	}  
 
 }

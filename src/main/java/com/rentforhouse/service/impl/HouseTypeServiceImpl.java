@@ -18,8 +18,8 @@ import com.rentforhouse.repository.IHouseTypeRepository;
 import com.rentforhouse.service.IHouseTypeService;
 
 @Service
-public class HouseTypeServiceImpl implements IHouseTypeService{
-	
+public class HouseTypeServiceImpl implements IHouseTypeService {
+
 	@Autowired
 	private IHouseTypeRepository houseTypeRepository;
 	@Autowired
@@ -31,7 +31,7 @@ public class HouseTypeServiceImpl implements IHouseTypeService{
 	public List<HouseTypeDto> findAll() {
 		List<HouseTypeDto> houseTypeDtos = new ArrayList<>();
 		List<HouseType> houseTypes = houseTypeRepository.findAll();
-		for(HouseType houseType : houseTypes) {
+		for (HouseType houseType : houseTypes) {
 			houseTypeDtos.add(houseTypeConverter.convertToDto(houseType));
 		}
 		return houseTypeDtos;
@@ -51,25 +51,23 @@ public class HouseTypeServiceImpl implements IHouseTypeService{
 	@Transactional
 	public HouseTypeDto save(HouseTypeRequest houseTypeRequest) {
 		HouseType houseType = new HouseType();
-		if(houseTypeRequest.getId()!= null && !houseTypeRepository.existsById(houseTypeRequest.getId())) {
+		if (houseTypeRequest.getId() != null && !houseTypeRepository.existsById(houseTypeRequest.getId())) {
 			return new HouseTypeDto();
 		}
-		houseType = houseTypeRepository.save(houseTypeConverter.convertToEntity(houseTypeRequest));	
+		houseType = houseTypeRepository.save(houseTypeConverter.convertToEntity(houseTypeRequest));
 		return houseTypeConverter.convertToDto(houseType);
 	}
 
 	@Override
 	@Transactional
 	public Boolean deleteById(Long id) {
-		if(!houseTypeRepository.existsById(id)) {
+		if (!houseTypeRepository.existsById(id)) {
 			return false;
 		}
-		List<House> houses = houseRepository.findByHouseTypes_Id(id);
-		HouseType houseType = houseTypeRepository.findById(id).get();
-		for(House house : houses) {
-			houseType.remove(house);
+		List<House> houses = houseRepository.findByHouseType(id);
+		for (House house : houses) {
+			houseRepository.save(house.removeTypeId(house));
 		}
-		houseTypeRepository.save(houseType);
 		houseTypeRepository.deleteById(id);
 		return true;
 	}

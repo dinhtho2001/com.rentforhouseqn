@@ -2,6 +2,8 @@ package com.rentforhouse.dto;
 
 import java.util.List;
 
+import com.rentforhouse.entity.HouseType;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +19,7 @@ public class HouseDto extends AbstractDto{
 	
     private String address;
 	
-    private String area;
+    private Double area;
     
     private Integer roomNumber;
 	
@@ -39,13 +41,11 @@ public class HouseDto extends AbstractDto{
     
     private String image5;
     
-    private String toilet;
+    private Integer toilet;
     
-    private String floor;
-     
-	/* private List<Long> typeIds; */
+    private Integer floor;
     
-    private List<HouseTypeDto> houseTypes;
+    private HouseTypeDto houseType; 
 
     private UserDto user;
     

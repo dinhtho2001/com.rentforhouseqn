@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.rentforhouse.common.TypeHouse;
 import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.payload.request.HouseRequest;
@@ -60,9 +61,11 @@ public class HouseConverter {
 		return house;
 	}
 
-	public SaveHouseRequest toSaveHouseRequest(HouseRequest request, MultipartFile image, MultipartFile image2,
+	public SaveHouseRequest toSaveHouseRequest(
+			HouseRequest request, TypeHouse codeHouseType , MultipartFile image, MultipartFile image2,
 			MultipartFile image3, MultipartFile image4, MultipartFile image5) {
 		SaveHouseRequest saveHouseRequest = modelMapper.map(request, SaveHouseRequest.class);
+		saveHouseRequest.setCodeHouseType(codeHouseType); 
 		if (image != null) {
 			saveHouseRequest.setImage(image);
 		}
