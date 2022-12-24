@@ -82,12 +82,16 @@ public class UserController {
 			@RequestParam(required = false, name = "image") MultipartFile image) {
 		return userService.save(request, image);
 	}
-
-	//chưa làm
+	
 	@PutMapping("/update-role/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
 	public ResponseEntity<?> updateRoles(@PathVariable("id") Long id,@RequestParam List<UserRole> roles) {
 		return userService.updateRoles(id,roles);
+	}
+	@PutMapping("/update-status/{id}")
+	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
+	public ResponseEntity<?> updateStatus(@PathVariable("id") Long id,@RequestParam Boolean status) {
+		return userService.updateStatus(id,status);
 	}
 
 	@PostMapping("/search/")

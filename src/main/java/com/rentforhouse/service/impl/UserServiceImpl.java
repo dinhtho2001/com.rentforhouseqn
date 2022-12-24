@@ -253,6 +253,20 @@ public class UserServiceImpl implements IUserService {
 					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error: " + e, new ErrorParam())));
 		}
 	}
+	@Override
+	public ResponseEntity<?> updateStatus(Long id, Boolean status){
+		try {
+			User user = userRepository.findById(id).orElse(new User());
+			user.setStatus(status);
+			//System.out.println(status);
+			User user2 = userRepository.save(user);
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), userConverter.convertToDto(user2), HttpStatus.OK.name()));
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error: " + e, new ErrorParam())));
+		}
+	}
 
 	@Override
 	public ResponseEntity<?> search(String content, int limit, int page) {
@@ -329,7 +343,7 @@ public class UserServiceImpl implements IUserService {
 				user.setPhone(null);
 			}
 			return ResponseEntity.status(HttpStatus.OK)
-					.body(new SuccessReponse(Param.success.name(), userRepository.save(user), HttpStatus.OK.name()));
+					.body(new SuccessReponse(Param.success.name(), userConverter.convertToDto(userRepository.save(user)), HttpStatus.OK.name()));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
 					new SysError("error: " + e, new ErrorParam(Param.phone.name()))));

@@ -21,4 +21,5 @@ public interface IUserService {
 	ResponseEntity<?> updateRoles(Long id, List<UserRole> roles);
 	ResponseEntity<?> search(String content, int limit, int page);
 	ResponseEntity<?> updateProfile(ProfileRequest request);
+	ResponseEntity<?> updateStatus(Long id, Boolean status);
 }
