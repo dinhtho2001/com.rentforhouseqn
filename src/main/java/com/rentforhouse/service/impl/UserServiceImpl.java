@@ -26,6 +26,7 @@ import com.rentforhouse.converter.RoleConverter;
 import com.rentforhouse.converter.UserConverter;
 import com.rentforhouse.dto.RoleDto;
 import com.rentforhouse.dto.UserDto;
+import com.rentforhouse.entity.Role;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;
@@ -233,9 +234,24 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public ResponseEntity<?> updateRoles(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public ResponseEntity<?> updateRoles(Long id, List<UserRole> roles) {
+		try {
+			User user = userRepository.findById(id).orElse(new User());
+			List<Role> roles2 = new ArrayList<>();
+			for (UserRole item : roles) {
+				if (item == null) {
+					continue;
+				} else {
+					Role role = (roleRepository.findByName(item.name()));
+					roles2.add(role);
+				}
+			}
+			user.setRoles(roles2);
+			return ResponseEntity.ok(userConverter.convertToDto(userRepository.save(user)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("Error: " + e, new ErrorParam())));
+		}
 	}
 
 	@Override

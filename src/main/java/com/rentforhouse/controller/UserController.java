@@ -1,5 +1,7 @@
 package com.rentforhouse.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -84,8 +86,8 @@ public class UserController {
 	//chưa làm
 	@PutMapping("/update-role/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
-	public ResponseEntity<?> updateRoles(@PathVariable("id") Long id, UserRole roles) {
-		return userService.updateRoles(id);
+	public ResponseEntity<?> updateRoles(@PathVariable("id") Long id,@RequestParam List<UserRole> roles) {
+		return userService.updateRoles(id,roles);
 	}
 
 	@PostMapping("/search/")
