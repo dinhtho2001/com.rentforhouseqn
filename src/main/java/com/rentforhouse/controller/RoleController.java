@@ -48,7 +48,6 @@ public class RoleController {
 		if(roleDto.getId() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
-			
 		}
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new SuccessReponse(Param.success.name(),roleDto,HttpStatus.OK.name()));

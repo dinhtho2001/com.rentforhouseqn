@@ -9,6 +9,7 @@ import com.rentforhouse.entity.Comment;
 
 public interface ICommentRepository extends JpaRepository<Comment, Long>{
 
+	/* Lấy tất cả comment theo bài viết */
 	@Query(value = "SELECT * FROM rentforhouse.comment u WHERE u.house_id = ?1 ORDER BY u.createddate DESC", 
 			  nativeQuery = true)
 	List<Comment> findAllByHouse_id(Long id);

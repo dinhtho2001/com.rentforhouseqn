@@ -33,15 +33,16 @@ public class CommentController {
 	@Autowired
 	private ICommentService commentService;
 
+	/* thêm comment*/
 	@PostMapping
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
 	public ResponseEntity<?> save(@RequestParam("houseId") Long houseId, @RequestParam("userId") Long userId,
 			@RequestParam("content") String content) {
-		CommentRequest request = new CommentRequest();
+		CommentRequest request = new CommentRequest(); /* comment request để lưu thông tin của comment*/
 		request.setHouseId(houseId);
 		request.setUserId(userId);
 		request.setContent(content);
-		CommentDto response = commentService.save(request);
+		CommentDto response = commentService.save(request); /* gọi comment service để dùng chức năng save*/
 		if (response != null) {
 			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(new SuccessReponse(Param.success.name(), response, HttpStatus.CREATED.name()));
@@ -54,12 +55,12 @@ public class CommentController {
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
 	public ResponseEntity<?> edit(@RequestParam("id") Long id, @RequestParam("houseId") Long houseId, @RequestParam("userId") Long userId,
 			@RequestParam("content") String content) {
-		CommentRequest request = new CommentRequest();
+		CommentRequest request = new CommentRequest();/* comment request để lưu thông tin của comment*/
 		request.setId(id);
 		request.setHouseId(houseId);
 		request.setUserId(userId);
 		request.setContent(content);
-		CommentDto response = commentService.save(request);
+		CommentDto response = commentService.save(request);/* gọi comment service để dùng chức năng save*/
 		if (response.getId() != null) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new SuccessReponse(Param.success.name(), response, HttpStatus.OK.name()));
@@ -68,6 +69,7 @@ public class CommentController {
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
 
+	/* xóa comment theo id */
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
 	public ResponseEntity<?> deleteById(@PathVariable("id") Long id) {
@@ -79,6 +81,7 @@ public class CommentController {
 				.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError()));
 	}
 
+	/* lấy comment theo id */
 	@GetMapping("/house/{houseId}")
 	public ResponseEntity<?> findCommentsByHouse(@PathVariable("houseId") Long id) {
 
