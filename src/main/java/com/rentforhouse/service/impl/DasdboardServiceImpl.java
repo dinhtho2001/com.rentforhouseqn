@@ -202,32 +202,46 @@ public class DasdboardServiceImpl implements DasdboardService {
 		return ResponseEntity.ok(response);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
-	public ResponseEntity<?> interactivePieChart() {
+	public ResponseEntity<?> interactivePieChart(int year) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<String> nameColumns = new ArrayList<>();
 		nameColumns.add("Nhà cho thuê");
 		nameColumns.add("Nhà bán");
-		/*
-		 * String nhaThue = TypeHouse.nha_cho_thue.name().toString(); String nhaBan =
-		 * TypeHouse.nha_ban.name();
-		 */
 		Integer totalNhaChoThue = 0;
 		Integer totalNhaBan = 0;
 		List<House> houses = houseRepository.findAll();
-		for (House house : houses) {
-			String code = house.getHouseType().getCode();
-			switch (code) {
-			case "nha_cho_thue":
-				totalNhaChoThue ++;
-				break;
-			case "nha_ban":
-				totalNhaBan ++;
-				break;
+		for (int iMonth = 1; iMonth <= 12; iMonth++) {
+			int soNgay = daysInMonth(year, iMonth);
+			for (int iDay = 0; iDay < soNgay; iDay++) {
+				Date date = new Date(year - 1900, iMonth - 1, iDay + 1);
+				for (House house : houses) {
+					Date dateHouse;
+					try {
+						dateHouse = dateFormat.parse(house.getCreatedDate().toString());
+						if (date.equals(dateHouse)) {
+							String code = house.getHouseType().getCode();
+							switch (code) {
+							case "nha_cho_thue":
+								totalNhaChoThue++;
+								break;
+							case "nha_ban":
+								totalNhaBan++;
+								break;
 
-			default:
-				break;
+							default:
+								break;
+							}
+						}
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
 			}
+
 		}
+
 		DataChart dataChartChoThue = new DataChart();
 		dataChartChoThue.setColumn(nameColumns.get(0));
 		dataChartChoThue.setValue(totalNhaChoThue);

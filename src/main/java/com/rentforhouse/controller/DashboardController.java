@@ -29,7 +29,7 @@ public class DashboardController {
 	}
 	
 	@GetMapping("/interactive/pie/chart/")
-	public ResponseEntity<?> interactivePieChart() {
-		return dasdboardService.interactivePieChart();
+	public ResponseEntity<?> interactivePieChart(@RequestParam(required = false) int year) {
+		return dasdboardService.interactivePieChart(year);
 	}
 }

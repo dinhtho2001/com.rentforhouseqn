@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -24,12 +23,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import com.rentforhouse.common.Constant;
 import com.rentforhouse.common.Param;
 import com.rentforhouse.common.Storage;
-import com.rentforhouse.controller.HouseController;
 import com.rentforhouse.dto.FileInfo;
 import com.rentforhouse.exception.ErrorParam;
 import com.rentforhouse.exception.SysError;

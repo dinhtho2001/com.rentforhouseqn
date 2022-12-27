@@ -10,7 +10,6 @@ import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.payload.request.ProfileRequest;
 import com.rentforhouse.payload.request.UserRequest;
 import com.rentforhouse.payload.response.DataGetResponse;
-import com.rentforhouse.payload.response.FileUploadResponse;
 
 public interface IUserService {
 	ResponseEntity<?> save(UserRequest request, MultipartFile image);

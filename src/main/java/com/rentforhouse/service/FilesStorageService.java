@@ -2,10 +2,7 @@ package com.rentforhouse.service;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.Stream;
-import com.rentforhouse.dto.FileInfo;
-import com.rentforhouse.payload.response.FileUploadResponse;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
