@@ -1,8 +1,8 @@
 package com.rentforhouse.utils;
 
-import com.rentforhouse.exception.ErrorParam;
+import com.rentforhouse.common.ErrorParam;
+import com.rentforhouse.common.SysError;
 import com.rentforhouse.exception.MyFileNotFoundException;
-import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.SignupRequest;
 

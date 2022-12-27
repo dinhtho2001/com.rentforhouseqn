@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rentforhouse.common.ErrorParam;
 import com.rentforhouse.common.Param;
+import com.rentforhouse.common.SysError;
 import com.rentforhouse.dto.HouseTypeDto;
-import com.rentforhouse.exception.ErrorParam;
-import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.HouseTypeRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.MessageResponse;

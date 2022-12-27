@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rentforhouse.common.ErrorParam;
 import com.rentforhouse.common.Param;
+import com.rentforhouse.common.SysError;
 import com.rentforhouse.dto.CommentDto;
-import com.rentforhouse.exception.ErrorParam;
-import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.CommentRequest;
 import com.rentforhouse.payload.response.CommentResponse;
 import com.rentforhouse.payload.response.ErrorResponse;

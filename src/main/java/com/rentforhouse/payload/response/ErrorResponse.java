@@ -1,6 +1,6 @@
 package com.rentforhouse.payload.response;
 
-import com.rentforhouse.exception.SysError;
+import com.rentforhouse.common.SysError;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

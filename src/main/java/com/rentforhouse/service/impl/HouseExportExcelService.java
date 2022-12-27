@@ -30,11 +30,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.rentforhouse.common.ErrorParam;
 import com.rentforhouse.common.Param;
 import com.rentforhouse.common.ResourceDTO;
+import com.rentforhouse.common.SysError;
 import com.rentforhouse.entity.House;
-import com.rentforhouse.exception.ErrorParam;
-import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.FileUploadResponse;
 import com.rentforhouse.payload.response.SuccessReponse;

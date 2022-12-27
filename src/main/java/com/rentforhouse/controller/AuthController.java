@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rentforhouse.common.Param;
-import com.rentforhouse.exception.SysError;
+import com.rentforhouse.common.SysError;
 import com.rentforhouse.payload.request.LoginRequest;
 import com.rentforhouse.payload.request.SignupRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
