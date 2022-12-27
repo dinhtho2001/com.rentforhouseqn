@@ -6,4 +6,6 @@ public interface DasdboardService {
 
 	ResponseEntity<?> interactiveByYear(int year);
 
+	ResponseEntity<?> interactiveMonthByYear(int year, int month);
+
 }

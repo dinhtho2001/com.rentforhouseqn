@@ -22,4 +22,9 @@ public class DashboardController {
 	public ResponseEntity<?> interactiveLineChart(@RequestParam int year) {
 		return dasdboardService.interactiveByYear(year);
 	}
+	
+	@GetMapping("/interactive/chart/month/")
+	public ResponseEntity<?> interactiveLineChart(@RequestParam int year, @RequestParam int month) {
+		return dasdboardService.interactiveMonthByYear(year, month);
+	}
 }

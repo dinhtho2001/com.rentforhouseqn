@@ -60,14 +60,14 @@ public class DasdboardServiceImpl implements DasdboardService {
 						e.printStackTrace();
 					}
 				}
-				
-				dataChart.setColumn(nameColumns.get(iMonth-1));
+
+				dataChart.setColumn(nameColumns.get(iMonth - 1));
 				dataChart.setValue(value);
 			}
 			dataCharts.add(dataChart);
 			tolTalValues = tolTalValues + value;
 			value = 0;
-			
+
 		}
 		LineChartResponse response = new LineChartResponse();
 		response.setNameColumns(nameColumns);
@@ -112,6 +112,50 @@ public class DasdboardServiceImpl implements DasdboardService {
 		default:
 			return 0;
 		}
+	}
+
+	@Override
+	public ResponseEntity<?> interactiveMonthByYear(int year, int month) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		List<House> houses = houseRepository.findAll();
+		List<String> nameColumns = new ArrayList<>();
+		int soNgay = daysInMonth(year, month);
+		for (int i = 0; i < soNgay; i++) {
+			nameColumns.add("" + (i + 1));
+		}
+		Integer value = 0;
+		Integer tolTalValues = 0;
+		
+		List<DataChart> dataCharts = new ArrayList<>();
+		for (int iDay = 0; iDay < soNgay; iDay++) {
+			DataChart dataChart = new DataChart();
+			@SuppressWarnings("deprecation")
+			Date date = new Date(year - 1900, month - 1, iDay + 1);
+			for (House house : houses) {
+				Date dateHouse;
+				try {
+					dateHouse = dateFormat.parse(house.getCreatedDate().toString());
+					if (date.equals(dateHouse)) {
+						value = value + 1;
+					}
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+
+			dataChart.setColumn(nameColumns.get(iDay));
+			dataChart.setValue(value);
+			dataCharts.add(dataChart);
+			tolTalValues = tolTalValues + value;
+			value = 0;
+		}
+
+		LineChartResponse response = new LineChartResponse();
+		response.setNameColumns(nameColumns);
+		response.setData(dataCharts);
+		response.setTotalColumn(nameColumns.size());
+		response.setTotalValues(tolTalValues);
+		return ResponseEntity.ok(response);
 	}
 
 }
