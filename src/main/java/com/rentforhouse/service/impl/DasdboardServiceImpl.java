@@ -7,14 +7,18 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.crypto.Data;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.rentforhouse.common.DataChart;
 import com.rentforhouse.entity.House;
+import com.rentforhouse.entity.User;
 import com.rentforhouse.payload.response.LineChartResponse;
 import com.rentforhouse.repository.IHouseRepository;
+import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.DasdboardService;
 
 @Service
@@ -22,31 +26,30 @@ public class DasdboardServiceImpl implements DasdboardService {
 
 	@Autowired
 	private IHouseRepository houseRepository;
+	
+	@Autowired
+	private IUserRepository userRepository;
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public ResponseEntity<?> interactiveByYear(int year) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<House> houses = houseRepository.findAll();
-		List<String> nameColumns = new ArrayList<>();
-		nameColumns.add("Tháng 1");
-		nameColumns.add("Tháng 2");
-		nameColumns.add("Tháng 3");
-		nameColumns.add("Tháng 4");
-		nameColumns.add("Tháng 5");
-		nameColumns.add("Tháng 6");
-		nameColumns.add("Tháng 7");
-		nameColumns.add("Tháng 8");
-		nameColumns.add("Tháng 9");
-		nameColumns.add("Tháng 10");
-		nameColumns.add("Tháng 11");
-		nameColumns.add("Tháng 12");
-		Integer value = 0;
-		Integer tolTalValues = 0;
-		List<DataChart> dataCharts = new ArrayList<>();
+		List<User> users = userRepository.findAll();
+ 		List<String> nameColumns = new ArrayList<>();
+ 		for (int i = 0; i < 12; i++) {
+ 			nameColumns.add("Tháng "+(i+1));
+		}
+		Integer valueHouse = 0;
+		Integer valueUser = 0;
+		Integer tolTalValuesHouses = 0;
+		Integer tolTalValuesUsers = 0;
+		List<DataChart> dataChartHouses = new ArrayList<>();
+		List<DataChart> dataChartUsers = new ArrayList<>();
 		for (int iMonth = 1; iMonth <= nameColumns.size(); iMonth++) {
 			int soNgay = daysInMonth(year, iMonth);
-			DataChart dataChart = new DataChart();
+			DataChart dataChartHouse = new DataChart();
+			DataChart dataChartUser = new DataChart();
 			for (int iDay = 0; iDay < soNgay; iDay++) {
 				Date date = new Date(year - 1900, iMonth - 1, iDay + 1);
 				for (House house : houses) {
@@ -54,26 +57,45 @@ public class DasdboardServiceImpl implements DasdboardService {
 					try {
 						dateHouse = dateFormat.parse(house.getCreatedDate().toString());
 						if (date.equals(dateHouse)) {
-							value = value + 1;
+							valueHouse = valueHouse + 1;
+						}
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				for (User user : users) {
+					Date dateUser;
+					try {
+						dateUser = dateFormat.parse(user.getCreatedDate().toString());
+						if (date.equals(dateUser)) {
+							valueUser = valueUser + 1;
 						}
 					} catch (ParseException e) {
 						e.printStackTrace();
 					}
 				}
 
-				dataChart.setColumn(nameColumns.get(iMonth - 1));
-				dataChart.setValue(value);
+				dataChartHouse.setColumn(nameColumns.get(iMonth - 1));
+				dataChartHouse.setValue(valueHouse);
+				dataChartUser.setColumn(nameColumns.get(iMonth - 1));
+				dataChartUser.setValue(valueUser);
 			}
-			dataCharts.add(dataChart);
-			tolTalValues = tolTalValues + value;
-			value = 0;
+			dataChartHouses.add(dataChartHouse);
+			dataChartUsers.add(dataChartUser);
+			tolTalValuesHouses = tolTalValuesHouses + valueHouse;
+			tolTalValuesUsers = tolTalValuesUsers + valueUser;
+			valueHouse = 0;
+			valueUser = 0;
 
 		}
 		LineChartResponse response = new LineChartResponse();
 		response.setNameColumns(nameColumns);
-		response.setData(dataCharts);
+		response.setDataHouses(dataChartHouses);
+		response.setDataUsers(dataChartUsers);
+		response.setTotalDataHouses(tolTalValuesHouses);
+		response.setTotalDataUsers(tolTalValuesUsers);
 		response.setTotalColumn(nameColumns.size());
-		response.setTotalValues(tolTalValues);
 		return ResponseEntity.ok(response);
 	}
 
@@ -118,17 +140,22 @@ public class DasdboardServiceImpl implements DasdboardService {
 	public ResponseEntity<?> interactiveMonthByYear(int year, int month) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<House> houses = houseRepository.findAll();
-		List<String> nameColumns = new ArrayList<>();
+		List<User> users = userRepository.findAll();
+ 		List<String> nameColumns = new ArrayList<>();
 		int soNgay = daysInMonth(year, month);
 		for (int i = 0; i < soNgay; i++) {
 			nameColumns.add("" + (i + 1));
 		}
-		Integer value = 0;
-		Integer tolTalValues = 0;
+		Integer valueHouse = 0;
+		Integer valueUser = 0;
+		Integer tolTalValuesHouses = 0;
+		Integer tolTalValuesUsers = 0;
 		
-		List<DataChart> dataCharts = new ArrayList<>();
+		List<DataChart> dataChartHouses = new ArrayList<>();
+		List<DataChart> dataChartUsers = new ArrayList<>();
 		for (int iDay = 0; iDay < soNgay; iDay++) {
-			DataChart dataChart = new DataChart();
+			DataChart dataChartHouse = new DataChart();
+			DataChart dataChartUser = new DataChart();
 			@SuppressWarnings("deprecation")
 			Date date = new Date(year - 1900, month - 1, iDay + 1);
 			for (House house : houses) {
@@ -136,25 +163,44 @@ public class DasdboardServiceImpl implements DasdboardService {
 				try {
 					dateHouse = dateFormat.parse(house.getCreatedDate().toString());
 					if (date.equals(dateHouse)) {
-						value = value + 1;
+						valueHouse = valueHouse + 1;
+					}
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			for (User user : users) {
+				Date dateUser;
+				try {
+					dateUser = dateFormat.parse(user.getCreatedDate().toString());
+					if (date.equals(dateUser)) {
+						valueUser = valueUser + 1;
 					}
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 			}
 
-			dataChart.setColumn(nameColumns.get(iDay));
-			dataChart.setValue(value);
-			dataCharts.add(dataChart);
-			tolTalValues = tolTalValues + value;
-			value = 0;
+			dataChartHouse.setColumn(nameColumns.get(iDay));
+			dataChartHouse.setValue(valueHouse);
+			dataChartHouses.add(dataChartHouse);
+			dataChartUser.setColumn(nameColumns.get(iDay));
+			dataChartUser.setValue(valueUser);
+			dataChartUsers.add(dataChartUser);
+			tolTalValuesHouses = tolTalValuesHouses + valueHouse;
+			valueHouse = 0;
+			tolTalValuesUsers = tolTalValuesUsers + valueUser;
+			valueUser = 0;
 		}
 
 		LineChartResponse response = new LineChartResponse();
 		response.setNameColumns(nameColumns);
-		response.setData(dataCharts);
+		response.setDataHouses(dataChartHouses);
+		response.setDataUsers(dataChartUsers);
+		response.setTotalDataHouses(tolTalValuesHouses);
+		response.setTotalDataUsers(tolTalValuesUsers);
 		response.setTotalColumn(nameColumns.size());
-		response.setTotalValues(tolTalValues);
 		return ResponseEntity.ok(response);
 	}
 

@@ -15,7 +15,8 @@ public class LineChartResponse {
 
 	private List<String> NameColumns;
 	private int TotalColumn;
-	private List<?> data;
-	
-	private Object TotalValues;
+	private List<?> dataHouses;
+	private List<?> dataUsers;
+	private Object totalDataHouses;
+	private Object totalDataUsers;
 }

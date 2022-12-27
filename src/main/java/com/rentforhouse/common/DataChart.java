@@ -14,4 +14,5 @@ public class DataChart {
 	private String column;
 
 	private Object value;
+	
 }
