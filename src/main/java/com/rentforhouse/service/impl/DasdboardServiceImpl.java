@@ -4,10 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.crypto.Data;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +14,7 @@ import com.rentforhouse.common.DataChart;
 import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.User;
 import com.rentforhouse.payload.response.LineChartResponse;
+import com.rentforhouse.payload.response.PieChartResponse;
 import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.DasdboardService;
@@ -26,7 +24,7 @@ public class DasdboardServiceImpl implements DasdboardService {
 
 	@Autowired
 	private IHouseRepository houseRepository;
-	
+
 	@Autowired
 	private IUserRepository userRepository;
 
@@ -36,9 +34,9 @@ public class DasdboardServiceImpl implements DasdboardService {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<House> houses = houseRepository.findAll();
 		List<User> users = userRepository.findAll();
- 		List<String> nameColumns = new ArrayList<>();
- 		for (int i = 0; i < 12; i++) {
- 			nameColumns.add("Tháng "+(i+1));
+		List<String> nameColumns = new ArrayList<>();
+		for (int i = 0; i < 12; i++) {
+			nameColumns.add("Tháng " + (i + 1));
 		}
 		Integer valueHouse = 0;
 		Integer valueUser = 0;
@@ -63,7 +61,7 @@ public class DasdboardServiceImpl implements DasdboardService {
 						e.printStackTrace();
 					}
 				}
-				
+
 				for (User user : users) {
 					Date dateUser;
 					try {
@@ -141,7 +139,7 @@ public class DasdboardServiceImpl implements DasdboardService {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		List<House> houses = houseRepository.findAll();
 		List<User> users = userRepository.findAll();
- 		List<String> nameColumns = new ArrayList<>();
+		List<String> nameColumns = new ArrayList<>();
 		int soNgay = daysInMonth(year, month);
 		for (int i = 0; i < soNgay; i++) {
 			nameColumns.add("" + (i + 1));
@@ -150,7 +148,7 @@ public class DasdboardServiceImpl implements DasdboardService {
 		Integer valueUser = 0;
 		Integer tolTalValuesHouses = 0;
 		Integer tolTalValuesUsers = 0;
-		
+
 		List<DataChart> dataChartHouses = new ArrayList<>();
 		List<DataChart> dataChartUsers = new ArrayList<>();
 		for (int iDay = 0; iDay < soNgay; iDay++) {
@@ -169,7 +167,7 @@ public class DasdboardServiceImpl implements DasdboardService {
 					e.printStackTrace();
 				}
 			}
-			
+
 			for (User user : users) {
 				Date dateUser;
 				try {
@@ -200,6 +198,48 @@ public class DasdboardServiceImpl implements DasdboardService {
 		response.setDataUsers(dataChartUsers);
 		response.setTotalDataHouses(tolTalValuesHouses);
 		response.setTotalDataUsers(tolTalValuesUsers);
+		response.setTotalColumn(nameColumns.size());
+		return ResponseEntity.ok(response);
+	}
+
+	@Override
+	public ResponseEntity<?> interactivePieChart() {
+		List<String> nameColumns = new ArrayList<>();
+		nameColumns.add("Nhà cho thuê");
+		nameColumns.add("Nhà bán");
+		/*
+		 * String nhaThue = TypeHouse.nha_cho_thue.name().toString(); String nhaBan =
+		 * TypeHouse.nha_ban.name();
+		 */
+		Integer totalNhaChoThue = 0;
+		Integer totalNhaBan = 0;
+		List<House> houses = houseRepository.findAll();
+		for (House house : houses) {
+			String code = house.getHouseType().getCode();
+			switch (code) {
+			case "nha_cho_thue":
+				totalNhaChoThue ++;
+				break;
+			case "nha_ban":
+				totalNhaBan ++;
+				break;
+
+			default:
+				break;
+			}
+		}
+		DataChart dataChartChoThue = new DataChart();
+		dataChartChoThue.setColumn(nameColumns.get(0));
+		dataChartChoThue.setValue(totalNhaChoThue);
+		DataChart dataChartBan = new DataChart();
+		dataChartBan.setColumn(nameColumns.get(1));
+		dataChartBan.setValue(totalNhaBan);
+		List<DataChart> datasChart = new ArrayList<>();
+		datasChart.add(dataChartChoThue);
+		datasChart.add(dataChartBan);
+		PieChartResponse response = new PieChartResponse();
+		response.setDatas(datasChart);
+		response.setNameColumns(nameColumns);
 		response.setTotalColumn(nameColumns.size());
 		return ResponseEntity.ok(response);
 	}

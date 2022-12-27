@@ -8,4 +8,6 @@ public interface DasdboardService {
 
 	ResponseEntity<?> interactiveMonthByYear(int year, int month);
 
+	ResponseEntity<?> interactivePieChart();
+
 }

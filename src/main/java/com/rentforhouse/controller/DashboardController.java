@@ -27,4 +27,9 @@ public class DashboardController {
 	public ResponseEntity<?> interactiveLineChart(@RequestParam int year, @RequestParam int month) {
 		return dasdboardService.interactiveMonthByYear(year, month);
 	}
+	
+	@GetMapping("/interactive/pie/chart/")
+	public ResponseEntity<?> interactivePieChart() {
+		return dasdboardService.interactivePieChart();
+	}
 }
