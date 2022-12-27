@@ -128,7 +128,7 @@ public class HouseController {
 	}
 
 	@GetMapping("/export/excel")
-	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')")
+	/* @PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN')") */
 	public ResponseEntity<?> exportToExcel() throws IOException {
 		ResourceDTO resourceDTO = excelService.exportHouseToExcel();
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");

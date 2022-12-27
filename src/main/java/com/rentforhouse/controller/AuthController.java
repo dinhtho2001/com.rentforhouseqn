@@ -20,7 +20,7 @@ import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IAuthService;
 
 @CrossOrigin(origins = {"http://random-quotes-webs.s3-website-ap-southeast-1.amazonaws.com/", "http://localhost:3000/"})
-@RestController
+@RestController(value = "AuthAPIOfWeb")
 @RequestMapping("/api/auth")
 public class AuthController {
 

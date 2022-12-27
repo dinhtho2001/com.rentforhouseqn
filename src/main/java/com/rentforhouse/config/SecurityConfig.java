@@ -63,9 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/swagger-ui.html/**").antMatchers("/swagger-ui.html#/**")
 				.antMatchers("/webjars/springfox-swagger-ui/**").antMatchers("/swagger-resources/**")
-				.antMatchers("/v2/api-docs").antMatchers("/api/auth/**").antMatchers("/api/file/**")
+				.antMatchers("/v2/api-docs").antMatchers("/api/auth/**").antMatchers("/api/file/**").antMatchers("/api/dasdboard/**")
 				.antMatchers(HttpMethod.GET, "/api/houses", "/api/houses/top-5", "/api/houses/status/{trueOrfalse}",
-						"/api/houses/{id}", "/api/houses/typeId/{typeId}", "/api/houseTypes", "/api/comments/**")
+						"/api/houses/{id}", "/api/houses/export/excel", "/api/houses/typeId/{typeId}", "/api/houseTypes", "/api/comments/**")
 				.antMatchers(HttpMethod.PUT, "/api/houses/viewPlus/{id}");
 	}
 
