@@ -67,34 +67,44 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	@Transactional
 	public ResponseEntity<?> save(UserRequest request, MultipartFile image) {
+		 // Tạo một đối tượng UserDto mới để lưu dữ liệu người dùng
 		UserDto userDto = new UserDto();
 		/* sửa */
+		 // Kiểm tra xem người dùng đang được cập nhật hay tạo mới
 		if (request.getId() != null) {
+			// Nếu người dùng đang được cập nhật, thì đặt trường id trong đối tượng
 			userDto.setId(request.getId());
 		}
 		/* save */
 		else {
+			// Nếu người dùng đang được tạo mới, kiểm tra xem tên người dùng, email, hoặc số điện thoại đã tồn tại trong cơ sở dữ liệu hay chưa
 			if (userRepository.existsByUserName(request.getUserName())) {
+				// Nếu tên người dùng đã tồn tại, trả về mã trạng thái lỗi và thông báo lỗi
 				return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
 						new SysError("exist-username", new ErrorParam(Param.username.name()))));
 			}
 			if (userRepository.existsByEmail(request.getEmail())) {
+				// Nếu email đã tồn tại, trả về mã trạng thái lỗi và thông báo lỗi
 				return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
 						new SysError("exist-email", new ErrorParam(Param.email.name()))));
 			}
 			if (userRepository.existsByPhone(request.getPhone())) {
+				// Nếu số điện thoại đã tồn tại, trả về mã trạng thái lỗi và thông báo
 				return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.name(),
 						new SysError("exist-phone", new ErrorParam(Param.phone.name()))));
 			}
 		}
 		try {
 			if (image != null) {
+				// Lưu ảnh và đặt tên file trong đối tượng UserDto
 				ResponseEntity<?> uploadResponse = fileService.save(image, Storage.users.name());
 				FileUploadResponse fileUploadResponse = (FileUploadResponse) uploadResponse.getBody();
 				userDto.setImage(fileUploadResponse.getFileName());
 			} else {
+				// Đặt trường hình ảnh trong đối tượng UserDto thành hình ảnh hiện có cho người dùng, nếu có
 				userDto.setImage(userRepository.findById(userDto.getId()).get().getImage());
 			}
+			// Tạo danh sách các đối tượng RoleDto dựa trên các vai trò được cung cấp trong đối tượng UserRequest
 			List<RoleDto> roleDtos = new ArrayList<>();
 			for (UserRole item : request.getRoles()) {
 				if (item == null) {
@@ -103,6 +113,7 @@ public class UserServiceImpl implements IUserService {
 					roleDtos.add(roleConverter.convertToDto(roleRepository.findByName(item.name())));
 				}
 			}
+			// Đặt các trường còn lại trong đối tượng UserDto dựa trên các trường tương ứng trong đối tượng UserRequest
 			userDto.setLastName(request.getLastName());
 			userDto.setFirstName(request.getFirstName());
 			userDto.setUserName(request.getUserName());
@@ -236,13 +247,17 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public ResponseEntity<?> updateRoles(Long id, List<UserRole> roles) {
 		try {
+			// Tìm người dùng với ID đã cho trong cơ sở dữ liệu hoặc tạo người dùng mới nếu không tìm thấy
 			User user = userRepository.findById(id).orElse(new User());
+			// Chuyển đổi danh sách đối tượng UserRole thành danh sách đối tượng Vai trò
 			List<Role> roles2 = new ArrayList<>();
 			for (UserRole item : roles) {
 				if (item == null) {
 					continue;
 				} else {
+					// Tìm đối tượng Vai trò có tên của đối tượng UserRole hiện tại và thêm nó vào danh sách
 					Role role = (roleRepository.findByName(item.name()));
+					// Đặt vai trò của người dùng vào danh sách các đối tượng Vai trò
 					roles2.add(role);
 				}
 			}
@@ -271,9 +286,12 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public ResponseEntity<?> search(String content, int limit, int page) {
 		try {
+			// Tạo một đối tượng DataGetResponse để lưu kết quả tìm kiếm và thông tin phân trang
 			DataGetResponse dataGetResponse = new DataGetResponse();
+			// Create a Pageable object with the given page and limit values
 			Pageable pageable = PageRequest.of(page - 1, limit);
 			Page<User> users = null;
+			// If a search query was provided, search for users by content using the given pageable object
 			if (content != null) {
 				users = userRepository.findAllByContent(content, pageable);
 			} else {
