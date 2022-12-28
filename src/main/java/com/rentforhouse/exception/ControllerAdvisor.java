@@ -6,11 +6,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
-@ControllerAdvice 
+@ControllerAdvice
 public class ControllerAdvisor {
+
 	@ExceptionHandler(MyFileNotFoundException.class)
-	public ResponseEntity<Object> handleCityNotFoundException(
-			MyFileNotFoundException ex, WebRequest request) {	
-	    return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<Object> handleCityNotFoundException(MyFileNotFoundException ex, WebRequest request) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
 }

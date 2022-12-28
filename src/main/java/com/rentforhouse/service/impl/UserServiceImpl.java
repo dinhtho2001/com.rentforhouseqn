@@ -1,8 +1,6 @@
 package com.rentforhouse.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -14,13 +12,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.rentforhouse.common.ErrorParam;
 import com.rentforhouse.common.Param;
 import com.rentforhouse.common.Storage;
+import com.rentforhouse.common.SysError;
 import com.rentforhouse.common.UserRole;
 import com.rentforhouse.converter.RoleConverter;
 import com.rentforhouse.converter.UserConverter;
@@ -28,8 +27,6 @@ import com.rentforhouse.dto.RoleDto;
 import com.rentforhouse.dto.UserDto;
 import com.rentforhouse.entity.Role;
 import com.rentforhouse.entity.User;
-import com.rentforhouse.exception.ErrorParam;
-import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.ProfileRequest;
 import com.rentforhouse.payload.request.UserRequest;
 import com.rentforhouse.payload.response.DataGetResponse;

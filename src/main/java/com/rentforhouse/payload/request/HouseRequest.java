@@ -1,7 +1,5 @@
 package com.rentforhouse.payload.request;
 
-import com.rentforhouse.common.TypeHouse;
-
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

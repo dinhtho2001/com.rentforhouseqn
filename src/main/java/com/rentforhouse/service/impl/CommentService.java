@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +22,7 @@ import com.rentforhouse.repository.IHouseRepository;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.ICommentService;
-import com.rentforhouse.service.impl.userdetail.UserDetailsImpl;
+import com.rentforhouse.utils.SecurityUtils;
 
 @Service
 public class CommentService implements ICommentService {
@@ -52,40 +50,24 @@ public class CommentService implements ICommentService {
 	public CommentDto save(CommentRequest request) {
 		House house = houseRepository.findById(request.getHouseId()).orElse(new House());
 		User user = userRepository.findById(request.getUserId()).orElse(new User());
-		if (request.getId() != null) {
-			Comment comment = commentRepository.findById(request.getId()).orElse(new Comment());
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
-			Long userId = userRepository.findById(userDetailsImpl.getId()).map(User::getId).get();
-			if (comment.getUserId() != userId) {
-				throw new MyFileNotFoundException("Bạn không có quyền chỉnh sửa comment!");
-			} else {
-				Comment commentNew = new Comment();
-				commentNew.setContent(request.getContent());
-				commentNew.setId(request.getId());
-				commentNew.setUserId(userId);
-				commentNew.setHouse(house);
-				Comment result = commentRepository.save(commentNew);
-				if (result.getId() != null) {
-					CommentDto commentDto = commentConverter.convertToDto(result);
-					commentDto.setUser(userConverter.convertToDto(user));
-					return commentDto;
+		Comment commentNew = new Comment();
+		if (house.getId() != null && user.getId() != null) {
+			if (request.getId() != null) { /* sửa */
+				Comment oldcomment = commentRepository.findById(request.getId()).orElse(new Comment());
+				Long id = SecurityUtils.getPrincipal().getId();
+				Long userId = userRepository.findById(id).get().getId();
+				if (oldcomment.getUserId() != userId) {
+					throw new MyFileNotFoundException("Bạn không có quyền chỉnh sửa comment!");
+				} else {
+					commentNew.setId(request.getId());
 				}
 			}
-		} else if (house.getId() != null && user.getId() != null) {
-			Comment comment = new Comment();
-			CommentDto commentDto = new CommentDto();
-			commentDto.setUserId(user.getId());
-			commentDto.setContent(request.getContent());
-			comment = commentConverter.convertToEntity(commentDto);
-			comment.setHouse(house);
-			Comment result = commentRepository.save(comment);
-			if (result.getId() != null) {
-				commentDto.setId(result.getId());
-				commentDto.setCreatedBy(result.getCreatedBy());
-				commentDto.setCreatedDate(result.getCreatedDate());
-				commentDto.setModifiedBy(result.getModifiedBy());
-				commentDto.setModifiedDate(result.getModifiedDate());
+			commentNew.setContent(request.getContent());
+			commentNew.setUserId(user.getId());
+			commentNew.setHouse(house);
+			Comment comment = commentRepository.save(commentNew);
+			if (comment.getId() != null) {
+				CommentDto commentDto = commentConverter.convertToDto(comment);
 				commentDto.setUser(userConverter.convertToDto(user));
 				return commentDto;
 			}

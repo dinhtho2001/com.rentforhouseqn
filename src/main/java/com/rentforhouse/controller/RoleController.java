@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rentforhouse.common.ErrorParam;
 import com.rentforhouse.common.Param;
+import com.rentforhouse.common.SysError;
 import com.rentforhouse.dto.RoleDto;
-import com.rentforhouse.exception.ErrorParam;
-import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.RoleRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.MessageResponse;
@@ -48,7 +48,6 @@ public class RoleController {
 		if(roleDto.getId() == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("not-found", new ErrorParam("id"))));
-			
 		}
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new SuccessReponse(Param.success.name(),roleDto,HttpStatus.OK.name()));

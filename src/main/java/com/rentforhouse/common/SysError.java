@@ -1,4 +1,4 @@
-package com.rentforhouse.exception;
+package com.rentforhouse.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

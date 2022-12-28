@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.rentforhouse.entity.House;
 import com.rentforhouse.entity.User;
 
 public interface IUserRepository extends JpaRepository<User, Long> {
@@ -37,5 +36,5 @@ public interface IUserRepository extends JpaRepository<User, Long> {
 
 	@Query(nativeQuery = true, value = "SELECT * FROM rentforhouse.user u WHERE u.phone LIKE %:content% OR u.first_name LIKE %:content% OR u.last_name LIKE %:content% OR u.username LIKE %:content% OR u.email LIKE %:content% ORDER BY u.createddate DESC", 
 			      countQuery = "SELECT COUNT(id) FROM rentforhouse.user u WHERE u.phone LIKE %:content% OR u.first_name LIKE %:content% OR u.last_name LIKE %:content% OR u.username LIKE %:content% OR u.email LIKE %:content% ORDER BY u.createddate DESC")
-	Page<User> findAllByContent(@Param("content") String content, Pageable pageable);
+	Page<User> findAllByContent(@Param("content") String content, Pageable pageable); /* tìm kiếm */
 }

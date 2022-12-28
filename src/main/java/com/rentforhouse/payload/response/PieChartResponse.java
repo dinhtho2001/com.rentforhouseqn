@@ -1,20 +1,19 @@
 package com.rentforhouse.payload.response;
 
-import com.rentforhouse.common.SysError;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
-public class ErrorResponse {
+@AllArgsConstructor
+public class PieChartResponse {
 
-	private String message;
-	private SysError sysError;
-	
-	
+	private List<String> NameColumns;
+	private int TotalColumn;
+	private List<?> datas;
 }

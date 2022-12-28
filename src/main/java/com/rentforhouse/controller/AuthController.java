@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rentforhouse.common.Param;
-import com.rentforhouse.exception.SysError;
+import com.rentforhouse.common.SysError;
 import com.rentforhouse.payload.request.LoginRequest;
 import com.rentforhouse.payload.request.SignupRequest;
 import com.rentforhouse.payload.response.ErrorResponse;
@@ -20,7 +20,7 @@ import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IAuthService;
 
 @CrossOrigin(origins = {"http://random-quotes-webs.s3-website-ap-southeast-1.amazonaws.com/", "http://localhost:3000/"})
-@RestController
+@RestController(value = "AuthAPIOfWeb")
 @RequestMapping("/api/auth")
 public class AuthController {
 

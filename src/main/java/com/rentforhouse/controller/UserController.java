@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.rentforhouse.common.Param;
+import com.rentforhouse.common.SysError;
 import com.rentforhouse.common.UserRole;
 import com.rentforhouse.dto.UserDto;
-import com.rentforhouse.exception.SysError;
 import com.rentforhouse.payload.request.UserRequest;
 import com.rentforhouse.payload.response.DataGetResponse;
 import com.rentforhouse.payload.response.ErrorResponse;
