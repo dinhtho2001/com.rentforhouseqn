@@ -14,4 +14,6 @@ public class HouseGetResponse {
 	private int page;
 	private int total_page;
 	private Object houses;
+	private Long size;
+
 }

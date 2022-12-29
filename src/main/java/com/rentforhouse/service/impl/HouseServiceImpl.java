@@ -376,6 +376,7 @@ public class HouseServiceImpl implements IHouseService {
 				response.setHouses(houseDtos);
 				response.setPage(page);
 				response.setTotal_page(houses.getTotalPages());
+				response.setSize(houses.getTotalElements());
 				return ResponseEntity.status(HttpStatus.OK)
 						.body(new SuccessReponse(Param.success.name(), response, HttpStatus.OK.name()));
 			} else {
