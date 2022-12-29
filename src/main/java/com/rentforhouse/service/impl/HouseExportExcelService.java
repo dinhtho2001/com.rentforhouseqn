@@ -39,6 +39,7 @@ import com.rentforhouse.payload.response.ErrorResponse;
 import com.rentforhouse.payload.response.FileUploadResponse;
 import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.repository.IHouseRepository;
+import com.rentforhouse.repository.IHouseTypeRepository;
 import com.rentforhouse.repository.IUserRepository;
 import com.rentforhouse.service.FilesStorageService;
 import com.rentforhouse.service.IExcelService;
@@ -49,6 +50,9 @@ public class HouseExportExcelService implements IExcelService {
 
 	@Autowired
 	private IHouseRepository houseRepository;
+	
+	@Autowired
+	private IHouseTypeRepository houseTypeRepository;
 
 	@Autowired
 	private IUserRepository userRepository;
@@ -167,6 +171,7 @@ public class HouseExportExcelService implements IExcelService {
 	}
 
 	@Override
+	@Transactional
 	public ResponseEntity<?> importHouses(MultipartFile file) {
 		try {
 			ResponseEntity<?> fileResponse = storageService.save(file, "");
@@ -174,24 +179,21 @@ public class HouseExportExcelService implements IExcelService {
 			try {
 				if (saveHousesToExcel(fileUploadResponse.getFileName())) {
 					return ResponseEntity.status(HttpStatus.OK)
-							.body(new SuccessReponse(Param.success.name(), null, HttpStatus.OK.name()));
+							.body(new SuccessReponse(Param.success.name(), "success", HttpStatus.OK.name()));
 				} else {
-					ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
 							new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("error: ", new ErrorParam())));
 				}
 			} catch (Exception e) {
-				ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+				return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
 						new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("error: " + e, new ErrorParam())));
 			}
 		} catch (Exception e) {
-			ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
 					new ErrorResponse(HttpStatus.BAD_REQUEST.name(), new SysError("error: " + e, new ErrorParam())));
 		}
-
-		return null;
 	}
 
-	@Transactional
 	private Boolean saveHousesToExcel(String fileName) throws IOException {
 		String strRootPath = rootPath.getParent().toString()+"/"+rootPath.getFileName();
 		File file = new File(strRootPath + "/" + fileName);
@@ -222,7 +224,7 @@ public class HouseExportExcelService implements IExcelService {
 	private List<House> readHousesToExcel(Sheet sheet) {
 		List<House> houses = new ArrayList<>();
 		for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
-			Integer columnCount = 0;
+			Integer columnCount = 1;
 			House house = new House();
 			Row row = sheet.getRow(i);
 			house.setName(row.getCell(columnCount++).getStringCellValue());
@@ -250,7 +252,7 @@ public class HouseExportExcelService implements IExcelService {
 			house.setToilet((int) row.getCell(columnCount++).getNumericCellValue());
 			house.setFloor((int) row.getCell(columnCount++).getNumericCellValue());
 			house.setUser(userRepository.findById(SecurityUtils.getPrincipal().getId()).get());
-			house.setHouseType(null);
+			house.setHouseType(houseTypeRepository.findByCode("nha_cho_thue"));
 			houses.add(house);
 		}
 		return houses;
