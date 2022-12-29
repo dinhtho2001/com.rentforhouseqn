@@ -245,6 +245,7 @@ public class HouseServiceImpl implements IHouseService {
 				for (House house : houseEntities) {
 					houseDto = houseConverter.convertToDto(house);
 					houseDto.getUser().setPassword(null);
+					houseDto.getUser().setImage(storageService.getUrlImage(house.getUser().getImage()));
 					houseDto.setImage(storageService.getUrlImage(house.getImage()));
 					houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
 					houseDto.setImage3(storageService.getUrlImage(house.getImage3()));

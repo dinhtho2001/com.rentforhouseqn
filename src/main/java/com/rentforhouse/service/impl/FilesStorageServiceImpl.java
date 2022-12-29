@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,12 +16,14 @@ import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -220,15 +223,6 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 	@Override
 	public ResponseEntity<?> load(String filename) {
 		try {
-			/*
-			 * try { rootPath = Paths.get(resource.getURI()); } catch (IOException e) {
-			 * e.printStackTrace(); return
-			 * ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
-			 * HttpStatus.BAD_REQUEST.name(), new SysError("khong lay dc rootPath", new
-			 * ErrorParam(""))));
-			 * 
-			 * }
-			 */
 			Path path = null;
 			String lastPath = null;
 			if (filename.contains(Storage.users.name())) {
@@ -240,14 +234,35 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 			} else {
 				path = rootPath;
 			}
+			if (!Files.exists(path)) {
+				try {
+					init(path);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			Path file = path.resolve(filename);
 			Resource resource = new UrlResource(file.toUri());
 
 			if (resource.exists() || resource.isReadable()) {
 				return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(resource);
 			} else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
-						HttpStatus.BAD_REQUEST.name(), new SysError("Could not read the file!", new ErrorParam(""))));
+				Resource resource2 = new ClassPathResource("assets" + "/" + filename);
+				if (resource2.exists()) {
+					InputStream inputStream;
+					try {
+						inputStream = resource2.getInputStream();
+						byte[] bdata = FileCopyUtils.copyToByteArray(inputStream);
+						return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png")).body(bdata);
+					} catch (IOException e) {
+						return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+								new SysError("Error: " + e.toString(), new ErrorParam(""))));
+					}
+				} else {
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(
+							HttpStatus.BAD_REQUEST.name(), new SysError("Could not read the file!", new ErrorParam(""))));
+				}
 			}
 		} catch (MalformedURLException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
