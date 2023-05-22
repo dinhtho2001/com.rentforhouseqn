@@ -16,9 +16,10 @@ import org.springframework.stereotype.Service;
 
 import com.rentforhouse.common.ErrorParam;
 import com.rentforhouse.common.Param;
+import com.rentforhouse.common.ServerError;
+import com.rentforhouse.common.ServiceResponse;
 import com.rentforhouse.common.Storage;
 import com.rentforhouse.common.SysError;
-import com.rentforhouse.common.TypeHouse;
 import com.rentforhouse.common.UserRole;
 import com.rentforhouse.converter.HouseConverter;
 import com.rentforhouse.converter.UserConverter;
@@ -181,7 +182,7 @@ public class HouseServiceImpl implements IHouseService {
 									new SysError("unable-to-save-image: " + e, new ErrorParam("image"))));
 				}
 			}
-			house.setHouseType(houseTypeRepository.findByCode(TypeHouse.nha_ban.name()));
+			house.setHouseType(houseTypeRepository.findByCode(request.getCodeHouseType().name()));
 			HouseDto houseDto = houseConverter.convertToDto(houseRepository.save(house));
 			houseDto.setUser(houseDto.setPassword(houseDto.getUser()));
 			houseDto.setImage(storageService.getUrlImage(house.getImage()));
@@ -201,7 +202,7 @@ public class HouseServiceImpl implements IHouseService {
 	@Override
 	public ResponseEntity<?> findById(Long id) {
 		House house = houseRepository.findById(id).orElse(new House());
-		if (house.getId() != null) {
+		if (house != null) {
 			HouseDto houseDto = houseConverter.convertToDto(house);
 			UserDto userDto = houseDto.getUser();
 			userDto.setPassword(null);
@@ -465,6 +466,68 @@ public class HouseServiceImpl implements IHouseService {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
 					new SysError("error: " + e.toString(), new ErrorParam())));
+		}
+	}
+
+	@Override
+	public Object setHide(Long id, Boolean hide) {
+		try {
+			House house = new House();
+			house = houseRepository.findById(id).orElse(new House());
+			if (house.getId() != null) {
+				house.setHide(hide);
+				houseRepository.save(house);
+				HouseDto houseDto = houseConverter.convertToDto(house);
+				UserDto userDto = houseDto.getUser();
+				userDto.setPassword(null);
+				userDto.setImage(storageService.getUrlImage(userDto.getImage()));
+				houseDto.setUser(userDto);
+				houseDto.setImage(storageService.getUrlImage(house.getImage()));
+				houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+				houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+				houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+				houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
+				return new ServiceResponse(true, houseDto);
+			}
+			else {
+				return new ServiceResponse(false, "null");
+			}
+		} catch (Exception e) {
+			return new ServiceResponse(new ServerError(e.toString()));
+		}
+	}
+
+	@Override
+	public Object getHidePostsByIdUser(Long idUser) {
+		try {
+			List<HouseDto> houseDtos = new ArrayList<>();
+			List<House> houses = new ArrayList<>();
+			Boolean existUser = userRepository.existsById(idUser);
+			if (existUser) {
+				houses = houseRepository.findByHideTrueOrderByCreatedDateDesc();
+				if (houses.isEmpty()) {
+					return new ServiceResponse(true, houseDtos);
+				}
+				else {
+					for (House house : houses) {
+						HouseDto houseDto = houseConverter.convertToDto(house);
+						houseDto.setUser(userConverter.convertToDto(house.getUser()));
+						houseDto.setImage(storageService.getUrlImage(house.getImage()));
+						houseDto.setImage2(storageService.getUrlImage(house.getImage2()));
+						houseDto.setImage3(storageService.getUrlImage(house.getImage3()));
+						houseDto.setImage4(storageService.getUrlImage(house.getImage4()));
+						houseDto.setImage5(storageService.getUrlImage(house.getImage5()));
+						houseDtos.add(houseDto);
+					}
+					return new ServiceResponse(true, houseDtos);
+				}
+			}
+			else {
+				return new ServiceResponse(false, "null");
+			}
+			
+		} catch (Exception e) {
+			return new ServiceResponse(new ServerError(e.toString()));
 		}
 	}
 

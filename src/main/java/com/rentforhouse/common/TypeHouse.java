@@ -2,6 +2,8 @@ package com.rentforhouse.common;
 
 public enum TypeHouse {
 
-	nha_cho_thue,
-	nha_ban
+	nha_cap_1,
+	nha_cap_2,
+	nha_cap_3,
+	nha_cap_4
 }

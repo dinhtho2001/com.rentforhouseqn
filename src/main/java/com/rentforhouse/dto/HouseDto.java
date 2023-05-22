@@ -1,9 +1,5 @@
 package com.rentforhouse.dto;
 
-import java.util.List;
-
-import com.rentforhouse.entity.HouseType;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +40,8 @@ public class HouseDto extends AbstractDto{
     private Integer toilet;
     
     private Integer floor;
+    
+    private Boolean hide;
     
     private HouseTypeDto houseType; 
 

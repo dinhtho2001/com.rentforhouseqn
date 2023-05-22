@@ -34,6 +34,8 @@ public interface IHouseRepository extends JpaRepository<House, Long> {
 
 	List<House> findByUser(User user);
 	
+	List<House> findByHideTrueOrderByCreatedDateDesc();
+	
 	// Page<House> findByNameLikeAndHouseTypes_Id(String name, Long typeId, Pageable
 		// pageable);
 

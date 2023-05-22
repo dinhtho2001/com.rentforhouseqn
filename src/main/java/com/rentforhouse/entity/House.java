@@ -69,6 +69,9 @@ public class House extends BaseEntity {
 
 	@Column(name = "floor")
 	private Integer floor;
+	
+	@Column(name = "hide")
+	private Boolean hide;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")

@@ -17,4 +17,6 @@ public interface IHouseService {
 	ResponseEntity<?> findByTypeId(Long id, int page, int limit);
 	ResponseEntity<?> updateStatus(Long id, Boolean status);
 	ResponseEntity<?> findTop6HouseByView();
+	Object setHide(Long id, Boolean hide);
+	Object getHidePostsByIdUser(Long idUser);
 }

@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,11 +22,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.rentforhouse.common.ErrorParam;
+import com.rentforhouse.common.Param;
 import com.rentforhouse.common.ResourceDTO;
+import com.rentforhouse.common.ServiceResponse;
+import com.rentforhouse.common.SysError;
 import com.rentforhouse.common.TypeHouse;
 import com.rentforhouse.converter.HouseConverter;
+import com.rentforhouse.dto.HouseDto;
 import com.rentforhouse.payload.request.HouseRequest;
 import com.rentforhouse.payload.request.SearchHouseRequest;
+import com.rentforhouse.payload.response.ErrorResponse;
+import com.rentforhouse.payload.response.SuccessReponse;
 import com.rentforhouse.service.IExcelService;
 import com.rentforhouse.service.IHouseService;
 
@@ -109,6 +117,38 @@ public class HouseController {
 				houseConverter.toSaveHouseRequest(request, codeHouseType , image, image2, image3, image4, image5));
 	}
 
+	@PutMapping("/set-hide-post/")
+	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN', 'ROLE_USER')")
+	public ResponseEntity<?> setHide(@RequestParam Long id, @RequestParam Boolean hide) {
+		ServiceResponse serviceResponse = (ServiceResponse) houseService.setHide(id, hide);
+		if (serviceResponse.getState()) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), serviceResponse.getData(), HttpStatus.OK.name()));
+		}
+		else if (serviceResponse.getServerError() != null || serviceResponse.getServerError().getError() != "") {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+					new SysError("houseId-not-found", new ErrorParam("id"))));
+		}
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.name(),
+				new SysError()));
+	}
+	
+	@GetMapping("/get-hide-posts/{idUser}")
+	@PreAuthorize("hasAnyRole('ROLE_STAFF','ROLE_ADMIN', 'ROLE_USER')")
+	public ResponseEntity<?> getHidePostsByIdUser(@PathVariable("idUser") Long idUser) {
+		ServiceResponse serviceResponse = (ServiceResponse) houseService.getHidePostsByIdUser(idUser);
+		if (serviceResponse.getState()) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new SuccessReponse(Param.success.name(), serviceResponse.getData(), HttpStatus.OK.name()));
+		}
+		else if (serviceResponse.getServerError() != null || serviceResponse.getServerError().getError() != "") {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.name(),
+					new SysError("houseId-not-found", new ErrorParam("id"))));
+		}
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.name(),
+				new SysError()));
+	}
+	
 	@PutMapping("/viewPlus/{id}")
 	public ResponseEntity<?> updateView(@PathVariable("id") Long id) {
 		return houseService.viewPlus(id);
